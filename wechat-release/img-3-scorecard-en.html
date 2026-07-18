@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>Fable 5 Scorecard (EN)</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Noto Sans CJK SC','Helvetica Neue',Arial,sans-serif; background:#0F172A; width:1080px; }
+  .canvas { width:1080px; padding:56px 60px 44px 60px; background:#0F172A; }
+  .kicker { font-size:20px; color:#7DD3FC; letter-spacing:6px; font-weight:bold; margin-bottom:14px; }
+  h1 { font-size:42px; color:#ffffff; letter-spacing:0.5px; margin-bottom:8px; }
+  .sub { font-size:20px; color:#8FA7C4; margin-bottom:36px; }
+  .overall { display:flex; align-items:center; gap:28px; background:linear-gradient(90deg,rgba(37,99,235,0.35),rgba(6,182,212,0.18)); border:1px solid #2563EB; border-radius:16px; padding:24px 32px; margin-bottom:36px; }
+  .overall .big { font-size:76px; font-weight:900; color:#ffffff; line-height:1; }
+  .overall .big span { font-size:30px; color:#8FA7C4; font-weight:bold; }
+  .overall .quote { font-size:19px; color:#DBEAFE; line-height:1.6; border-left:3px solid #7DD3FC; padding-left:22px; }
+  .row { margin-bottom:23px; }
+  .row .head { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px; }
+  .row .dim { font-size:23px; font-weight:bold; color:#ffffff; letter-spacing:0.3px; }
+  .row .score { font-size:28px; font-weight:900; color:#7DD3FC; font-variant-numeric:tabular-nums; }
+  .row .score.low { color:#94A3B8; }
+  .track { height:14px; background:rgba(255,255,255,0.08); border-radius:7px; overflow:hidden; margin-bottom:8px; }
+  .fill { height:14px; border-radius:7px; background:linear-gradient(90deg,#2563EB,#06B6D4); }
+  .fill.low { background:#64748B; }
+  .why { font-size:16px; color:#8FA7C4; line-height:1.55; }
+  .why .fix { color:#6EE7B7; font-weight:600; }
+  .divider { border-top:1px dashed rgba(255,255,255,0.18); margin:30px 0 22px 0; }
+  .method { font-size:14px; color:#64748B; line-height:1.7; }
+  .foot { margin-top:16px; font-size:15px; color:#475569; letter-spacing:0.5px; display:flex; justify-content:space-between; }
+</style></head>
+<body>
+<div class="canvas">
+  <div class="kicker">FABLE 5 SCORECARD</div>
+  <h1>south-china-report — Scorecard</h1>
+  <div class="sub">Narrative data-reporting skill · scale of 10 · reviewed by Claude Fable 5</div>
+
+  <div class="overall">
+    <div class="big">8.5<span> / 10</span></div>
+    <div class="quote">"In turning business data into decision-ready stories, its engineering completeness exceeds most community skills I've seen — including Anthropic's official equivalent."</div>
+  </div>
+
+  <div class="row">
+    <div class="head"><div class="dim">Data integrity chain</div><div class="score">9.5</div></div>
+    <div class="track"><div class="fill" style="width:95%"></div></div>
+    <div class="why">Metrics pipeline + machine-verified numbers + dirty-data circuit breaker — most peers ship none of the three</div>
+  </div>
+  <div class="row">
+    <div class="head"><div class="dim">Self-iteration &amp; honesty</div><div class="score">9.5</div></div>
+    <div class="track"><div class="fill" style="width:95%"></div></div>
+    <div class="why">Independent blind review, reproduce-then-fix logs; dares to document "passing checks does not mean shippable"</div>
+  </div>
+  <div class="row">
+    <div class="head"><div class="dim">Narrative methodology</div><div class="score">9.0</div></div>
+    <div class="track"><div class="fill" style="width:90%"></div></div>
+    <div class="why">Enforced Phenomenon → Attribution → Countermeasure loop; every action names an owner, deadline and metric</div>
+  </div>
+  <div class="row">
+    <div class="head"><div class="dim">Engineering quality gates</div><div class="score">9.0</div></div>
+    <div class="track"><div class="fill" style="width:90%"></div></div>
+    <div class="why">4 delivery gates + 20 trigger-regression cases; docked: some rules warn-only, still need human sign-off</div>
+  </div>
+  <div class="row">
+    <div class="head"><div class="dim">Visual design system</div><div class="score">8.5</div></div>
+    <div class="track"><div class="fill" style="width:85%"></div></div>
+    <div class="why">Three-role typography + layered semantic color + dual density; docked: part of the motion spec not yet baked in</div>
+  </div>
+  <div class="row">
+    <div class="head"><div class="dim">Learning curve</div><div class="score low">6.5</div></div>
+    <div class="track"><div class="fill low" style="width:65%"></div></div>
+    <div class="why">Requires Node / Python / DuckDB / headless browser; 19-file doc set; graceful degradation paths included</div>
+  </div>
+  <div class="row">
+    <div class="head"><div class="dim">Statistical depth</div><div class="score low">5.5</div></div>
+    <div class="track"><div class="fill low" style="width:55%"></div></div>
+    <div class="why">Descriptive BI calibers only at review time — <span class="fix">addressed in V2.10: native Mann-Kendall tests, robust-Z anomaly scan, growth decomposition</span></div>
+  </div>
+
+  <div class="divider"></div>
+  <div class="method">Method: Claude Fable 5 read the complete V2.9.1 source — 19 files, 3 report templates, 8 automation scripts, and the full V1.0-V2.9.1 changelog. Model evaluation is subjective; scores reflect one model's judgment.</div>
+  <div class="foot"><span>Fable 5 review series</span><span>Save this — 7 dimensions to judge any reporting tool</span></div>
+</div>
+</body>
+</html>
