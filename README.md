@@ -67,7 +67,7 @@ node scripts/make-offline.mjs report.html
 
 ## 一份外部评测
 
-Claude Fable 5 通读全部源码后的评分：**8.5 / 10**——"在'把业务数据讲成能决策的故事'这个细分赛道，它的工程完成度超过我见过的绝大多数民间 Skill，包括 Anthropic 官方的同类实现。"（模型评估存在主观性，七维评分卡与方法见 `wechat-release/`）
+Claude Fable 5 通读全部源码后的评分：**8.5 / 10**——"在'把业务数据讲成能决策的故事'这个细分赛道，它的工程完成度超过我见过的绝大多数民间 Skill，包括 Anthropic 官方的同类实现。"（模型评估存在主观性，七维评分卡与方法见 [assets/img-3-scorecard.png](assets/img-3-scorecard.png)，英文版 [assets/img-3-scorecard-en.png](assets/img-3-scorecard-en.png)）
 
 ## 边界（它不做什么）
 
