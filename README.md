@@ -46,7 +46,12 @@ node scripts/make-offline.mjs report.html
 
 ## 完整演示
 
-[demo-report/](demo-report/) 是一份用 10,800 行模拟数据端到端跑通的实战报告（V2.10 全链路），直接浏览器打开 `demo-report/report.offline.html` 即可查看。四章叙事：趋势诊断（MK 检验）→ 量价拆解（PVM 瀑布）→ 战区贡献分解 → 结构与集中度，49 处数字绑定全部通过机器对账。
+[demo-report/](demo-report/) 是一份用 10,800 行模拟数据端到端跑通的实战报告（V2.10 全链路），**双风格档各一份**，浏览器直接打开：
+
+- `demo-report/report.offline.html` — **叙事标准风**：大留白沉浸、100vh Hero、滚动动效，适合高管汇报与对外呈现
+- `demo-report/report-compact.offline.html` — **紧凑销售报告风**：Hero 收为 masthead 横幅、8 KPI 密排一行、密集表格，同一份数据同一套故事，整页高度压缩约 25%，适合发群扫读 / 打印 / 移动端长图
+
+四章叙事：趋势诊断（MK 检验）→ 量价拆解（PVM 瀑布）→ 战区贡献分解 → 结构与集中度；两版数字绑定（49/51 处）全部通过机器对账，双双跑完四道 Gate。
 
 ## 项目结构
 
