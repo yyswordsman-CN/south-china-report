@@ -59,15 +59,18 @@ node scripts/make-offline.mjs report.html
 |---|---|
 | `SKILL.md` | 主文件：设计哲学 + 工作流 + 质量体系 |
 | `templates/` | 三套模板：scroll-narrative（叙事）/ bento-brief（一屏简报）/ audit-pack（审计包） |
-| `references/` | 选图引擎、组件库、Token、叙事合同、48 项 Quality Gate 等 15 份参考 |
+| `references/` | 选图引擎、组件库、Token、叙事合同、48 项 Quality Gate 等 14 份参考 |
 | `scripts/` | 数据管线、统计洞察、四道 Gate、eval 回归等 9 个自动化脚本 |
 | `evals/` | 机器断言回归用例 |
 | `USAGE-GUIDE.md` | 使用指南与提示词手册 |
 | `CHANGELOG.md` | V1.0 → V2.10 完整迭代记录（含独立盲评与缺陷修复过程） |
 
-## 一份外部评测
+## 两份外部评测（分歧也如实挂出）
 
-Claude Fable 5 通读全部源码后的评分：**8.5 / 10**——"在'把业务数据讲成能决策的故事'这个细分赛道，它的工程完成度超过我见过的绝大多数民间 Skill，包括 Anthropic 官方的同类实现。"（模型评估存在主观性，七维评分卡与方法见 [assets/img-3-scorecard.png](assets/img-3-scorecard.png)，英文版 [assets/img-3-scorecard-en.png](assets/img-3-scorecard-en.png)）
+- **Claude Fable 5**（架构/纪律镜头，通读全部源码）：**8.5 / 10**——"在'把业务数据讲成能决策的故事'这个细分赛道，它的工程完成度超过我见过的绝大多数民间 Skill，包括 Anthropic 官方的同类实现。"（七维评分卡：[中文](assets/img-3-scorecard.png) / [英文](assets/img-3-scorecard-en.png)）
+- **Codex**（发布工程/安全镜头，行级对抗审计）：**6.5 / 10**，列出 7 项 P0 缺陷。逐条对源码复现核实后 **V2.10.1 全部修复**（基年相邻性 / 截图动画中间帧 / 路径穿越 / 零绑定放行 / shell 注入面 / 出厂假图章 / 演示虚构归因），过程见 [CHANGELOG.md](CHANGELOG.md)。
+
+两个分数并存不矛盾：一个衡量设计完成度相对同类的位置，一个衡量距生产级代码审计标准的差距。被审出缺陷 → 复现 → 修复 → 留痕，正是本项目从 V1.0 走到 V2.10.1 的方式。（模型评估均存在主观性）
 
 ## 边界（它不做什么）
 

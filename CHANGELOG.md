@@ -4,6 +4,22 @@
 
 ---
 
+## V2.10.1 — 2026-07-18 — Codex 独立审计修复 (7 项指控 → 逐条复现 → 6 修 1 加固)
+
+**背景**：Codex 对 HEAD 做独立代码审计, 综合 6.5/10 (工程质量 4.8), 列出 7 项 P0。逐条对源码复现核实: 5 条实锤、1 条实锤但威胁模型有限、1 条属文档化设计但默认值过软。本版全部修复。与 Fable 5 评审 (8.5, 架构/纪律镜头) 的分歧属评审镜头差异——安全级行级审计确实抓到了架构评审漏掉的缺陷, 两份评审并存记录。
+
+- **`prep-source.py` 基年相邻性 (最重)**：`yrs[-1]/yrs[-2]` 会把 2024+2026 (缺 2025) 静默标成"同比"且状态 OK。修复: 相邻性检查——`gap != 1` 时 WARN"口径为跨期对比而非同比, 措辞禁用 YoY", `meta.yoy` 增 `adjacent` 布尔 + `caliber_note`。回归: 2024+2026 合成数据 → WARN + `adjacent:false`; demo (2025+2026) → `adjacent:true` 无警告。
+- **`snapshot.mjs` 动画中间帧**：等待 900ms < CountUp 2000ms, 可截到数字中间值。修复: PREP 注入 `*{animation:none!important;transition:none!important}` 并把全部 `[data-to]` 元素直接写成终值 (toLocaleString+suffix)——不赌时序。回归: hero 截图稳定为终值 6,372。
+- **`snapshot.mjs` 路径穿越**：`data-snap` id 未消毒直接拼文件名, 含 `../` 可写出 outDir。修复: 文件名白名单消毒 `[^A-Za-z0-9_-] → _`, 空 id 跳过。
+- **`verify-numbers.mjs` 零绑定放行**：零 data-metric 曾 `exit 0`——完全未接线的报告能"通过数字 Gate"。修复: 默认 `exit 1` 判未通过, 新增 `--allow-unbound` 显式逃生口 (不推荐)。回归: 无绑定文件默认 FAIL、带 flag 放行、demo 两版 (49/51 处) 照常通过。
+- **`run-evals.mjs` shell 注入面**：`execSync` 拼字符串, JSON.stringify 引号包裹挡不住双引号内 `$()`/反引号展开 (威胁模型=本地自用 CLI, 有限但该修)。修复: 改 `execFileSync('node', [script, ...args])` 全程无 shell, 顺删无用 `q()`。回归: eval#1 对紧凑版 5/5 PASS, validator/verify 子进程调用正常。
+- **`audit-pack.html` 出厂假图章**：模板自带"审计结果: ALL PASS"+固定时间戳, 忘改占位 = 交付假审计。修复: 顶层图章改 warn 态"[待校验 — 按实际结果回填]", 时间改占位, 注释声明各 Section 的 PASS/MATCH 均为示例必须回填。
+- **demo 报告虚构归因**：C1 lead 把"春节错期与大客户提货推迟"写成事实语气 (模拟数据无此支撑, 违反自家数据至上纪律)。修复: 两版均改为"归因需结合业务事件核实——本演示不虚构原因"; 重跑双版本 4 道 Gate 全绿, 离线版重建。
+
+**未修 (记录理由)**：Codex 若干 P1 (紧凑档图表 grid 挤压/斜率图轴域硬编码/HHI 阈值假设等) 属 demo 专用代码或已有文档化设计取舍, 经复核当前产物截图无实际劣化, 记录不改; strict-offline 覆盖面待下轮专项核。
+
+---
+
 ## V2.10 — 2026-07-18 — 统计洞察层 (`stat-insights.py`): 补"分析深度"短板
 
 **动机**：外部评测(Fable 5 通读评分)指出"统计分析深度"为最弱维度(5.5/10)——此前"异常识别/趋势判断"依赖 Agent 对 metrics.json 的自由发挥, 无统计学依据、无可执行脚本。本版把该能力从"靠提示词"升级为"技能原生"。

@@ -10,9 +10,11 @@
  */
 import { readFileSync } from 'fs';
 
-const [,, htmlPath, metricsPath] = process.argv;
+const argv = process.argv.slice(2);
+const allowUnbound = argv.includes('--allow-unbound');
+const [htmlPath, metricsPath] = argv.filter(a => !a.startsWith('--'));
 if (!htmlPath || !metricsPath) {
-  console.error('用法: node verify-numbers.mjs <report.html> <metrics.json>');
+  console.error('用法: node verify-numbers.mjs <report.html> <metrics.json> [--allow-unbound]');
   process.exit(1);
 }
 const html = readFileSync(htmlPath, 'utf-8');
@@ -54,7 +56,14 @@ while ((m = tagRe.exec(html)) !== null) {
     failed.push(`${path}: 显示 ${disp.value}${disp.unit} ≠ 期望 ${expected} (容差 ±${tol.toFixed(disp.decimals + 1)})`);
   }
 }
-if (checked === 0) { console.log('未发现 data-metric 标记 — 数字一致性未接线 (不阻断, 建议按模板示范绑定)。'); process.exit(0); }
+if (checked === 0) {
+  // V2.10.1 (外部审计缺陷): 零绑定曾静默 exit 0 — 一份完全未接线的报告能"通过数字 Gate"。
+  // 改为默认 FAIL; 确属无 metrics 场景用 --allow-unbound 显式放行 (不推荐)。
+  if (allowUnbound) { console.log('未发现 data-metric 标记 — 已按 --allow-unbound 显式放行 (数字一致性未接线)。'); process.exit(0); }
+  console.error('✗ 未发现任何 data-metric 绑定 — 数字一致性 Gate 无法起效, 视为未通过。');
+  console.error('  按模板示范为关键数字添加 data-metric 后重跑; 确要跳过请显式 --allow-unbound。');
+  process.exit(1);
+}
 if (failed.length) {
   console.error(`✗ 数字一致性失败: ${failed.length}/${checked} 处与 metrics.json 不符`);
   failed.forEach(f => console.error('   - ' + f));

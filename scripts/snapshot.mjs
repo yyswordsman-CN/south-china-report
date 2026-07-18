@@ -25,10 +25,19 @@ if (!existsSync(reportPath)) { console.error('报告不存在:', reportPath); pr
 mkdirSync(outDir, { recursive: true });
 const url = pathToFileURL(reportPath).href;
 
-// 截图前在页面内执行: 强制显示 + 等图表渲染
+// 截图前在页面内执行: 强制显示 + 冻结动效 + 等图表渲染
 const PREP = () => new Promise(res => {
   document.querySelectorAll('.reveal').forEach(e => e.classList.add('visible'));
   document.querySelectorAll('.hero-scroll-hint').forEach(e => e.style.display = 'none');
+  // 冻结动画/过渡 (V2.10.1, 外部审计缺陷): CountUp 时长 2000ms > 等待 900ms,
+  // 不冻结会截到数字中间帧; 直接把 [data-to] 元素写成终值, 不赌时序
+  const st = document.createElement('style');
+  st.textContent = '*{animation:none!important;transition:none!important}';
+  document.head.appendChild(st);
+  document.querySelectorAll('[data-to]').forEach(e => {
+    const v = parseFloat(e.getAttribute('data-to'));
+    if (!isNaN(v)) e.textContent = Math.floor(v).toLocaleString() + (e.getAttribute('data-suffix') || '');
+  });
   // 触发 resize 让 ECharts 按最终视口重算, 再给渲染留时间
   window.dispatchEvent(new Event('resize'));
   setTimeout(res, 900);
@@ -71,8 +80,12 @@ async function shoot() {
   await s.evaluate(PREP);
   const ids = await s.$$eval('[data-snap]', els => els.map(e => e.getAttribute('data-snap')));
   for (const id of ids) {
+    // 文件名消毒 (V2.10.1, 外部审计缺陷): id 来自 HTML 属性, 含 ../ 或特殊字符时
+    // 会写出 outDir 之外 (路径穿越) — 只保留安全字符, 其余替换为 _
+    const safe = String(id || '').replace(/[^A-Za-z0-9_-]/g, '_');
+    if (!safe) continue;
     const el = await s.$(`[data-snap="${id}"]`);
-    if (el) { await el.screenshot({ path: path.join(outDir, `snap-${id}.png`) }); done.push(`snap-${id}.png`); }
+    if (el) { await el.screenshot({ path: path.join(outDir, `snap-${safe}.png`) }); done.push(`snap-${safe}.png`); }
   }
   await browser.close();
   console.log('✓ 截图完成 →', outDir);

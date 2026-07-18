@@ -4,7 +4,9 @@
 //       主观项 (Hero 语义/PAC 闭环) 标 MANUAL 交人工。
 // 用法: node scripts/run-evals.mjs <report.html> --eval <id> [--metrics metrics.json]
 import { readFileSync } from 'fs';
-import { execSync } from 'child_process';
+// V2.10.1 (外部审计缺陷): execSync 拼 shell 字符串时, 双引号内 $()/反引号仍会被 shell 展开,
+// 路径可注入命令 — 改 execFileSync 传参数组, 完全绕开 shell。
+import { execFileSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 
@@ -38,12 +40,11 @@ try { html = readFileSync(report, 'utf8'); }
 catch { console.error(`无法读取报告: ${report}`); process.exit(2); }
 
 const count = (pat) => (html.match(new RegExp(pat, 'g')) || []).length;
-const q = (s) => JSON.stringify(s);
 
 function runCheck(c) {
   switch (c.type) {
     case 'validator_exit0':
-      try { execSync(`node ${q(VALIDATOR)} ${q(report)}`, { stdio: 'pipe' }); return { ok: true, got: 'exit 0 (无 P0 FAIL)' }; }
+      try { execFileSync('node', [VALIDATOR, report], { stdio: 'pipe' }); return { ok: true, got: 'exit 0 (无 P0 FAIL)' }; }
       catch (e) { return { ok: false, got: `exit ${e.status ?? '?'} (有 P0 FAIL, 详情见 validate-report.mjs)` }; }
     case 'grep_count_min': { const n = count(c.pattern); return { ok: n >= c.min, got: `命中 ${n} (需 ≥${c.min})` }; }
     case 'grep_count_max': { const n = count(c.pattern); return { ok: n <= c.max, got: `命中 ${n} (需 ≤${c.max})` }; }
@@ -55,7 +56,7 @@ function runCheck(c) {
     }
     case 'data_metric_or_verify':
       if (metrics) {
-        try { execSync(`node ${q(VERIFY)} ${q(report)} ${q(metrics)}`, { stdio: 'pipe' }); return { ok: true, got: 'verify-numbers exit 0' }; }
+        try { execFileSync('node', [VERIFY, report, metrics], { stdio: 'pipe' }); return { ok: true, got: 'verify-numbers exit 0' }; }
         catch (e) { return { ok: false, got: `verify-numbers exit ${e.status ?? '?'} (数字不符)` }; }
       } else {
         const n = count('data-metric="'); return { ok: n >= c.min, got: `未给 --metrics, 退化查 data-metric 命中 ${n} (需 ≥${c.min})` };

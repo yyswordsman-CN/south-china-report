@@ -222,10 +222,19 @@ def build(args):
         yrs = sorted(df['_y'].dropna().unique().tolist())
         if len(yrs) >= 2:
             cur, prev = yrs[-1], yrs[-2]
+            # 基年相邻性检查 (V2.10.1, 外部审计缺陷): 2024+2026 这类缺中间年的数据,
+            # yrs[-1]/yrs[-2] 会把跨 2 年对比静默标成"同比"且状态 OK — 必须显式降级口径
+            gap = int(cur - prev)
+            adjacent = (gap == 1)
+            if not adjacent:
+                R.warn(f"基年不相邻: {int(cur)} vs {int(prev)} (间隔 {gap} 年) — 口径为跨期对比而非同比, "
+                       f"报告措辞禁用'同比/YoY', 应写'对比{int(prev)}年'; pvm/yoy 字段均按此口径理解")
             cur_ks = sorted(df[df._y==cur]['_mk'].dropna().unique().tolist())
             out['meta']['yoy'] = {"current_year": int(cur), "base_year": int(prev),
                                   "months": sorted({int(k // 10 if gran=='xun' else k) for k in cur_ks}),
-                                  "granularity": gran}
+                                  "granularity": gran, "adjacent": adjacent}
+            if not adjacent:
+                out['meta']['yoy']['caliber_note'] = f"基年不相邻(间隔{gap}年): 跨期对比, 非同比"
             yoy_ready = True
             def period_sum(sub, y): return float(sub[(sub._y==y)&(sub._mk.isin(cur_ks))]['_amt'].sum())
             # 期间总额 + 总 YoY (报告头条) + 量价 (若有 qty)

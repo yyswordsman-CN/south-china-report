@@ -1,10 +1,10 @@
 ---
 name: south-china-report
-description: "通用型数据分析报告叙事设计系统 V2.10。用于月报、旬报、季报、年报、专题复盘等讲故事型 HTML 数据报告的设计与生成——报告主体(机构/区域/业务线/产品/渠道/客户等)由数据内容自动决定并适配, 不绑定任何特定区域或组织。融合 Anti-Default 克制纪律、三角色字体、语义色三层架构、动效 Recipe 系统、密度轴(叙事标准风/紧凑报告风双档)与自动化校验。Invoke when the user needs a narrative HTML data report, business/sales analysis report, executive brief, or audit pack, or mentions 数据分析报告/经营分析/月报/旬报/季报/年报/专题复盘/区域分析/渠道分析/品类分析/客户分析. 不适用于高频运营监控看板(operational_monitor)、纯明细分析工作簿(analysis_workbook)；产物为静态自包含 HTML(非 PPT/Excel/交互式 BI 平台)。"
+description: "通用型数据分析报告叙事设计系统 V2.10.1。用于月报、旬报、季报、年报、专题复盘等讲故事型 HTML 数据报告的设计与生成——报告主体(机构/区域/业务线/产品/渠道/客户等)由数据内容自动决定并适配, 不绑定任何特定区域或组织。融合 Anti-Default 克制纪律、三角色字体、语义色三层架构、动效 Recipe 系统、密度轴(叙事标准风/紧凑报告风双档)与自动化校验。Invoke when the user needs a narrative HTML data report, business/sales analysis report, executive brief, or audit pack, or mentions 数据分析报告/经营分析/月报/旬报/季报/年报/专题复盘/区域分析/渠道分析/品类分析/客户分析. 不适用于高频运营监控看板(operational_monitor)、纯明细分析工作簿(analysis_workbook)；产物为静态自包含 HTML(非 PPT/Excel/交互式 BI 平台)。"
 ---
 # South China Report — 通用数据分析报告叙事设计系统 V2
 
-> 技能标识 `south-china-report` 为稳定 ID (不随内容版本改); 内容版本见 §11, 当前 V2.10; 2026-07 起目录名去除版本后缀, 曾用名 south-china-report-V2。
+> 技能标识 `south-china-report` 为稳定 ID (不随内容版本改); 内容版本见 §11, 当前 V2.10.1; 2026-07 起目录名去除版本后缀, 曾用名 south-china-report-V2。
 >
 > **环境依赖**: 依赖 node>=18 (校验/截图/数字一致性/离线内联; 截图另需 Playwright+Chromium) 与 python3+duckdb+pandas (数据管线)。缺依赖时按文内降级路径执行并标注未验证。
 >
@@ -206,6 +206,7 @@ node scripts/validate-report.mjs 目标/report.html
 node scripts/snapshot.mjs 目标/report.html 目标/shots/
 
 # ③ 数字一致性 (有 metrics.json 必跑): data-metric 绑定值 vs metrics.json
+#    V2.10.1: 零绑定默认 FAIL (未接线≠通过); 确属无绑定场景须显式 --allow-unbound
 node scripts/verify-numbers.mjs 目标/report.html metrics.json
 
 # ④ 离线交付 (飞书/内网/截图场景): 内联外链后用严格离线档复检
@@ -558,7 +559,7 @@ node scripts/validate-report.mjs <report.html>
 | `scripts/prep-source.py`                   | **V2.6** 多源数据画像(字段→骨架建议)+ 清洗聚合校验 → metrics.json (DuckDB 吃 Excel/CSV/SQLite/DuckDB/SQL) | **有数据源时第一步** (步骤4) |
 | `scripts/stat-insights.py`                 | **V2.10** 统计洞察层: MK 趋势显著性/稳健Z异常月/断崖引擎/贡献分解/HHI/量价象限 → insights.json + 问题清单 (纯标准库) | **build 之后第二步**; 问题发现章证据源 |
 | `scripts/validate-report.mjs`              | **V2.6** 自动化质量校验 (含禁用图表 + 离线自包含检测)                        | 交付前运行                     |
-| `scripts/verify-numbers.mjs`               | 数字一致性 Gate: data-metric vs metrics.json                                         | 有 metrics.json 时交付前必跑   |
+| `scripts/verify-numbers.mjs`               | 数字一致性 Gate: data-metric vs metrics.json (**V2.10.1 零绑定默认 FAIL**, `--allow-unbound` 显式放行) | 有 metrics.json 时交付前必跑   |
 | `scripts/make-offline.mjs`                 | 外链内联出离线单文件                                                                 | 飞书/内网/截图交付时           |
 | `scripts/snapshot.mjs`                     | **V2.6** 截图 Gate (Playwright: desktop/mobile/分区 PNG, 强制 reveal 显示)   | **交付前必跑并逐张自看**       |
 | `scripts/run-evals.mjs`                    | **V2.9.1** eval 回归: 对已生成报告跑 `evals.json` 机器断言(machine_checks), 主观项标 MANUAL (`--eval <id>`) | 回归/自测报告是否满足 eval     |
@@ -629,3 +630,4 @@ node scripts/validate-report.mjs <report.html>
 | V2.9 | 2026-07-11 | **二轮缺陷诊断修复** (4 维并行审查: 文档一致性/脚本健全性/模板校验/使用者 RED 模拟, 去重后修复)：图表口径全库统一(饼图/环形默认禁用·≤3类破例; chart-patterns 章节号 §4/§5/§6 归位、量价 PVM 归因指向瀑布图 §1、撤下环形图/Gauge 推荐与 `recommendKpiStyle('target')`)；`prep-source.py` 金额空值≠坏值同口径、`trend` 缺月写 `null` 不补 0、`profile` 单年自动降级(不诱导无数据 YoY/瀑布)、无参干净报错；`snapshot.mjs` 动态 import 优雅降级 + 新增 `package.json`；validator 图表高度闸门覆盖 `tile-chart`/`id^=chart`(bento 不再漏检塌陷)；references 卫生(shadow/Inter/font-serif/版本 V2.5.1→V2.6/checklist 措辞)；bento 图表色走 Token；SKILL §8 禁用图表 P0→P1 归位。详见 CHANGELOG |
 | V2.9.1 | 2026-07-11 | **独立盲评修复** (盲评 7.5/10 抓到 4 个自评漏掉的真缺陷, 全部复现后修)：validator `checkEmoji` 改**全文查**——修复多行 `<script>` 内图表文案 emoji 漏检 (P0 红线在图表标题处的盲区)；"红线/硬闸门"措辞**诚实化**——明确 validator 自动硬阻断仅 3 项 P0，饼图/弱标题等 P1 不阻断、`exit 0 ≠ 可交付`，须人工清零；bento `brief-footer`→`audit-strip` 重命名 (eval-3 断言与模板自洽)；新增 `scripts/run-evals.mjs` + `evals.json` machine_checks——散文断言变可执行回归 (自曝并修了 density 全文 grep 陷阱)。详见 CHANGELOG |
 | V2.10 | 2026-07-18 | **统计洞察层**：新增 `stat-insights.py`(零新依赖)——Mann-Kendall 趋势显著性/稳健Z异常月/维度断崖·引擎·结构位移·增速贡献分解/HHI/量价象限/按影响金额排序的问题清单；统计诚实纪律(BLOCKED 拒跑·n<8 只报方向·不做预测·无目标不谈缺口)；合成数据植入 5 模式全命中实测。补齐外部评测指出的"统计分析深度"短板。详见 CHANGELOG |
+| V2.10.1 | 2026-07-18 | **Codex 独立审计修复** (7 项 P0 指控逐条复现, 6 修 1 加固)：`prep-source` 基年相邻性检查(2024+2026 不再静默标"同比", meta.yoy 增 adjacent)；`snapshot` 截图前冻结动画+CountUp 写终值(不再截中间帧)+snap-id 文件名消毒(防路径穿越)；`verify-numbers` 零绑定默认 FAIL(新增 --allow-unbound)；`run-evals` execSync→execFileSync 去 shell；`audit-pack` 出厂图章"ALL PASS"→"[待校验]"；demo 报告删无数据支撑的事实语气归因。双版本 4 道 Gate 回归全绿。详见 CHANGELOG |

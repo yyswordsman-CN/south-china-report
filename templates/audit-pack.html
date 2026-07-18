@@ -310,10 +310,13 @@
                 <h1 class="audit-title">数据审计包</h1>
                 <div class="audit-subtitle">[报告主体] [期间]经营报告 — 数据溯源与一致性审计</div>
             </div>
+            <!-- V2.10.1 (外部审计缺陷): 出厂图章严禁默认 PASS —— 审计包的顶层结论必须由
+                 validate-report.mjs / verify-numbers.mjs 的实际结果回填, 忘改占位 = 交付假审计。
+                 下方各 Section 的 PASS/MATCH 均为示例占位, 同样必须逐项按实际结果回填。 -->
             <div class="audit-stamp">
-                审计时间: 2026-02-28 14:32<br>
+                审计时间: [校验时间]<br>
                 审计脚本: validate-report.mjs v2.0<br>
-                审计结果: <span class="status-dot pass">ALL PASS</span>
+                审计结果: <span class="status-dot warn">[待校验 — 按实际结果回填]</span>
             </div>
         </div>
 

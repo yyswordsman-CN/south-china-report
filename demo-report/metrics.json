@@ -16,7 +16,8 @@
     5,
     6
    ],
-   "granularity": "month"
+   "granularity": "month",
+   "adjacent": true
   },
   "share_caliber": "当期(与YoY同口径)"
  },
