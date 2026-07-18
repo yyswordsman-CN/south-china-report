@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><title>数据可信链</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Noto Sans CJK SC',sans-serif; background:#ffffff; width:1080px; }
+  .canvas { width:1080px; padding:56px 60px 48px 60px; background:#ffffff; }
+  .topbar { height:8px; background:linear-gradient(90deg,#2563EB,#06B6D4); margin-bottom:40px; border-radius:4px; }
+  .kicker { font-size:20px; color:#2563EB; letter-spacing:6px; font-weight:bold; margin-bottom:12px; }
+  h1 { font-size:44px; color:#111827; letter-spacing:2px; margin-bottom:10px; }
+  .sub { font-size:22px; color:#6B7A90; margin-bottom:40px; }
+  .flow { display:flex; align-items:stretch; gap:0; margin-bottom:18px; }
+  .node { flex:1; background:#F5F8FC; border:2px solid #DBE4F0; border-radius:12px; padding:20px 16px; text-align:center; }
+  .node.dark { background:#0F172A; border-color:#0F172A; }
+  .node .t1 { font-size:21px; font-weight:bold; color:#111827; margin-bottom:8px; }
+  .node.dark .t1 { color:#ffffff; }
+  .node .t2 { font-size:16px; color:#6B7A90; line-height:1.55; }
+  .node.dark .t2 { color:#9FB6D4; }
+  .arrow { width:44px; display:flex; align-items:center; justify-content:center; font-size:26px; color:#2563EB; font-weight:bold; }
+  .rule { background:#EAF1FB; border-left:4px solid #2563EB; border-radius:0 10px 10px 0; padding:16px 22px; font-size:20px; color:#1E3A5F; margin-bottom:40px; }
+  .rule strong { color:#2563EB; }
+  h2 { font-size:30px; color:#111827; letter-spacing:2px; margin-bottom:22px; }
+  .gates { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:16px; margin-bottom:18px; }
+  .gate { border-radius:12px; padding:22px 18px; background:#0F172A; }
+  .gate .num { font-size:17px; color:#7DD3FC; font-weight:bold; letter-spacing:2px; margin-bottom:8px; }
+  .gate .name { font-size:21px; font-weight:bold; color:#ffffff; margin-bottom:10px; line-height:1.4; }
+  .gate .how { font-size:16px; color:#9FB6D4; line-height:1.55; }
+  .warn { background:#F5F8FC; border:2px dashed #B9CBE3; border-radius:10px; padding:14px 22px; font-size:18px; color:#4A5B72; }
+  .warn strong { color:#2563EB; }
+  .foot { margin-top:26px; font-size:16px; color:#94A3B8; letter-spacing:1px; }
+</style></head>
+<body>
+<div class="canvas">
+  <div class="topbar"></div>
+  <div class="kicker">SKILL 评测 · 机制图</div>
+  <h1>数字凭什么可信：一条链 + 四道门</h1>
+  <div class="sub">报告里每个数字从管线"抄"，禁止手敲 —— 事故过不了机器关</div>
+
+  <div class="flow">
+    <div class="node"><div class="t1">任意数据源</div><div class="t2">Excel / CSV<br>数据库 / SQL</div></div>
+    <div class="arrow">→</div>
+    <div class="node"><div class="t1">数据管线</div><div class="t2">DuckDB 清洗<br>画像 + 聚合校验</div></div>
+    <div class="arrow">→</div>
+    <div class="node dark"><div class="t1">metrics.json</div><div class="t2">唯一数字来源<br>同比 · 占比<br>量价拆解</div></div>
+    <div class="arrow">→</div>
+    <div class="node"><div class="t1">叙事合同</div><div class="t2">现象 → 归因 → 对策<br>章节强制闭环</div></div>
+    <div class="arrow">→</div>
+    <div class="node"><div class="t1">自包含 HTML</div><div class="t2">离线可开<br>可发可存档</div></div>
+  </div>
+
+  <div class="rule">脏数据熔断：管线检测到编码变更、占比不合时标记 <strong>BLOCKED</strong> —— 只出修数建议，<strong>不出结论</strong>；无目标字段时禁止编造达成率。</div>
+
+  <h2>交付前四道质量门</h2>
+  <div class="gates">
+    <div class="gate"><div class="num">GATE 01</div><div class="name">结构校验</div><div class="how">脚本硬阻断：违规直接不过，不是提醒</div></div>
+    <div class="gate"><div class="num">GATE 02</div><div class="name">截图逐张目检</div><div class="how">桌面 + 移动端 + 分区截图，没看过 = 没完成</div></div>
+    <div class="gate"><div class="num">GATE 03</div><div class="name">数字机器对账</div><div class="how">页面数字 vs 管线数字逐一核对一致性</div></div>
+    <div class="gate"><div class="num">GATE 04</div><div class="name">离线复检</div><div class="how">外链内联成单文件后按严格离线档复验</div></div>
+  </div>
+  <div class="warn">它自己在文档里写明：<strong>校验脚本通过 ≠ 可以交付</strong> —— 部分设计纪律仍须人工逐条清零。敢自曝边界，是它最值得信的信号。</div>
+  <div class="foot">Fable 5 评测系列 · 图 2 / 3 · 流程为该 Skill V2.9.1 实际链路</div>
+</div>
+</body>
+</html>

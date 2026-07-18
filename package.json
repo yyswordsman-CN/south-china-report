@@ -1,0 +1,21 @@
+{
+  "name": "south-china-report",
+  "version": "2.6.0",
+  "private": true,
+  "type": "module",
+  "description": "通用数据分析 HTML 报告 Skill 的脚本工具集 (校验/截图/数字一致性/离线内联)。脚本均为 ESM (.mjs)，可直接 `node scripts/<name>.mjs` 运行。",
+  "//": "Playwright 仅【截图 Gate】(scripts/snapshot.mjs) 需要，故列为 optionalDependencies：未安装时 snapshot.mjs 会优雅降级为『截图未验证』并以退出码 3 退出，其余脚本 (validate-report / verify-numbers / make-offline) 无需 Playwright。安装截图依赖: `npm i -D playwright && npx playwright install chromium`，或 `npm run setup:screenshots`。",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "validate": "node scripts/validate-report.mjs",
+    "snapshot": "node scripts/snapshot.mjs",
+    "verify-numbers": "node scripts/verify-numbers.mjs",
+    "make-offline": "node scripts/make-offline.mjs",
+    "setup:screenshots": "npx playwright install chromium"
+  },
+  "optionalDependencies": {
+    "playwright": "^1.40.0"
+  }
+}

@@ -1,0 +1,206 @@
+{
+ "meta": {
+  "source": "demo_sales.csv",
+  "rows": 10800,
+  "amount_field": "签收额",
+  "period": "2026-01~06 vs 2025 同期",
+  "generated_by": "prep-source.py",
+  "yoy": {
+   "current_year": 2026,
+   "base_year": 2025,
+   "months": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+   ],
+   "granularity": "month"
+  },
+  "share_caliber": "当期(与YoY同口径)"
+ },
+ "total": 310755148.36,
+ "dimensions": {
+  "战区": [
+   {
+    "name": "北区",
+    "amount_wan": 7768.9,
+    "share": 25.0,
+    "yoy": -12.6,
+    "amount_cur_wan": 1593.0,
+    "amount_base_wan": 1823.1
+   },
+   {
+    "name": "南区",
+    "amount_wan": 7322.8,
+    "share": 18.0,
+    "yoy": -37.1,
+    "amount_cur_wan": 1147.0,
+    "amount_base_wan": 1823.1
+   },
+   {
+    "name": "西区",
+    "amount_wan": 6215.1,
+    "share": 20.0,
+    "yoy": -12.6,
+    "amount_cur_wan": 1274.4,
+    "amount_base_wan": 1458.5
+   },
+   {
+    "name": "东区",
+    "amount_wan": 4979.9,
+    "share": 20.0,
+    "yoy": 16.5,
+    "amount_cur_wan": 1274.4,
+    "amount_base_wan": 1093.9
+   },
+   {
+    "name": "中区",
+    "amount_wan": 4788.8,
+    "share": 17.0,
+    "yoy": -1.0,
+    "amount_cur_wan": 1083.2,
+    "amount_base_wan": 1093.9
+   }
+  ],
+  "品类": [
+   {
+    "name": "主力系列",
+    "amount_wan": 14916.2,
+    "share": 48.0,
+    "yoy": -12.6,
+    "amount_cur_wan": 3058.5,
+    "amount_base_wan": 3500.4
+   },
+   {
+    "name": "入门系列",
+    "amount_wan": 8812.9,
+    "share": 22.0,
+    "yoy": -35.9,
+    "amount_cur_wan": 1401.8,
+    "amount_base_wan": 2187.8
+   },
+   {
+    "name": "旗舰系列",
+    "amount_wan": 7346.4,
+    "share": 30.0,
+    "yoy": 19.2,
+    "amount_cur_wan": 1911.6,
+    "amount_base_wan": 1604.4
+   }
+  ],
+  "渠道": [
+   {
+    "name": "KA",
+    "amount_wan": 12366.5,
+    "share": 39.0,
+    "yoy": -14.8,
+    "amount_cur_wan": 2485.1,
+    "amount_base_wan": 2917.0
+   },
+   {
+    "name": "电商",
+    "amount_wan": 9870.5,
+    "share": 38.0,
+    "yoy": 3.8,
+    "amount_cur_wan": 2421.3,
+    "amount_base_wan": 2333.6
+   },
+   {
+    "name": "传统",
+    "amount_wan": 8838.5,
+    "share": 23.0,
+    "yoy": -28.2,
+    "amount_cur_wan": 1465.6,
+    "amount_base_wan": 2041.9
+   }
+  ]
+ },
+ "_discipline": "报告数字一律从本文件抄，勿手敲",
+ "period": {
+  "total_cur_wan": 6372.0,
+  "total_base_wan": 7292.5,
+  "total_yoy": -12.6,
+  "qty_cur": 20792,
+  "qty_yoy": -18.5,
+  "price_cur": 3065,
+  "price_yoy": 7.2,
+  "pvm": {
+   "base_wan": 7292.5,
+   "vol_wan": -1349.9,
+   "price_mix_wan": 429.4,
+   "cur_wan": 6372.0,
+   "_note": "price_mix_wan = 总额差 − 量效应 = 价格效应 + 产品结构/mix (混合均价法, 多SKU时非纯价; 瀑布图标签应写'价+结构')"
+  }
+ },
+ "trend": {
+  "2024": [
+   759.5,
+   840.0,
+   950.0,
+   1060.0,
+   1140.5,
+   1170.0,
+   1140.5,
+   1060.0,
+   950.0,
+   840.0,
+   759.5,
+   730.0
+  ],
+  "2025": [
+   987.3,
+   1071.2,
+   1188.1,
+   1299.4,
+   1370.0,
+   1376.5,
+   1313.6,
+   1194.7,
+   1047.2,
+   905.2,
+   799.7,
+   750.6
+  ],
+  "2026": [
+   990.8,
+   589.2,
+   1133.5,
+   1207.7,
+   1239.4,
+   1211.3,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null
+  ]
+ },
+ "concentration_scope": {
+  "period": "当期"
+ },
+ "concentration": {
+  "customers": 40,
+  "top5_share": 48.0,
+  "top10_share": 64.0,
+  "pareto_n50": 6,
+  "pareto_n80": 19,
+  "top5_wan": [
+   764.6,
+   611.7,
+   611.7,
+   550.5,
+   520.0
+  ]
+ },
+ "data_status": {
+  "status": "WARN",
+  "errors": [],
+  "warnings": [
+   "客户集中度高(Top5=48.0%), 建议成风险章"
+  ],
+  "passed": []
+ }
+}

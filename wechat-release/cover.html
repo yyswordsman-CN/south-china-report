@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><title>封面</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { width:1260px; height:540px; overflow:hidden; font-family:'Noto Sans CJK SC',sans-serif; }
+  .cover { position:relative; width:1260px; height:540px; background:#0F172A; overflow:hidden; }
+  .glow { position:absolute; right:-140px; top:-160px; width:560px; height:560px; border-radius:50%;
+          background:radial-gradient(circle,rgba(37,99,235,0.45) 0%,rgba(6,182,212,0.12) 55%,transparent 75%); }
+  .glow2 { position:absolute; right:120px; bottom:-220px; width:480px; height:480px; border-radius:50%;
+          background:radial-gradient(circle,rgba(6,182,212,0.25) 0%,transparent 70%); }
+  .content { position:absolute; left:76px; top:0; height:540px; display:flex; flex-direction:column; justify-content:center; z-index:3; }
+  .kicker { font-size:22px; color:#7DD3FC; letter-spacing:10px; font-weight:bold; margin-bottom:22px; }
+  h1 { font-size:96px; color:#ffffff; font-weight:900; letter-spacing:6px; line-height:1.15; margin-bottom:20px; }
+  h1 .accent { background:linear-gradient(90deg,#60A5FA,#22D3EE); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .sub { font-size:26px; color:#B9CBE3; letter-spacing:3px; }
+  .motif { position:absolute; right:88px; top:50%; transform:translateY(-50%); z-index:2; }
+  .ring { width:280px; height:280px; border-radius:50%; position:relative;
+          background:conic-gradient(#2563EB 0deg, #06B6D4 306deg, rgba(255,255,255,0.08) 306deg 360deg); }
+  .ring::after { content:''; position:absolute; inset:26px; border-radius:50%; background:#0F172A; }
+  .ring-inner { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:2; }
+  .ring-inner .score { font-size:78px; font-weight:900; color:#ffffff; line-height:1; }
+  .ring-inner .of { font-size:22px; color:#8FA7C4; margin-top:6px; letter-spacing:2px; }
+  .nodes { position:absolute; left:0; right:0; bottom:44px; display:flex; align-items:center; gap:14px; padding-left:76px; z-index:3; }
+  .dot { width:11px; height:11px; border-radius:50%; background:#2563EB; }
+  .dot.c { background:#06B6D4; }
+  .line { width:54px; height:2px; background:rgba(255,255,255,0.22); }
+  .nodes .label { font-size:18px; color:#64748B; letter-spacing:2px; margin-left:12px; }
+</style></head>
+<body>
+<div class="cover">
+  <div class="glow"></div>
+  <div class="glow2"></div>
+  <div class="content">
+    <div class="kicker">FABLE 5 评分实录</div>
+    <h1>数据分析的<br><span class="accent">最后一公里</span></h1>
+    <div class="sub">一个民间 Skill，凭什么敢跟官方掰手腕</div>
+  </div>
+  <div class="motif">
+    <div class="ring"><div class="ring-inner"><div class="score">8.5</div><div class="of">/ 10</div></div></div>
+  </div>
+  <div class="nodes">
+    <div class="dot"></div><div class="line"></div>
+    <div class="dot"></div><div class="line"></div>
+    <div class="dot c"></div><div class="line"></div>
+    <div class="dot c"></div>
+    <div class="label">数据源 → 管线 → 叙事 → 决策</div>
+  </div>
+</div>
+</body>
+</html>

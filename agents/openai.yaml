@@ -1,0 +1,6 @@
+interface:
+  display_name: "South China Report"
+  short_description: "Narrative business-report design system for monthly/quarterly/annual HTML reports (three-role type, semantic color, anti-default discipline, density axis, automated validation)."
+  default_prompt: "Use $south-china-report to design and generate a narrative strategic business report as a self-contained HTML file."
+policy:
+  allow_implicit_invocation: true

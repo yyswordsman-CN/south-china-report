@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><title>Fable 5 评分卡</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Noto Sans CJK SC',sans-serif; background:#0F172A; width:1080px; }
+  .canvas { width:1080px; padding:56px 60px 44px 60px; background:#0F172A; }
+  .kicker { font-size:20px; color:#7DD3FC; letter-spacing:6px; font-weight:bold; margin-bottom:14px; }
+  h1 { font-size:42px; color:#ffffff; letter-spacing:2px; margin-bottom:8px; }
+  .sub { font-size:20px; color:#8FA7C4; margin-bottom:36px; }
+  .overall { display:flex; align-items:center; gap:28px; background:linear-gradient(90deg,rgba(37,99,235,0.35),rgba(6,182,212,0.18)); border:1px solid #2563EB; border-radius:16px; padding:24px 32px; margin-bottom:36px; }
+  .overall .big { font-size:76px; font-weight:900; color:#ffffff; line-height:1; }
+  .overall .big span { font-size:30px; color:#8FA7C4; font-weight:bold; }
+  .overall .quote { font-size:20px; color:#DBEAFE; line-height:1.65; border-left:3px solid #7DD3FC; padding-left:22px; }
+  .row { margin-bottom:24px; }
+  .row .head { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px; }
+  .row .dim { font-size:24px; font-weight:bold; color:#ffffff; letter-spacing:1px; }
+  .row .score { font-size:28px; font-weight:900; color:#7DD3FC; font-variant-numeric:tabular-nums; }
+  .row .score.low { color:#94A3B8; }
+  .track { height:14px; background:rgba(255,255,255,0.08); border-radius:7px; overflow:hidden; margin-bottom:8px; }
+  .fill { height:14px; border-radius:7px; background:linear-gradient(90deg,#2563EB,#06B6D4); }
+  .fill.low { background:#64748B; }
+  .why { font-size:17px; color:#8FA7C4; line-height:1.6; }
+  .divider { border-top:1px dashed rgba(255,255,255,0.18); margin:32px 0 24px 0; }
+  .method { font-size:15px; color:#64748B; line-height:1.7; }
+  .foot { margin-top:18px; font-size:16px; color:#475569; letter-spacing:1px; display:flex; justify-content:space-between; }
+</style></head>
+<body>
+<div class="canvas">
+  <div class="kicker">FABLE 5 SCORECARD</div>
+  <h1>south-china-report V2.9.1 评分卡</h1>
+  <div class="sub">叙事型数据分析报告 Skill · 十分制 · 评分人：Claude Fable 5</div>
+
+  <div class="overall">
+    <div class="big">8.5<span> / 10</span></div>
+    <div class="quote">"在'把业务数据讲成能决策的故事'这个细分赛道，它的工程完成度超过我见过的绝大多数民间 Skill —— 包括 Anthropic 官方的同类实现。"</div>
+  </div>
+
+  <div class="row">
+    <div class="head"><div class="dim">数据可信链</div><div class="score">9.5</div></div>
+    <div class="track"><div class="fill" style="width:95%"></div></div>
+    <div class="why">指标管线 + 数字机器对账 + 脏数据熔断三件套闭环，多数同类连第一件都没有</div>
+  </div>
+  <div class="row">
+    <div class="head"><div class="dim">自我迭代与诚实度</div><div class="score">9.5</div></div>
+    <div class="track"><div class="fill" style="width:95%"></div></div>
+    <div class="why">独立盲评 + 四维缺陷诊断，日志全是"复现后修"；敢写"校验通过 ≠ 可交付"</div>
+  </div>
+  <div class="row">
+    <div class="head"><div class="dim">叙事方法论</div><div class="score">9.0</div></div>
+    <div class="track"><div class="fill" style="width:90%"></div></div>
+    <div class="why">现象-归因-对策强制闭环，行动建议必须带对象 + 动作 + 期限 + 验证指标</div>
+  </div>
+  <div class="row">
+    <div class="head"><div class="dim">工程质量门</div><div class="score">9.0</div></div>
+    <div class="track"><div class="fill" style="width:90%"></div></div>
+    <div class="why">四道交付关卡 + 20 个触发回归用例；扣分：部分纪律只警告，仍靠人工清零</div>
+  </div>
+  <div class="row">
+    <div class="head"><div class="dim">视觉设计系统</div><div class="score">8.5</div></div>
+    <div class="track"><div class="fill" style="width:85%"></div></div>
+    <div class="why">三角色字体 + 语义三层色 + 双密度档；扣分：动效部分停在规范未全烘焙</div>
+  </div>
+  <div class="row">
+    <div class="head"><div class="dim">上手门槛</div><div class="score low">6.5</div></div>
+    <div class="track"><div class="fill low" style="width:65%"></div></div>
+    <div class="why">依赖 Node / Python / DuckDB / 无头浏览器，19 个文件学习成本；有降级路径</div>
+  </div>
+  <div class="row">
+    <div class="head"><div class="dim">统计分析深度</div><div class="score low">5.5</div></div>
+    <div class="track"><div class="fill low" style="width:55%"></div></div>
+    <div class="why">经营分析口径（同比/占比/量价），无假设检验与预测 —— 非目标，但如实扣分</div>
+  </div>
+
+  <div class="divider"></div>
+  <div class="method">评测方法：Claude Fable 5 通读该 Skill V2.9.1 全部源码 —— 19 个文件、3 套报告模板、8 个自动化脚本及 V1.0 至 V2.9.1 完整变更日志。模型评估存在主观性，分数仅代表该模型判断，供参考。</div>
+  <div class="foot"><span>Fable 5 评测系列 · 图 3 / 3</span><span>建议保存 · 评价报告类工具可对照此七维</span></div>
+</div>
+</body>
+</html>

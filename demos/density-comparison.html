@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>south-china-report · 风格档位对比 (叙事标准风 vs 紧凑销售报告风) — 开发者参考</title>
+<style>
+  /* ============================================================
+     密度轴左右对比 (DEV ONLY)
+     零脱节设计: 两栏都 iframe 载入【真实模板】scroll-narrative-skeleton.html,
+     右栏由本页 JS 在 iframe 内注入 data-density="compact"。
+     —— 模板一改, 这里自动跟随, 不再手抄样式 (根治历史脱节)。
+     注意: 需通过本地服务打开 (python3 -m http.server); 直接双击因浏览器
+       file:// 同源限制无法向 iframe 注入紧凑档属性。
+     ============================================================ */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans','Noto Sans SC',-apple-system,sans-serif; background: #f0f2f5; color: #1a1a2e; }
+  .page-header {
+    position: sticky; top: 0; z-index: 100;
+    display: flex; align-items: center; gap: 16px; padding: 14px 28px;
+    background: #fff; border-bottom: 1px solid #e2e8f0; font-size: 13px;
+  }
+  .page-header strong { font-family: 'Plus Jakarta Sans','Noto Sans SC',sans-serif; font-weight: 700; color: #003566; }
+  .page-header .spacer { flex: 1; }
+  .badge-dev {
+    font-family: 'JetBrains Mono',monospace; font-size: 11px; font-weight: 500;
+    padding: 3px 10px; border-radius: 100px; background: #fef3c7; color: #92400e;
+  }
+  #warn { display: none; background: #fef2f2; color: #991b1b; font-size: 12px; padding: 8px 28px; border-bottom: 1px solid #fecaca; }
+  .comparison-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+  .panel { border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; }
+  .panel:last-child { border-right: none; }
+  .panel-label {
+    position: sticky; top: 49px; z-index: 99;
+    padding: 8px 24px; font-size: 12px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; text-align: center; border-bottom: 2px solid transparent;
+  }
+  .panel-label span:last-child { display: block; font-weight: 400; font-size: 11px; letter-spacing: 0; margin-top: 2px; opacity: 0.65; }
+  .panel-label--narrative { background: #eef6ff; color: #003566; border-bottom-color: #0582ca; }
+  .panel-label--compact  { background: #f0fdf4; color: #166534; border-bottom-color: #22c55e; }
+  .frame { width: 100%; height: calc(100vh - 90px); border: none; background: #fff; }
+  @media (max-width: 1024px) { .comparison-grid { grid-template-columns: 1fr; } .frame { height: 80vh; } }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <strong>south-china-report</strong>
+  <span>双风格档位对比 — 同一模板，两种密度 (iframe 载入真实模板，零脱节)</span>
+  <div class="spacer"></div>
+  <span class="badge-dev">DEV ONLY / 仅开发调试参考</span>
+</div>
+<div id="warn">注意: 检测到无法向 iframe 注入紧凑档：请通过本地服务打开本页（如 <code>python3 -m http.server</code>），直接双击文件会被浏览器 file:// 同源策略阻止。</div>
+
+<div class="comparison-grid">
+  <div class="panel">
+    <div class="panel-label panel-label--narrative">叙事标准风（默认）<span>--density : 1 | 大留白 / 100vh Hero / 沉浸阅读</span></div>
+    <iframe class="frame" src="../templates/scroll-narrative-skeleton.html" title="叙事标准风"></iframe>
+  </div>
+  <div class="panel">
+    <div class="panel-label panel-label--compact">紧凑销售报告风<span>--density : 0.6 | 信息密集 / Hero masthead / 快速扫读</span></div>
+    <iframe class="frame" id="compactFrame" src="../templates/scroll-narrative-skeleton.html" title="紧凑销售报告风"></iframe>
+  </div>
+</div>
+
+<script>
+  // 只在 demo 内向 iframe 注入紧凑档 —— 模板本身不含任何切换机制
+  var f = document.getElementById('compactFrame');
+  f.addEventListener('load', function () {
+    try {
+      f.contentDocument.documentElement.setAttribute('data-density', 'compact');
+    } catch (e) {
+      document.getElementById('warn').style.display = 'block';
+    }
+  });
+</script>
+</body>
+</html>

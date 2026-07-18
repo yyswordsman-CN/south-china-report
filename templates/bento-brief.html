@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[报告主体] — 一屏决策简报</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    <style>
+        /* ================================================================
+           BENTO BRIEF — 一屏决策简报
+           设计哲学: 一屏承载关键决策信息，Bento Grid 不对称布局
+           适用: executive_brief 报告类型
+           ================================================================ */
+
+        /* ========== V2 Design Tokens ========== */
+        :root {
+            /* === Spacing (8pt grid) — 密度轴: 由 --density 缩放 ===
+                 <html data-density="compact"> 时 --density=0.6, 全间距自动收紧 */
+            --density: 1;
+            --space-1:   calc(4px  * var(--density));
+            --space-2:   calc(8px  * var(--density));
+            --space-3:   calc(12px * var(--density));
+            --space-4:   calc(16px * var(--density));
+            --space-5:   calc(20px * var(--density));
+            --space-6:   calc(24px * var(--density));
+            --space-8:   calc(32px * var(--density));
+            --space-10:  calc(40px * var(--density));
+            --space-12:  calc(48px * var(--density));
+
+            --text-xs:11px; --text-sm:13px; --text-base:16px; --text-lg:18px;
+            --text-xl:22px; --text-2xl:28px;
+            --text-3xl: clamp(28px, 3.5vw, 36px);
+            --text-hero: clamp(36px, 5vw, 56px);
+
+            --font-display: 'Plus Jakarta Sans','Noto Sans SC',sans-serif;
+            --font-editorial: 'DM Sans','Noto Sans SC',-apple-system,sans-serif;
+            --font-data: 'JetBrains Mono','SF Mono','Fira Code',monospace;
+
+            --fw-normal: 400; --fw-medium: 500; --fw-semibold: 600; --fw-bold: 700; --fw-extrabold: 800; --fw-black: 900;
+            /* Leading: 与字号反向 (Apple §15) */
+            --leading-display: 1.05; --leading-tight: 1.1; --leading-snug: 1.3;
+            --leading-normal: 1.5; --leading-relaxed: 1.7; --leading-loose: 1.8;
+            /* Tracking: 尺寸专属, 绝不固定 (Apple §15) */
+            --tracking-display: -0.035em; --tracking-tighter: -0.03em; --tracking-tight: -0.02em;
+            --tracking-normal: 0; --tracking-caption: 0.01em;
+            --tracking-wide: 0.05em; --tracking-wider: 0.08em; --tracking-widest: 0.12em;
+
+            --brand-deepest: #001d3d;
+            --brand-deep: #003566;
+            --brand-mid: #0353a4;
+            --brand-accent: #0582ca;
+            --brand-light: #006daa;
+            --brand-faint: #e8f4fd;
+
+            --semantic-growth: #059669;
+            --semantic-growth-bg: #ecfdf5;
+            --semantic-risk: #dc2626;
+            --semantic-risk-bg: #fef2f2;
+            --semantic-opportunity: #2563eb;
+            --semantic-opportunity-bg: #eff6ff;
+            --semantic-warning: #f59e0b;
+            --semantic-warning-bg: #fffbeb;
+            --semantic-neutral: #64748b;
+            --semantic-neutral-bg: #f1f5f9;
+
+            --surface-primary: #ffffff;
+            --surface-secondary: #f8fafc;
+            --surface-tertiary: #f1f5f9;
+            --text-primary: #1a1a2e;
+            --text-secondary: #64748b;
+            --text-tertiary: #94a3b8;
+            --text-inverse: #f8fafc;
+            --border-default: #e2e8f0;
+            --border-subtle: #f1f5f9;
+
+            --chart-1: var(--brand-mid);
+            --chart-2: var(--semantic-growth);
+            --chart-3: #d97706;
+            --chart-4: #7c3aed;
+            --chart-5: #0891b2;
+            --chart-6: #be123c;
+
+            --content-width: 800px;
+            --content-wide: 1080px;
+
+            --radius-sm: 6px;
+            --radius: 12px;
+            --radius-lg: 16px;
+            --radius-full: 100px;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+            --shadow-elevated: 0 12px 40px rgba(0,0,0,0.10);
+
+            --ease-expressive: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-productive: cubic-bezier(0.2, 0, 0.38, 0.9);
+            --duration-fast: 150ms;
+            --duration-slower: 700ms;
+            --duration-dramatic: 1200ms;
+            --stagger-normal: 60ms;
+        }
+
+        /* ========== 密度轴: 紧凑档 (density 对齐 V2.4 = 0.6) ==========
+           叙事标准档 (默认, density=1) 即"大公司财报叙事风": 大留白、慢节奏、强沉浸。
+           紧凑档 (data-density="compact", density=0.6): 本模板仅做间距/行高/标题尺度的
+           等比收紧 (spacing-only), 不含 scroll-narrative 的组件级版式重组 (masthead/KPI 加密/
+           左线 callout/密集表格)。如需完整紧凑销售报告风版式, 用 scroll-narrative 模板。
+           切换: <html lang="zh-CN" data-density="compact">                                    */
+        :root[data-density="compact"] {
+            --density: 0.6;
+            --text-hero:  clamp(30px, 4vw, 46px);
+            --text-4xl:   clamp(26px, 3.5vw, 40px);
+            --text-3xl:   clamp(22px, 2.6vw, 30px);
+            --leading-relaxed: 1.55;
+            --leading-normal:  1.45;
+            --leading-loose:   1.65;
+        }
+
+        /* ========== Base ========== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { height: 100%; text-size-adjust: 100%; -webkit-text-size-adjust: 100%; }
+        body {
+            font-family: var(--font-editorial);
+            background: var(--surface-secondary);
+            color: var(--text-primary);
+            font-size: var(--text-base);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            font-optical-sizing: auto;
+        }
+
+        /* ========== Brief Container ========== */
+        .brief {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--space-6);
+            min-height: 100vh;
+            display: flex; flex-direction: column;
+        }
+
+        /* ========== Header ========== */
+        .brief-header {
+            display: flex; justify-content: space-between; align-items: flex-start;
+            margin-bottom: var(--space-5);
+        }
+        .brief-title-group { }
+        .brief-badge {
+            display: inline-flex; align-items: center; gap: var(--space-1);
+            font-family: var(--font-data); font-size: var(--text-xs); font-weight: 600;
+            color: var(--brand-mid); background: var(--brand-faint);
+            padding: 2px var(--space-2); border-radius: 100px;
+            letter-spacing: var(--tracking-wide); text-transform: uppercase;
+            margin-bottom: var(--space-2);
+        }
+        .brief-title {
+            font-family: var(--font-display); font-size: var(--text-2xl);
+            font-weight: 800; letter-spacing: var(--tracking-tight); line-height: 1.2;
+        }
+        .brief-subtitle {
+            font-size: var(--text-sm); color: var(--text-secondary); margin-top: var(--space-1);
+        }
+        .brief-meta {
+            text-align: right; font-family: var(--font-data); font-size: var(--text-xs);
+            color: var(--text-tertiary); line-height: 1.8;
+        }
+
+        /* ========== Bento Grid ========== */
+        .bento {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            grid-auto-rows: minmax(0, 1fr);
+            gap: var(--space-4);
+            flex: 1;
+        }
+
+        .bento-tile {
+            background: var(--surface-primary);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-lg);
+            padding: var(--space-5);
+            display: flex; flex-direction: column;
+            transition: box-shadow var(--duration-fast) var(--ease-productive);
+            overflow: hidden;
+        }
+        .bento-tile:hover { box-shadow: var(--shadow-md); }
+
+        /* === Tile Sizes === */
+        .tile-hero    { grid-column: span 4; grid-row: span 2; }
+        .tile-wide    { grid-column: span 8; grid-row: span 2; }
+        .tile-half    { grid-column: span 6; grid-row: span 2; }
+        .tile-third   { grid-column: span 4; grid-row: span 1; }
+        .tile-quarter { grid-column: span 3; grid-row: span 1; }
+        .tile-full    { grid-column: span 12; grid-row: span 1; }
+
+        /* === Tile Dark Variant === */
+        .tile-dark {
+            background: linear-gradient(135deg, var(--brand-deepest), var(--brand-deep));
+            border-color: transparent;
+        }
+        .tile-dark .tile-label { color: rgba(255,255,255,0.6); }
+        .tile-dark .tile-value { color: var(--text-inverse); }
+        .tile-dark .tile-desc  { color: rgba(255,255,255,0.7); }
+
+        /* === Tile Inner Elements === */
+        .tile-label {
+            font-family: var(--font-editorial); font-size: var(--text-xs); font-weight: 600;
+            color: var(--text-tertiary); text-transform: uppercase;
+            letter-spacing: var(--tracking-wider); margin-bottom: var(--space-2);
+        }
+        .tile-value {
+            font-family: var(--font-display); font-size: var(--text-hero);
+            font-weight: 800; line-height: 1; letter-spacing: var(--tracking-tighter);
+            color: var(--text-primary); font-variant-numeric: tabular-nums;
+        }
+        .tile-value-sm {
+            font-family: var(--font-display); font-size: var(--text-3xl);
+            font-weight: 800; line-height: 1; letter-spacing: var(--tracking-tight);
+            font-variant-numeric: tabular-nums;
+        }
+        .tile-desc {
+            font-family: var(--font-editorial); font-size: var(--text-sm);
+            color: var(--text-secondary); line-height: 1.6; margin-top: var(--space-2);
+        }
+        .tile-change {
+            font-family: var(--font-data); font-size: var(--text-sm); font-weight: 600;
+            margin-top: var(--space-2); font-variant-numeric: tabular-nums;
+        }
+        .tile-change.up   { color: var(--semantic-growth); }
+        .tile-change.down { color: var(--semantic-risk); }
+
+        .tile-chart { flex: 1; min-height: 0; }
+
+        /* === Action List (Compact) === */
+        .action-compact { list-style: none; }
+        .action-compact li {
+            display: flex; align-items: flex-start; gap: var(--space-2);
+            padding: var(--space-2) 0; border-bottom: 1px solid var(--border-subtle);
+            font-size: var(--text-sm); line-height: 1.5;
+        }
+        .action-compact li:last-child { border-bottom: none; }
+        .action-num {
+            width: 20px; height: 20px; border-radius: 50%;
+            background: var(--brand-mid); color: #fff;
+            display: flex; align-items: center; justify-content: center;
+            font-family: var(--font-display); font-size: 10px; font-weight: 800;
+            flex-shrink: 0; margin-top: 2px;
+        }
+        .action-tag {
+            display: inline-block; font-size: 9px; font-weight: 700;
+            padding: 1px 6px; border-radius: 100px; margin-left: var(--space-1);
+            vertical-align: middle;
+        }
+        .tag-urgent   { background: var(--semantic-risk-bg); color: var(--semantic-risk); }
+        .tag-strategic { background: var(--brand-faint); color: var(--brand-mid); }
+        .tag-monitor  { background: var(--semantic-warning-bg); color: var(--semantic-warning); }
+
+        /* === Mini Table === */
+        .mini-table { width: 100%; border-collapse: collapse; font-size: var(--text-xs); }
+        .mini-table th {
+            text-align: left; font-weight: 600; color: var(--text-tertiary);
+            padding: var(--space-1) var(--space-2); border-bottom: 1px solid var(--border-default);
+            font-family: var(--font-editorial); text-transform: uppercase; letter-spacing: var(--tracking-wide);
+        }
+        .mini-table td {
+            padding: var(--space-1) var(--space-2); border-bottom: 1px solid var(--border-subtle);
+            font-variant-numeric: tabular-nums;
+        }
+        .mini-table td.num { text-align: right; font-family: var(--font-data); font-weight: 500; }
+        .mini-badge {
+            display: inline-block; padding: 1px 6px; border-radius: 10px;
+            font-size: 9px; font-weight: 700;
+        }
+        .mini-badge-g { background: var(--semantic-growth-bg); color: var(--semantic-growth); }
+        .mini-badge-r { background: var(--semantic-risk-bg); color: var(--semantic-risk); }
+
+        /* === Audit Footer === */
+        .audit-strip {
+            display: flex; align-items: center; gap: var(--space-4);
+            padding: var(--space-3) 0; margin-top: var(--space-4);
+            font-family: var(--font-data); font-size: var(--text-xs); color: var(--text-tertiary);
+        }
+        .footer-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--semantic-growth); }
+
+        /* === Responsive === */
+        @media (max-width: 1024px) {
+            .tile-hero, .tile-wide, .tile-half { grid-column: span 6; }
+            .tile-third { grid-column: span 6; }
+            .tile-quarter { grid-column: span 6; }
+        }
+        @media (max-width: 768px) {
+            .bento { grid-template-columns: 1fr; }
+            .tile-hero, .tile-wide, .tile-half, .tile-third,
+            .tile-quarter, .tile-full { grid-column: span 1; }
+            .brief-header { flex-direction: column; gap: var(--space-3); }
+            .brief-meta { text-align: left; }
+        }
+
+        /* === Apple §12 材质系统: 玻璃表面复用类 === */
+        .glass-surface {
+            background: rgba(255, 255, 255, 0.72);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-top: 1px solid rgba(255, 255, 255, 0.45);
+            box-shadow: 0 8px 32px rgba(15, 23, 42, 0.12);
+        }
+        .glass-surface--edge-fade {
+            -webkit-mask-image: linear-gradient(to bottom, #000 85%, transparent 100%);
+            mask-image: linear-gradient(to bottom, #000 85%, transparent 100%);
+        }
+        .glass-surface--dark {
+            background: rgba(0, 29, 61, 0.72);
+            border-top: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+        }
+
+        /* === Reveal === */
+        .reveal { opacity: 0; transform: translateY(16px); transition: opacity var(--duration-slower) var(--ease-expressive), transform var(--duration-slower) var(--ease-expressive); }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        /* === 无障碍降级 (Apple §14: 三个独立信号) === */
+        @media (prefers-reduced-motion: reduce) {
+            .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+            .glass-surface { transition: none !important; }
+        }
+        @media (prefers-reduced-transparency: reduce) {
+            .glass-surface { background: var(--surface-primary); backdrop-filter: none; -webkit-backdrop-filter: none; }
+            .glass-surface--dark { background: var(--brand-deep); backdrop-filter: none; -webkit-backdrop-filter: none; }
+        }
+        @media (prefers-contrast: more) {
+            .glass-surface { background: var(--surface-primary); border: 1px solid var(--text-primary); }
+            .glass-surface--dark { background: var(--brand-deep); border: 1px solid #fff; }
+        }
+    </style>
+</head>
+<body>
+    <div class="brief">
+        <!-- Header -->
+        <div class="brief-header reveal">
+            <div class="brief-title-group">
+                <div class="brief-badge">EXECUTIVE BRIEF</div>
+                <h1 class="brief-title">逆势突围，结构领跑</h1>
+                <div class="brief-subtitle">[报告主体] [期间]经营决策简报</div>
+            </div>
+            <div class="brief-meta">
+                [机构] · [报告主体]<br>
+                数据截止: 2026-02-27<br>
+                生成时间: 2026-02-28
+            </div>
+        </div>
+
+        <!-- Bento Grid -->
+        <div class="bento">
+            <!-- Hero Tile: 核心数字 -->
+            <div class="bento-tile tile-hero tile-dark reveal">
+                <div class="tile-label">累计签收量</div>
+                <div class="tile-value" data-to="16459">0</div>
+                <div class="tile-change up">+12.3% YoY</div>
+                <div class="tile-desc" style="margin-top:auto;">
+                    连续 2 个月双位数增长，量价齐升格局确立
+                </div>
+            </div>
+
+            <!-- Wide Tile: 趋势图 -->
+            <div class="bento-tile tile-wide reveal">
+                <div class="tile-label">月度签收趋势</div>
+                <div class="tile-chart" id="chart-trend"></div>
+            </div>
+
+            <!-- 3x Quarter KPI -->
+            <div class="bento-tile tile-quarter reveal">
+                <div class="tile-label">结构机渗透率</div>
+                <div class="tile-value-sm" data-to="35" data-suffix=".2%">0</div>
+                <div class="tile-change up">+8.3pp YoY</div>
+            </div>
+            <div class="bento-tile tile-quarter reveal">
+                <div class="tile-label">签收金额</div>
+                <div class="tile-value-sm" data-to="8639" data-suffix="万">0</div>
+                <div class="tile-change up">+18.6% YoY</div>
+            </div>
+            <div class="bento-tile tile-quarter reveal">
+                <div class="tile-label">加权均价</div>
+                <div class="tile-value-sm" data-to="5247" data-suffix="元">0</div>
+                <div class="tile-change up">+5.6% YoY</div>
+            </div>
+            <div class="bento-tile tile-quarter reveal">
+                <div class="tile-label">目标达成率</div>
+                <div class="tile-value-sm" data-to="94" data-suffix="%">0</div>
+                <div class="tile-change down">差 6pp</div>
+            </div>
+
+            <!-- Half Tile: 战区排名 -->
+            <div class="bento-tile tile-half reveal">
+                <div class="tile-label">战区排名 (累计签收量)</div>
+                <table class="mini-table">
+                    <thead><tr><th>排名</th><th>战区</th><th style="text-align:right">签收量</th><th style="text-align:right">同比</th><th>状态</th></tr></thead>
+                    <tbody>
+                        <tr><td>1</td><td>深圳</td><td class="num">4,280</td><td class="num">+18.2%</td><td><span class="mini-badge mini-badge-g">领跑</span></td></tr>
+                        <tr><td>2</td><td>广州</td><td class="num">3,960</td><td class="num">+15.1%</td><td><span class="mini-badge mini-badge-g">达标</span></td></tr>
+                        <tr><td>3</td><td>福州</td><td class="num">3,120</td><td class="num">+12.8%</td><td><span class="mini-badge mini-badge-g">达标</span></td></tr>
+                        <tr><td>4</td><td>长沙</td><td class="num">2,840</td><td class="num">+8.4%</td><td><span class="mini-badge mini-badge-g">达标</span></td></tr>
+                        <tr><td>5</td><td>南宁</td><td class="num">2,259</td><td class="num" style="color:var(--semantic-risk)">-2.1%</td><td><span class="mini-badge mini-badge-r">关注</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Half Tile: 行动项 -->
+            <div class="bento-tile tile-half reveal">
+                <div class="tile-label">本周必须做</div>
+                <ul class="action-compact">
+                    <li>
+                        <span class="action-num">1</span>
+                        <span>传统渠道 P 系列专项提升：导购话术培训 + 每台额外 50 元返利 <span class="action-tag tag-urgent">URGENT</span></span>
+                    </li>
+                    <li>
+                        <span class="action-num">2</span>
+                        <span>南宁战区专项诊断：3 日内实地走访，反馈根因 <span class="action-tag tag-urgent">URGENT</span></span>
+                    </li>
+                    <li>
+                        <span class="action-num">3</span>
+                        <span>深圳/福州经验复制：提炼 KA 展位策略和导购激励方案 <span class="action-tag tag-strategic">STRATEGIC</span></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Audit Strip: 数据来源 / 口径 / 审计状态 -->
+        <div class="audit-strip">
+            <span class="footer-dot"></span>
+            <span>数据源: DuckDB 本地库</span>
+            <span>|</span>
+            <span>口径: 含税签收额</span>
+            <span>|</span>
+            <span>审计: 图表=表格=文案 一致</span>
+        </div>
+    </div>
+
+    <script>
+        // === CSS Variable Reader ===
+        function cssVar(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
+        // === Reveal ===
+        var ro = new IntersectionObserver(function(entries) {
+            entries.forEach(function(e, i) {
+                if (e.isIntersecting) {
+                    var idx = Array.from(document.querySelectorAll('.reveal')).indexOf(e.target);
+                    e.target.style.transitionDelay = (idx * 60) + 'ms';
+                    e.target.classList.add('visible');
+                    ro.unobserve(e.target);
+                }
+            });
+        }, { threshold: 0.05 });
+        document.querySelectorAll('.reveal').forEach(function(el) { ro.observe(el); });
+
+        // === CountUp ===
+        function countUp(el, target, duration, suffix) {
+            var start = 0, startTime = null;
+            suffix = suffix || '';
+            function step(ts) {
+                if (!startTime) startTime = ts;
+                var p = Math.min((ts - startTime) / duration, 1);
+                var eased = 1 - Math.pow(1 - p, 3);
+                var current = Math.floor(start + (target - start) * eased);
+                el.textContent = current.toLocaleString('zh-CN') + suffix;
+                if (p < 1) requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+        }
+
+        // === Init ===
+        document.addEventListener('DOMContentLoaded', function() {
+            // CountUp
+            document.querySelectorAll('[data-to]').forEach(function(el) {
+                countUp(el, parseInt(el.dataset.to), 1200, el.dataset.suffix || '');
+            });
+
+            // Chart: Trend
+            var ct = document.getElementById('chart-trend');
+            if (ct) {
+                var chart = echarts.init(ct);
+                chart.setOption({
+                    tooltip: { trigger: 'axis' },
+                    grid: { top: 20, left: 50, right: 20, bottom: 24 },
+                    xAxis: { type: 'category',
+                        data: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
+                        axisLine: { lineStyle: { color: '#e2e8f0' } },
+                        axisLabel: { color: '#94a3b8', fontSize: 11, fontFamily: 'JetBrains Mono' }
+                    },
+                    yAxis: { type: 'value',
+                        splitLine: { lineStyle: { type: 'dashed', color: '#f1f5f9' } },
+                        axisLabel: { color: '#94a3b8', fontSize: 11, fontFamily: 'JetBrains Mono', formatter: function(v){ return (v/1000).toFixed(0)+'K'; } }
+                    },
+                    series: [
+                        { name: '2026', type: 'line', data: [7820, 8639, null,null,null,null,null,null,null,null,null,null],
+                          smooth: true, symbol: 'circle', symbolSize: 6,
+                          lineStyle: { width: 2.5, color: cssVar('--chart-1') },
+                          itemStyle: { color: cssVar('--chart-1') },
+                          areaStyle: {
+                              color: new echarts.graphic.LinearGradient(0,0,0,1,[
+                                  { offset: 0, color: 'rgba(3,83,164,0.18)' },
+                                  { offset: 1, color: 'rgba(3,83,164,0.02)' }
+                              ])
+                          }
+                        },
+                        { name: '2025', type: 'line', data: [6920, 7692, 9210, 8560, 10230, 11800, 14500, 15200, 12100, 9800, 7400, 6800],
+                          smooth: true, symbol: 'none',
+                          lineStyle: { width: 1.5, color: '#cbd5e1', type: 'dashed' },
+                          areaStyle: { color: 'rgba(203,213,225,0.06)' }
+                        }
+                    ]
+                });
+                window.addEventListener('resize', function() { chart.resize(); });
+            }
+        });
+    </script>
+</body>
+</html>
