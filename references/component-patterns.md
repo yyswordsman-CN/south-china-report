@@ -1,7 +1,16 @@
 # Component Patterns V2 — 统一组件手册
 
+## 快速导航
+
+- [§0 快速选型](#0-快速选型矩阵)
+- [§1 V2 新增组件](#1-v2-新增组件)
+- [§2 V1 组件索引](#2-v1-组件索引-已合并至此文件)
+- [§3 Badge 系统](#3-badge-统一系统-v2)
+- [§4 工具函数](#4-工具函数-v2-统一)
+- [§5 字体依赖](#5-字体依赖-v2-统一)
+
 > **版本**: V2.0 | 合并原 `analysis-component-patterns.md` + `kpi-display-patterns.md` + V2 新增组件
-> **原则**: 所有 CSS 必须使用 `references/design-tokens.md` 定义的 Token，禁止硬编码色值/字号
+> **原则**: 可执行 CSS 优先使用 `references/design-tokens.md` 定义的 Token；兼容第三方图表或语义组件的 literal 必须能映射到已登记 Token，禁止无法追溯的硬编码色值/字号
 > **字体纪律**: Display → 大数字/标题 | Editorial → 文案/标签 | Data → 表格数字/标注
 
 ---

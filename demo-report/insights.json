@@ -7,7 +7,11 @@
    "engine_yoy": 15,
    "material_share": 2,
    "share_shift_pp": 1.5,
-   "anomaly_robust_z": 2.5
+   "anomaly_robust_z": 2.5,
+   "hhi_medium": 0.1,
+   "hhi_high": 0.18,
+   "top5_medium": 30,
+   "top5_high": 45
   },
   "metrics_status": "WARN"
  },
@@ -113,7 +117,7 @@
      "name": "南区",
      "yoy": -37.1,
      "share": 18.0,
-     "delta_wan": -676.1,
+     "delta_wan": -676.2,
      "contribution_pp": -9.3,
      "share_shift_pp": -7.0
     }
@@ -130,16 +134,16 @@
    ],
    "share_shifts": [
     {
-     "name": "南区",
-     "from": 25.0,
-     "to": 18.0,
-     "shift_pp": -7.0
-    },
-    {
      "name": "东区",
      "from": 15.0,
      "to": 20.0,
      "shift_pp": 5.0
+    },
+    {
+     "name": "南区",
+     "from": 25.0,
+     "to": 18.0,
+     "shift_pp": -7.0
     },
     {
      "name": "中区",
@@ -153,7 +157,7 @@
      "name": "南区",
      "yoy": -37.1,
      "share": 18.0,
-     "delta_wan": -676.1,
+     "delta_wan": -676.2,
      "contribution_pp": -9.3
     },
     {
@@ -174,7 +178,7 @@
      "name": "中区",
      "yoy": -1.0,
      "share": 17.0,
-     "delta_wan": -10.7,
+     "delta_wan": -10.6,
      "contribution_pp": -0.1
     },
     {
@@ -188,7 +192,7 @@
    "hhi": {
     "value": 0.204,
     "level": "高集中",
-    "_note": "阈值沿用 0.10/0.18 (HHI 通用分级)"
+    "_note": "启发式阈值可配置: 中度>=0.1, 高>=0.18"
    }
   },
   "品类": {
@@ -197,7 +201,7 @@
      "name": "入门系列",
      "yoy": -35.9,
      "share": 22.0,
-     "delta_wan": -786.0,
+     "delta_wan": -785.9,
      "contribution_pp": -10.8,
      "share_shift_pp": -8.0
     }
@@ -214,16 +218,16 @@
    ],
    "share_shifts": [
     {
-     "name": "入门系列",
-     "from": 30.0,
-     "to": 22.0,
-     "shift_pp": -8.0
-    },
-    {
      "name": "旗舰系列",
      "from": 22.0,
      "to": 30.0,
      "shift_pp": 8.0
+    },
+    {
+     "name": "入门系列",
+     "from": 30.0,
+     "to": 22.0,
+     "shift_pp": -8.0
     }
    ],
    "contributions": [
@@ -231,7 +235,7 @@
      "name": "入门系列",
      "yoy": -35.9,
      "share": 22.0,
-     "delta_wan": -786.0,
+     "delta_wan": -785.9,
      "contribution_pp": -10.8
     },
     {
@@ -252,7 +256,7 @@
    "hhi": {
     "value": 0.369,
     "level": "高集中",
-    "_note": "阈值沿用 0.10/0.18 (HHI 通用分级)"
+    "_note": "启发式阈值可配置: 中度>=0.1, 高>=0.18"
    }
   },
   "渠道": {
@@ -307,14 +311,18 @@
    "hhi": {
     "value": 0.349,
     "level": "高集中",
-    "_note": "阈值沿用 0.10/0.18 (HHI 通用分级)"
+    "_note": "启发式阈值可配置: 中度>=0.1, 高>=0.18"
    }
   }
  },
  "concentration_risk": {
+  "status": "OK",
   "customers": 40,
+  "customer_coverage": 100.0,
+  "coverage_threshold": 80.0,
   "top5_share": 48.0,
   "top10_share": 64.0,
+  "top5_share_identified": 48.0,
   "pareto_n50": 6,
   "pareto_n80": 19,
   "top5_wan": [
@@ -325,29 +333,30 @@
    520.0
   ],
   "level": "高",
-  "_note": "Top5>45% 判高 (沿用 prep-source 阈值); 高集中建议成风险章"
+  "_note": "启发式阈值可配置: 中>=30%, 高>=45%"
  },
  "pvm_quadrant": {
+  "status": "OK",
   "qty_yoy": -18.5,
   "price_yoy": 7.2,
   "quadrant": "量减价升",
   "vol_wan": -1349.9,
   "price_mix_wan": 429.4,
-  "_note": "price_mix_wan = 总额差 − 量效应 = 价格效应 + 产品结构/mix (混合均价法, 多SKU时非纯价; 瀑布图标签应写'价+结构')"
+  "_note": "price_mix_wan = 总额差 − 量效应 = 价格效应 + 产品结构/mix"
  },
  "problem_list": [
   {
    "type": "维度断崖",
    "object": "品类=入门系列",
    "evidence": "YoY=-35.9%, 份额22.0%, 拖累总增速-10.8pp",
-   "impact_wan": -786.0,
+   "impact_wan": -785.9,
    "action_frame": "按 PAC 出对策: 对象+动作+期限+验证指标 (由报告作者结合业务补全, 脚本不代拟具体动作)"
   },
   {
    "type": "维度断崖",
    "object": "战区=南区",
    "evidence": "YoY=-37.1%, 份额18.0%, 拖累总增速-9.3pp",
-   "impact_wan": -676.1,
+   "impact_wan": -676.2,
    "action_frame": "按 PAC 出对策: 对象+动作+期限+验证指标 (由报告作者结合业务补全, 脚本不代拟具体动作)"
   },
   {
@@ -381,7 +390,7 @@
   {
    "type": "客户集中度风险",
    "object": "客户结构",
-   "evidence": "Top5 占比 48.0% (>45%), 前 19 户贡献 80%",
+   "evidence": "Top5 占比 48.0% (>=45%), 前 19 户贡献 80%",
    "impact_wan": null,
    "action_frame": "按 PAC 出对策: 对象+动作+期限+验证指标 (由报告作者结合业务补全, 脚本不代拟具体动作)"
   }

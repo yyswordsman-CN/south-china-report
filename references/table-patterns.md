@@ -1,5 +1,14 @@
 # Table & Component Patterns — 表格与通用组件库
 
+## 快速导航
+
+- [1. 高密度数据表](#1-高密度数据表格-data-grid)
+- [2–3. Badge](#2-badge-系统)
+- [4. Callout](#4-callout-洞察框)
+- [5. Trend Indicators](#5-trend-indicators--svg-图标)
+- [6–7. 密度与卡片](#6-高密度数据折叠-flex-baseline)
+- [8. Sparkline](#8-sparkline-迷你趋势图)
+
 > 整合自 SKILL 和 KI 中的表格、Badge、排名、Callout 等通用组件。
 > 所有间距使用 `design-tokens.md` 中定义的 token。
 >
@@ -20,12 +29,12 @@
     font-variant-numeric: tabular-nums;
 }
 .data-grid-table th {
-    background: #F8FAFC;
-    color: #475569;
+    background: var(--surface-secondary);
+    color: var(--text-secondary);
     font-weight: var(--fw-semibold);
     text-transform: uppercase;
     letter-spacing: var(--tracking-wide);
-    padding: 10px var(--space-3);
+    padding: var(--space-2) var(--space-3);
     border: 1px solid var(--border-default);
     text-align: right;
     position: sticky; top: 0; z-index: 10;

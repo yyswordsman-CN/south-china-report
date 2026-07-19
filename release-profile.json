@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "skill": "south-china-report",
+  "include": [
+    "SKILL.md",
+    "README.md",
+    "USAGE-GUIDE.md",
+    "CHANGELOG.md",
+    "package.json",
+    "package-lock.json",
+    "requirements.txt",
+    "release-profile.json",
+    ".github",
+    "agents",
+    "references",
+    "templates",
+    "scripts",
+    "evals",
+    "demos",
+    "tests",
+    "demo-report"
+  ],
+  "exclude_paths": [
+    "demo-report/shots"
+  ],
+  "exclude_names": [
+    ".DS_Store",
+    "__pycache__",
+    "node_modules"
+  ],
+  "exclude_suffixes": [
+    ".pyc"
+  ],
+  "allowed_target_metadata": [
+    ".south-china-report-install.json"
+  ]
+}

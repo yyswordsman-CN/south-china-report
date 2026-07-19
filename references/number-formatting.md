@@ -1,5 +1,12 @@
 # 数字格式化标准与交互动效目录
 
+## 快速导航
+
+- [1. 数字格式化](#1-数字格式化标准-number-formatting-standards)
+- [2. 微交互](#2-交互动效目录-micro-interaction-catalog)
+- [3. 加载状态](#3-加载状态管理)
+- [4. 打印与导出](#4-打印与导出适配)
+
 > 来源: McKinsey 数字呈现规范 + Apple/Airbnb 动效设计 + 现代 CSS 交互模式
 > 版本: V2 对齐 (2026-07) — 阴影/字体 Token 随三角色视觉系统更新 (Display=Plus Jakarta Sans / Editorial=DM Sans / Data=JetBrains Mono)
 > 用途: 统一报告内所有数字的呈现格式, 提供标准化动效组件

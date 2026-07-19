@@ -1,11 +1,17 @@
 {
   "skill_name": "south-china-report",
-  "_runner": "node scripts/run-evals.mjs <report.html> --eval <id> [--metrics metrics.json] —— 对一份已生成的报告执行该 eval 的机器断言 (machine_checks); 主观项标 MANUAL 交人工。assertions 为人类可读说明, machine_checks 为可执行版本。",
+  "_runner": "node scripts/run-evals.mjs <report.html> --eval <id> [--metrics metrics.json] —— 校验真实 DOM、报告契约、源文件 SHA-256、请求期间、报告模式与关键指标；主观项标 MANUAL 交人工。",
   "_check_types": {
     "validator_exit0": "跑 validate-report.mjs, 要求 exit 0 且 FAIL 计数=0",
-    "grep_count_min": "报告全文正则 pattern 命中次数 >= min",
-    "grep_count_max": "报告全文正则 pattern 命中次数 <= max",
-    "data_metric_or_verify": "给了 --metrics 则跑 verify-numbers 要求 exit 0; 否则退化为 data-metric=\" 命中 >= min",
+    "report_contract": "校验 #south-china-report-meta 中 requested_period/source SHA-256/report_mode/key_metrics",
+    "dom_class_count_min": "真实 DOM 中指定 class 数量不少于 min",
+    "dom_class_count_max": "真实 DOM 中指定 class 数量不超过 max",
+    "dom_class_pattern_count_max": "真实 DOM 中匹配 class 正则的元素数量不超过 max",
+    "dom_element_exists": "真实 DOM 中存在指定标签/class",
+    "text_absent": "只扫描可见正文，不扫描 CSS、注释或脚本",
+    "style_pattern": "只扫描真实 style 块并剥离注释",
+    "script_pattern": "只扫描真实 script 块并剥离注释",
+    "data_metric_or_verify": "给了 --metrics 则跑 verify-numbers 严格模式；否则只确认绑定数量，关键指标仍由 report_contract 对 fixture 真值校验",
     "manual": "主观项, runner 标 MANUAL 不计入通过/失败"
   },
   "evals": [
@@ -16,17 +22,23 @@
       "expected_output": "紧凑档(data-density=\"compact\")月报HTML，聚焦2025-12单月表现；因源数据无目标/预算列，须按纪律降级为YoY/结构叙事，不出现达成率或子弹图类目标叙事。",
       "files": ["evals/fixtures/sales-2024-2025.csv"],
       "assertions": [
-        "validator 0 FAIL（机器：node scripts/validate-report.mjs <report.html> 退出码为0，且输出汇总行 FAIL 计数为0）",
-        "报告标注紧凑档（机器：grep -q 'data-density=\"compact\"' <report.html>）",
-        "章节数≥4（机器：grep -c 'chapter-title' <report.html>，≥4）",
-        "全文不出现目标类叙事降级失败（机器：grep -c '达成率\\|目标完成\\|子弹图' <report.html> 应为0，验证CSV无目标列时脚本/模板的降级纪律确实生效，而非编造目标）",
-        "报告数字与源数据一致（机器：若产出了 metrics.json，则 node scripts/verify-numbers.mjs <report.html> metrics.json 退出码为0；若未产出 metrics.json，则退化检查 grep -c 'data-metric=\"' <report.html> ≥3 处）"
+        "报告契约明确标注 requested_period=2025-12、源文件 SHA-256、compact-monthly 模式，并与 fixture 关键指标真值一致",
+        "validator 0 FAIL（机器：node scripts/validate-report.mjs <report.html> 退出码为0）",
+        "报告标注紧凑档（机器：只读取 html 开标签的 data-density）",
+        "真实 DOM 中章节数≥4，不把 CSS、注释或脚本字符串计入",
+        "可见正文不出现达成率/目标完成/子弹图，验证 CSV 无目标列时不编造目标叙事",
+        "报告数字与源数据一致；提供 metrics.json 时还须通过 verify-numbers 严格覆盖检查"
       ],
       "machine_checks": [
+        { "id": "report-contract", "type": "report_contract", "requested_period": "2025-12", "source_file": "evals/fixtures/sales-2024-2025.csv", "report_mode": "compact-monthly", "key_metrics": [
+          { "path": "period.total_cur_wan", "expect": 172.0, "tolerance": 0.05 },
+          { "path": "period.qty_cur", "expect": 577, "tolerance": 0 },
+          { "path": "period.total_yoy", "expect": -2.2, "tolerance": 0.05 }
+        ], "desc": "报告契约与 2025-12 fixture 真值一致" },
         { "id": "validator", "type": "validator_exit0", "desc": "validator 0 FAIL 且 exit 0" },
         { "id": "compact", "type": "density", "expect": "compact", "desc": "紧凑档(只读<html>开标签, 不误命中CSS选择器)" },
-        { "id": "chapters", "type": "grep_count_min", "pattern": "chapter-title", "min": 4, "desc": "章节数≥4" },
-        { "id": "no-fake-target", "type": "grep_count_max", "pattern": "达成率|目标完成|子弹图", "max": 0, "desc": "无目标类叙事(CSV无目标列的降级纪律)" },
+        { "id": "chapters", "type": "dom_class_count_min", "class": "chapter-title", "min": 4, "desc": "真实 DOM 章节数≥4" },
+        { "id": "no-fake-target", "type": "text_absent", "pattern": "达成率|目标完成|子弹图", "flags": "g", "desc": "可见正文无目标类叙事(CSV无目标列)" },
         { "id": "numbers-wired", "type": "data_metric_or_verify", "min": 3, "desc": "数字一致性已接线" }
       ]
     },
@@ -37,18 +49,24 @@
       "expected_output": "标准密度叙事版(scroll-narrative)季度报告HTML，覆盖2025Q4；≥4个Chapter均遵循PAC(现象/归因/对策)叙事闭环；含瀑布图或YoY同期对比图支撑归因论证；Hero标题为非弱词的Action Title。",
       "files": ["evals/fixtures/sales-2024-2025.csv"],
       "assertions": [
+        "报告契约明确标注 requested_period=2025Q4、源文件 SHA-256、narrative-quarterly 模式，并与 fixture 关键指标真值一致",
         "validator 0 FAIL（机器：同上）",
-        "Hero标题不含弱词标签（半自动：grep 提取 .hero-title 文本，确认不含 分析/情况/对比/汇总/统计/概览/概况/总结/数据/报表/图表/明细/一览/状况 等词）",
+        "Hero标题不含分析/情况/对比/汇总/统计/概览等弱词标签",
         "Hero标题真正符合Action Title公式（主观：留 grader 判断标题语义是否传达方向与归因）",
-        "章节数≥4（机器：grep -c 'chapter-title'）",
+        "真实 DOM 中章节数≥4",
         "每个Chapter具备PAC闭环——现象/归因/对策三段语义均在（主观：grader 逐章判断）",
-        "存在瀑布图或YoY同期对比图作为归因支撑（机器：grep 命中 'createWaterfallChart' 或 '瀑布'）"
+        "真实脚本存在瀑布图或 YoY 同期对比图作为归因支撑"
       ],
       "machine_checks": [
+        { "id": "report-contract", "type": "report_contract", "requested_period": "2025Q4", "source_file": "evals/fixtures/sales-2024-2025.csv", "report_mode": "narrative-quarterly", "key_metrics": [
+          { "path": "period.total_cur_wan", "expect": 532.6, "tolerance": 0.05 },
+          { "path": "period.qty_cur", "expect": 1783, "tolerance": 0 },
+          { "path": "period.total_yoy", "expect": 5.7, "tolerance": 0.05 }
+        ], "desc": "报告契约与 2025Q4 fixture 真值一致" },
         { "id": "validator", "type": "validator_exit0", "desc": "validator 0 FAIL 且 exit 0" },
         { "id": "not-compact", "type": "density", "expect": "standard", "desc": "标准档(只读<html>开标签)" },
-        { "id": "chapters", "type": "grep_count_min", "pattern": "chapter-title", "min": 4, "desc": "章节数≥4" },
-        { "id": "attribution-chart", "type": "grep_count_min", "pattern": "createWaterfallChart|瀑布", "min": 1, "desc": "含瀑布/归因图" },
+        { "id": "chapters", "type": "dom_class_count_min", "class": "chapter-title", "min": 4, "desc": "真实 DOM 章节数≥4" },
+        { "id": "attribution-chart", "type": "script_pattern", "pattern": "createWaterfallChart|瀑布", "min": 1, "desc": "真实脚本含瀑布/归因图" },
         { "id": "hero-strong", "type": "manual", "desc": "Hero 为非弱词 Action Title (语义) — 人工判" },
         { "id": "pac", "type": "manual", "desc": "每章 PAC 现象/归因/对策闭环 — 人工判" }
       ]
@@ -57,19 +75,77 @@
       "id": 3,
       "name": "bento-brief",
       "prompt": "还是这份 evals/fixtures/sales-2024-2025.csv，我要一个能一屏看完的决策简报，明天开会要用，重点数据一眼扫到就行，不用看很多字。",
-      "expected_output": "基于bento-brief模板(12列Bento Grid基座)的一屏决策简报HTML；含Audit Strip标注数据来源与口径；KPI数量控制在7个以内以保证扫读效率。",
+      "expected_output": "基于bento-brief模板(12列Bento Grid基座)的2025全年一屏决策简报HTML；含Audit Strip标注数据来源与口径；KPI数量控制在7个以内以保证扫读效率。",
       "files": ["evals/fixtures/sales-2024-2025.csv"],
       "assertions": [
+        "报告契约明确标注 requested_period=2025、源文件 SHA-256、bento-brief 模式，并与 fixture 关键指标真值一致",
         "validator 0 FAIL（机器：同上）",
-        "基于bento-brief模板的12列grid基座（机器：grep -q 'grid-template-columns: repeat(12' <report.html>）",
-        "Audit Strip存在（机器：grep -q 'class=\"audit-strip\"' <report.html>）",
-        "KPI数量≤7（机器：统计 class 含 'tile-value' 的元素个数，需 ≤7）"
+        "真实 CSS 使用 bento-brief 的 12 列 Grid 基座",
+        "真实 DOM 中存在 Audit Strip",
+        "真实 DOM 中 tile-value/tile-value-sm KPI 数量≤7"
       ],
       "machine_checks": [
+        { "id": "report-contract", "type": "report_contract", "requested_period": "2025", "source_file": "evals/fixtures/sales-2024-2025.csv", "report_mode": "bento-brief", "key_metrics": [
+          { "path": "period.total_cur_wan", "expect": 2065.1, "tolerance": 0.05 },
+          { "path": "period.qty_cur", "expect": 7091, "tolerance": 0 },
+          { "path": "period.total_yoy", "expect": 10.0, "tolerance": 0.05 }
+        ], "desc": "报告契约与 2025 全年 fixture 真值一致" },
         { "id": "validator", "type": "validator_exit0", "desc": "validator 0 FAIL 且 exit 0" },
-        { "id": "bento-12col", "type": "grep_count_min", "pattern": "grid-template-columns: repeat\\(12", "min": 1, "desc": "12列Bento基座" },
-        { "id": "audit-strip", "type": "grep_count_min", "pattern": "class=\"audit-strip\"", "min": 1, "desc": "Audit Strip 存在" },
-        { "id": "kpi-max7", "type": "grep_count_max", "pattern": "class=\"tile-value", "max": 7, "desc": "KPI≤7 (含 tile-value/tile-value-sm)" }
+        { "id": "bento-12col", "type": "style_pattern", "pattern": "grid-template-columns\\s*:\\s*repeat\\(12", "min": 1, "desc": "真实 CSS 采用12列Bento基座" },
+        { "id": "audit-strip", "type": "dom_element_exists", "class": "audit-strip", "desc": "真实 DOM 中 Audit Strip 存在" },
+        { "id": "kpi-max7", "type": "dom_class_pattern_count_max", "pattern": "^tile-value(?:-sm)?$", "max": 7, "desc": "真实 DOM 中 KPI≤7" }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "demo-standard-2026-h1",
+      "prompt": "用 demo-report/demo_sales.csv 生成 2026H1 标准密度的华南经营分析 demo，并保留可追溯元数据与全量数字绑定。",
+      "expected_output": "2026H1 标准密度叙事报告；契约期间、源文件 SHA-256、关键指标与 metrics.json 一致；至少 4 个章节、4 个图表容器和 3 个行动项。",
+      "files": ["demo-report/demo_sales.csv", "demo-report/metrics.json"],
+      "assertions": [
+        "报告契约标注 requested_period=2026H1、demo-standard-2026-h1 模式和真实源文件指纹",
+        "validator 0 FAIL",
+        "标准密度且真实 DOM 中章节、图表、行动项结构完整",
+        "所有可见数字均绑定或有粒度合规的显式豁免"
+      ],
+      "machine_checks": [
+        { "id": "report-contract", "type": "report_contract", "requested_period": "2026H1", "source_file": "demo-report/demo_sales.csv", "report_mode": "demo-standard-2026-h1", "key_metrics": [
+          { "path": "period.total_cur_wan", "expect": 6372.0, "tolerance": 0.05 },
+          { "path": "period.qty_cur", "expect": 20792, "tolerance": 0 },
+          { "path": "period.total_yoy", "expect": -12.6, "tolerance": 0.05 }
+        ], "desc": "报告契约与 2026H1 demo 真值一致" },
+        { "id": "validator", "type": "validator_exit0", "desc": "validator 0 FAIL 且 exit 0" },
+        { "id": "density", "type": "density", "expect": "standard", "desc": "标准密度" },
+        { "id": "chapters", "type": "dom_class_count_min", "class": "chapter-title", "min": 4, "desc": "真实 DOM 章节数≥4" },
+        { "id": "charts", "type": "dom_class_count_min", "class": "chart-container", "min": 4, "desc": "真实 DOM 图表容器≥4" },
+        { "id": "actions", "type": "dom_class_count_min", "class": "action-item", "min": 3, "desc": "真实 DOM 行动项≥3" },
+        { "id": "numbers-wired", "type": "data_metric_or_verify", "min": 3, "desc": "严格数字一致性与 100% 覆盖" }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "demo-compact-2026-h1",
+      "prompt": "用 demo-report/demo_sales.csv 生成 2026H1 紧凑密度的华南经营分析 demo，并保留可追溯元数据与全量数字绑定。",
+      "expected_output": "2026H1 紧凑密度叙事报告；契约期间、源文件 SHA-256、关键指标与 metrics.json 一致；至少 4 个章节、4 个图表容器和 3 个行动项。",
+      "files": ["demo-report/demo_sales.csv", "demo-report/metrics.json"],
+      "assertions": [
+        "报告契约标注 requested_period=2026H1、demo-compact-2026-h1 模式和真实源文件指纹",
+        "validator 0 FAIL",
+        "紧凑密度且真实 DOM 中章节、图表、行动项结构完整",
+        "所有可见数字均绑定或有粒度合规的显式豁免"
+      ],
+      "machine_checks": [
+        { "id": "report-contract", "type": "report_contract", "requested_period": "2026H1", "source_file": "demo-report/demo_sales.csv", "report_mode": "demo-compact-2026-h1", "key_metrics": [
+          { "path": "period.total_cur_wan", "expect": 6372.0, "tolerance": 0.05 },
+          { "path": "period.qty_cur", "expect": 20792, "tolerance": 0 },
+          { "path": "period.total_yoy", "expect": -12.6, "tolerance": 0.05 }
+        ], "desc": "报告契约与 2026H1 demo 真值一致" },
+        { "id": "validator", "type": "validator_exit0", "desc": "validator 0 FAIL 且 exit 0" },
+        { "id": "density", "type": "density", "expect": "compact", "desc": "紧凑密度" },
+        { "id": "chapters", "type": "dom_class_count_min", "class": "chapter-title", "min": 4, "desc": "真实 DOM 章节数≥4" },
+        { "id": "charts", "type": "dom_class_count_min", "class": "chart-container", "min": 4, "desc": "真实 DOM 图表容器≥4" },
+        { "id": "actions", "type": "dom_class_count_min", "class": "action-item", "min": 3, "desc": "真实 DOM 行动项≥3" },
+        { "id": "numbers-wired", "type": "data_metric_or_verify", "min": 3, "desc": "严格数字一致性与 100% 覆盖" }
       ]
     }
   ]

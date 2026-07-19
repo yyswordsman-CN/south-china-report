@@ -11,7 +11,7 @@
     // ─── Theme 1: Corporate Blue (默认/Deep Ocean 主题对应) ───
     // 前 6 系列严格对齐 design-tokens §3.6 --chart-1..6 (唯一真相源); 第 7/8 为克制中性扩展
     echarts.registerTheme('corporate-blue', {
-        color: ['#0353a4','#059669','#d97706','#7c3aed','#0891b2','#be123c','#64748b','#94a3b8'],
+        color: ['#0353a4','#047857','#b45309','#7c3aed','#0891b2','#be123c','#475569','#64748b'],
         backgroundColor: 'transparent',
         textStyle: {
             fontFamily: 'DM Sans, Noto Sans SC, -apple-system, sans-serif', /* V2: --font-editorial */

@@ -1,9 +1,16 @@
 # Quality Gate — 报告交付前检查清单
 
-> **定位**: 本 Gate 只检查 `output-quality-guard` 和全局规则**不覆盖**的报告专属项。
-> 数据准确性 → `output-quality-guard` / `data-audit-framework`
-> Emoji/视觉基线 → `output-quality-guard`
-> 本文件 → 叙事质量 + 图表设计 + 数字格式
+## 快速导航
+
+- [Gate 1 叙事](#gate-1-叙事质量-narrative-quality--8-项)
+- [Gate 2 图表](#gate-2-图表设计-chart-design--10-项)
+- [Gate 3 数字](#gate-3-数字格式-number-formatting--5-项)
+- [Gate 4 布局](#gate-4-布局检查-layout--10-项)
+- [Gate 5 洞察与行动](#gate-5-洞察与行动-insight--action--5-项)
+- [Gate 6 视觉系统](#gate-6-视觉系统-v2-v2-新增--8-项)
+- [Gate 7 自动校验](#gate-7-自动化校验-v2-新增--6-项)
+
+> **定位**：本 Gate 是报告交付的自包含检查清单。数据准确性以 `prep-source.py` 的 quality.md/metrics.json 和 `verify-numbers.mjs` 为准；Emoji/视觉基线以 `validate-report.mjs` 为准；本文件补充叙事、图表和行动质量的人工审查。当前环境若有其他质量 Skill，只作叠加检查，不是本 Gate 运行的前置依赖。
 
 ---
 
@@ -118,23 +125,27 @@
 
 ---
 
-## Gate 7: 自动化校验 (V2 新增) — 2 项
+## Gate 7: 自动化校验 (V2 新增) — 6 项
 
 | # | 检查项 | 通过标准 | 档案 |
 |:---|:---|:---|:---:|
 | 7.1 | **validate-report.mjs** | `node scripts/validate-report.mjs report.html` P0 全部 PASS | all |
-| 7.2 | **Anti-Default 检查** | 对照 `anti-default-discipline.md` §4 Post-Build 完成勾选 | strategic+ |
+| 7.2 | **静态数字真值** | `verify-numbers.mjs report.html metrics.json` 可见数字覆盖率与真值 100% | all |
+| 7.3 | **严格离线复检** | `make-offline.mjs` 后以 `validate-report.mjs --strict-offline` 复检，无外部/相对资源 | all |
+| 7.4 | **运行时数字真值** | `verify-runtime.mjs report.offline.html metrics.json` 最终 DOM 与 ECharts 标量/坐标/树/custom 数值叶子逐点一致 | all |
+| 7.5 | **四视口截图与无障碍** | `snapshot.mjs` 的布局、网络、DOM、AX Tree、Tab、焦点与 WCAG AA 全通过，并逐图目检 | all |
+| 7.6 | **Anti-Default 检查** | 对照 `anti-default-discipline.md` §4 Post-Build 完成勾选 | strategic+ |
 
 ---
 
 ## 使用方式
 
 ```
-brief        → Gate 2-4 + Gate 6 + Gate 7.1
-operational  → Gate 1(1.2/1.5) + Gate 2-4 + Gate 6 + Gate 7.1
+brief        → Gate 2-4 + Gate 6 + Gate 7.1-7.5
+operational  → Gate 1(1.2/1.5) + Gate 2-4 + Gate 6 + Gate 7.1-7.5
 strategic    → 全部 Gate (Gate 1-7)
 presentation → 全部 Gate + 逐项人工复核
-audit_pack   → Gate 5.5 + Gate 7.1 + 数据审计为主
+audit_pack   → Gate 5.5 + Gate 7.1-7.5 + 数据审计为主
 ```
 
-> **V2 总计**: 48 项检查 (8+10+5+10+5+8+2)
+> **V2 总计**: 52 项检查 (8+10+5+10+5+8+6)

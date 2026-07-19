@@ -1,5 +1,14 @@
 # Audience Visual Contract — 报告前端设计合同
 
+## 快速导航
+
+- [1. 受众分层](#1-受众分层)
+- [2. 信息架构](#2-信息架构)
+- [3. 布局选择](#3-布局选择)
+- [4. Bento 规则](#4-bento-12-列规则)
+- [5. 图表政策](#5-图表政策)
+- [6. 合同模板](#6-visual-contract-模板)
+
 本文件把研究文档中的前端设计原则压缩成运行时约束。生成 HTML 报告前先填写合同，再写页面。
 
 ## 1. 受众分层
@@ -100,4 +109,3 @@ visual_contract:
     desktop_1360: required
     mobile_390: required_for_brief_or_mobile_delivery
 ```
-

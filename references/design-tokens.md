@@ -1,7 +1,7 @@
 # Design Tokens V2 — 完整设计系统基础
 
 > **版本**: V2.0 | **基于**: Carbon 严谨性 + Tremor 语义化 + Taste-Skill 工程化
-> 所有间距、字号、颜色、阴影均定义于此。报告模板中**仅允许** `#fff`/`rgba()` 等语义固定色出现在 `:root` 外部，其余色值必须通过 `var(--xxx)` 引用。
+> 所有间距、字号、颜色、阴影均定义于此。可执行模板与报告在 `:root` 外优先通过 `var(--xxx)` 引用；参考文档为解释色板或兼容第三方图表而展示 literal 时，复制到报告前必须映射到已登记 Token，禁止引入无法追溯的裸色值。
 
 ### 目录
 
@@ -21,9 +21,9 @@
 
 ---
 
-## 1. 8pt 间距系统 (Spacing System)
+## 1. 4pt 最小刻度 + 8pt 主布局网格 (Spacing System)
 
-> 原则: 所有间距值必须是 4 的整数倍，以 8pt 为基准步长。禁止 `14px`, `6px`, `20px` 等非标值。
+> 原则：边框、图标微调和小间隔允许 4px 的整数倍；大于 12px 的主布局间距优先使用 8px 整数倍并通过 `--space-*` Token 引用。禁止 `6px`、`14px`、`22px` 等无口径字面量。
 
 ```css
 :root {
@@ -55,26 +55,26 @@
 | 行内图标与文字 | `--space-1` | 4px | SVG icon 与 label 的 gap |
 | Badge 内边距 | `--space-0.5` `--space-2` | 2px 8px | padding: 2px 8px |
 | 表格 cell | `--space-2` `--space-3` | 8px 12px | padding: 8px 12px |
-| 表格 th | `--space-3` | 10px 12px | 略高于 td |
+| 表格 th | `--space-2` `--space-3` | 8px 12px | 与网格刻度一致 |
 | KPI 卡片 padding | `--space-5` `--space-6` | 20px 24px | padding: 20px 24px |
 | 卡片间距 | `--space-6` | 24px | margin-bottom: 24px |
 | 组件间 gap | `--space-4` | 16px | grid gap / flex gap |
 | Section 间 | `--space-8` | 32px | section margin-bottom |
 | **Chapter 间呼吸** | `--space-20` | 80px | **V2: 章节间的视觉留白** |
-| 报告内容 padding | `--space-10` `--space-16` | 40px 64px | padding: 40px 60px |
+| 报告内容 padding | `--space-10` `--space-16` | 40px 64px | `padding: 40px 64px` |
 | 侧边栏 padding | `--space-6` | 24px | padding: 24px 0 |
 
 > 上表像素值为**叙事标准档 (density=1)**; 紧凑档 (`data-density="compact"`) 下间距全部 ×0.6，并叠加组件级版式重组 (见 §2.6)。
 
 ### 2.6 密度轴 (Density Axis) — V2.4 紧凑销售报告风
 
-> 同一套视觉主体 (品牌渐变/语义色/三角色字体/Token)，两种阅读密度。调用 Skill 时由用户二选一。
+> 同一套视觉主体 (品牌渐变/语义色/三角色字体/Token)，两种阅读密度。未指定时使用紧凑档；标准档需显式选择。
 > 紧凑档不是"等比缩小"，而是为「信息密集 · 快速扫读」做的**版式重组**。
 
 | 档位 | 触发方式 | `--density` | 适用场景 | 版式特征 |
 | :--- | :--- | :--- | :--- | :--- |
-| **叙事标准风 (默认)** | `<html lang="zh-CN">` (无属性) | `1` | 高管月报/年报/战略叙事、沉浸式阅读 | 大留白、慢节奏、强 Hero 沉浸 (100vh)、章节间 80px 呼吸 |
-| **紧凑销售报告风** | `<html lang="zh-CN" data-density="compact">` | `0.6` | 销售月报/旬报快速扫读、打印存档、移动端长图、信息密集简报 | Hero 收为 masthead 横幅(结论居左+数字居右)、KPI 换行加密、内容列加宽、Pull Quote 转左线 callout、表格密集行 |
+| **紧凑销售报告风 (默认)** | `<html lang="zh-CN" data-density="compact">` | `0.6` | 销售月报/旬报快速扫读、打印存档、移动端长图、信息密集简报 | Hero 收为 masthead 横幅(结论居左+数字居右)、KPI 换行加密、内容列加宽、Pull Quote 转左线 callout、表格密集行 |
+| **叙事标准风 (显式可选)** | `<html lang="zh-CN">` (移除属性) | `1` | 明确要求的高管月报/年报/战略叙事、沉浸式阅读 | 大留白、慢节奏、强 Hero 沉浸 (100vh)、章节间 80px 呼吸 |
 
 **机制 (CSS 唯一真相源 = `scroll-narrative-skeleton.html`)**:
 - **间距层**: 所有 `--space-*` = `calc(Npx * var(--density, 1))`, 紧凑档 `--density:0.6` 整体收紧 40%；排版刻度下移 (`--text-hero/5xl/4xl/3xl` 缩小, `--leading-relaxed/normal/loose` = 1.5/1.4/1.55)。
@@ -88,11 +88,11 @@
 
 **切换示例**:
 ```html
-<!-- 叙事标准风 (默认, 可省略 data-density) -->
-<html lang="zh-CN">
-
-<!-- 紧凑风 -->
+<!-- 紧凑风 (模板出厂默认) -->
 <html lang="zh-CN" data-density="compact">
+
+<!-- 叙事标准风 (显式移除 data-density) -->
+<html lang="zh-CN">
 ```
 
 ---
@@ -269,7 +269,7 @@
     --brand-deep:    #003566;  /* Hero 渐变中间，KPI 数字色 */
     --brand-mid:     #0353a4;  /* Hero 渐变终点，图表主色 */
     --brand-light:   #006daa;  /* V2 保留: 图表辅助色 */
-    --brand-accent:  #0582ca;  /* 章节号、链接、按钮 */
+    --brand-accent:  #0369a1;  /* 章节号、链接、按钮，白底 AA */
     --brand-faint:   #e8f4fd;  /* V2 新增: 极浅品牌底色 (Tag 背景/高亮行) */
     --brand-muted:   #b8d8e8;  /* V2 新增: 柔和品牌辅助 (分隔线/图表辅助) */
 }
@@ -280,23 +280,23 @@
 ```css
 :root {
     /* === 语义色 — 浅底专用 (Light Mode) === */
-    --semantic-growth:         #059669;  /* 增长/积极 — 沉稳绿 */
+    --semantic-growth:         #047857;  /* 增长/积极 — AA 深绿 */
     --semantic-growth-bg:      #ecfdf5;  /* Badge/卡片底色 */
     --semantic-growth-text:    #065f46;  /* 深色文字(需高对比时) */
 
-    --semantic-risk:           #dc2626;  /* 风险/警告 — 权威红 */
+    --semantic-risk:           #b91c1c;  /* 风险/警告 — AA 深红 */
     --semantic-risk-bg:        #fef2f2;
     --semantic-risk-text:      #991b1b;
 
-    --semantic-opportunity:    #2563eb;  /* 机会/战略 — 深蓝 */
+    --semantic-opportunity:    #1d4ed8;  /* 机会/战略 — AA 深蓝 */
     --semantic-opportunity-bg: #eff6ff;
     --semantic-opportunity-text: #1e40af;
 
-    --semantic-warning:        #f59e0b;  /* 监控/关注 — 琥珀 */
+    --semantic-warning:        #b45309;  /* 监控/关注 — AA 深琥珀 */
     --semantic-warning-bg:     #fffbeb;
     --semantic-warning-text:   #92400e;
 
-    --semantic-neutral:        #64748b;  /* 中性/参考 — 灰 */
+    --semantic-neutral:        #475569;  /* 中性/参考 — AA 深灰 */
     --semantic-neutral-bg:     #f1f5f9;
     --semantic-neutral-text:   #334155;
 
@@ -335,8 +335,8 @@
 
     /* === Text 文字色 === */
     --text-primary:    #1a1a2e;   /* 标题、正文 */
-    --text-secondary:  #64748b;   /* 副标题、说明文字 */
-    --text-tertiary:   #94a3b8;   /* 辅助标签、图表轴标签 */
+    --text-secondary:  #475569;   /* 副标题、说明文字 */
+    --text-tertiary:   #64748b;   /* 辅助标签、图表轴标签，白底 AA */
     --text-inverse:    #f8fafc;   /* V2: 深底上的文字 */
     --text-muted:      #cbd5e1;   /* V2 新增: 极淡文字(装饰性) */
 
@@ -403,7 +403,7 @@
 :root {
     /* === 定性分类色 (最多 6 类) === */
     --chart-1: var(--brand-mid);          /* #0353a4 主系列 */
-    --chart-2: var(--semantic-growth);    /* #059669 第二系列 */
+    --chart-2: var(--semantic-growth);    /* #047857 第二系列 */
     --chart-3: #d97706;                  /* 琥珀 — 第三系列 */
     --chart-4: #7c3aed;                  /* 紫色 — 第四系列 */
     --chart-5: #0891b2;                  /* 青色 — 第五系列 */
@@ -615,12 +615,12 @@
 | 文字色 | 背景色 | 对比度 | AA 状态 |
 |:---|:---|:---|:---|
 | `--text-primary` (#1a1a2e) | `--surface-primary` (#ffffff) | 16.4:1 | Pass |
-| `--text-secondary` (#64748b) | `--surface-primary` (#ffffff) | 4.6:1 | Pass (AA) |
-| `--text-tertiary` (#94a3b8) | `--surface-primary` (#ffffff) | 3.0:1 | 仅装饰性文字 |
+| `--text-secondary` (#475569) | `--surface-primary` (#ffffff) | 7.58:1 | Pass (AA) |
+| `--text-tertiary` (#64748b) | `--surface-primary` (#ffffff) | 4.76:1 | Pass (AA) |
 | `--text-inverse` (#f8fafc) | `--surface-inverse` (#0f172a) | 15.3:1 | Pass |
 | `--semantic-growth-dark` (#6ee7b7) | `--surface-inverse` (#0f172a) | 9.2:1 | Pass |
 | `--semantic-risk-dark` (#fca5a5) | `--surface-inverse` (#0f172a) | 7.1:1 | Pass |
-| `--brand-accent` (#0582ca) | `--surface-primary` (#ffffff) | 4.5:1 | Pass (AA边界) |
+| `--brand-accent` (#0369a1) | `--surface-primary` (#ffffff) | 5.93:1 | Pass (AA) |
 
 ### Focus 状态
 

@@ -1,5 +1,14 @@
 # Chart Patterns V2 — 高级图表组件库
 
+## 快速导航
+
+- [1. 瀑布图](#1-瀑布图-waterfall--revenue-bridge)
+- [2. 子弹图](#2-子弹图-bullet-chart)
+- [3. 横向进度条](#3-横向进度条-progress-bar)
+- [4. Small Multiples](#4-small-multiples-grid)
+- [5. Lollipop](#5-lollipop-chart-棒棒糖图)
+- [6. Slope Chart](#6-slope-chart-斜率图)
+
 > 补充 ECharts 生产级图表模板，覆盖麦肯锡常用的归因分析、目标跟踪、密集对比场景。
 
 ### V2 Token 对齐说明
@@ -397,4 +406,3 @@ function createSlopeChart(domId, items) {
     return chart;
 }
 ```
-

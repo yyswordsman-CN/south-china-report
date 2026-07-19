@@ -1,5 +1,12 @@
 # Anti-Default Discipline — 报告版防默认审美纪律
 
+## 快速导航
+
+- [§1 克制六律](#1-克制六律)
+- [§2 Anti-Default 负面清单](#2-anti-default-负面清单-ai-默认审美陷阱)
+- [§3 Pre-Build 检查](#3-pre-build-检查清单-在写-html-之前)
+- [§4 Post-Build 检查](#4-生成后检查清单-交付-html-之前)
+
 > **目标**: 让 AI 生成的报告看起来不像 AI 生成的。
 > **来源**: 综合 taste-skill Anti-Slop 哲学 + guizang 版式纪律 + 铁幕·Iron 观点驱动
 > **原则**: 每一个默认选择都值得被质疑；只有经过意图确认的选择才是好选择。

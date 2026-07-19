@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "source_contract": {
+    "path": "demo_sales.csv",
+    "html_path": "demo-report/demo_sales.csv",
+    "sha256": "6fed1164095b2bdf221b47f704422eae83e7019b1bbbd506888ecfe012e27720",
+    "synthetic": true,
+    "note": "本源表由 gen_demo_data.py 生成，不含真实业务或客户数据"
+  },
+  "longitudinal_trend": {
+    "start": "2024-01",
+    "end": "2026-06",
+    "note": "报告期仍锁定 2026H1；该配置仅为趋势检验补充历史月度序列"
+  },
+  "evidence_contract": {
+    "p_threshold": 0.05,
+    "concentration_threshold": 45.0,
+    "top_n": 5,
+    "share_total": 100.0
+  },
+  "report_actions": {
+    "review_month": 8,
+    "south_visit_workdays": 7,
+    "south_due_month": 8,
+    "south_due_day": 5,
+    "south_yoy_target": -15.0,
+    "entry_plan_due_month": 7,
+    "entry_target_month": 8,
+    "entry_yoy_target": -20.0,
+    "customer_program_quarter": 3,
+    "pareto_share": 80.0,
+    "current_pareto_customers": 19,
+    "target_pareto_customers": 30,
+    "top5_target": 40.0
+  },
+  "report_modes": {
+    "report.html": "demo-standard-2026-h1",
+    "report-compact.html": "demo-compact-2026-h1"
+  }
+}

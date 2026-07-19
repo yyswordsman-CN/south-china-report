@@ -20,9 +20,22 @@
 用法:
   python3 scripts/stat-insights.py metrics.json [--out insights.json]
       [--cliff -15] [--engine 15] [--material 2] [--shift 1.5] [--zthr 2.5]
+      [--hhi-medium .10] [--hhi-high .18] [--top5-medium 30] [--top5-high 45]
 """
-import argparse, json, math, sys
+import argparse, json, math, os, sys
 from statistics import median
+
+def atomic_write(path, text):
+    target = os.path.abspath(path)
+    os.makedirs(os.path.dirname(target), exist_ok=True)
+    temporary = f"{target}.tmp.{os.getpid()}"
+    try:
+        with open(temporary, 'x', encoding='utf-8') as handle:
+            handle.write(text)
+        os.replace(temporary, target)
+    finally:
+        if os.path.exists(temporary):
+            os.unlink(temporary)
 
 # ---------- 统计原语 ----------
 
@@ -73,7 +86,7 @@ def robust_z(xs):
 
 def yoy_series(trend):
     """由 trend {year(str): [12 月值(万)|None]} 构造跨年逐月 YoY 序列 (时间升序)。
-    仅取相邻两年同月均有值且基期>0 的月份。返回 [(label, yoy%), ...]"""
+    仅取相邻两年同月均有值、基期>0 且当期>=0 的月份。返回 [(label, yoy%), ...]"""
     yrs = sorted(int(y) for y in trend)
     seq = []
     for y in yrs:
@@ -82,18 +95,25 @@ def yoy_series(trend):
             continue
         for m in range(12):
             c, p = trend[str(y)][m], trend[prev][m]
-            if c is None or p is None or p == 0:
+            if c is None or p is None or p <= 0 or c < 0:
                 continue
             seq.append((f"{y}-{m+1:02d}", round((c / p - 1) * 100, 1)))
     return seq
 
 def trailing_negative_run(seq):
+    """只统计末端日历连续的负增长月；缺月立即中断，不把 1 月+3 月说成连续两月。"""
     run = 0
-    for _, v in reversed(seq):
-        if v < 0:
-            run += 1
-        else:
+    previous_index = None
+    for label, value in reversed(seq):
+        try:
+            year, month = (int(x) for x in label.split('-', 1))
+            month_index = year * 12 + month - 1
+        except (ValueError, AttributeError):
             break
+        if value >= 0 or (previous_index is not None and month_index != previous_index - 1):
+            break
+        run += 1
+        previous_index = month_index
     return run
 
 # ---------- 主流程 ----------
@@ -106,18 +126,39 @@ def main():
     ap.add_argument('--material', type=float, default=2, help="重要性门槛: 当期份额%% (默认 2, 弱信号不进清单)")
     ap.add_argument('--shift', type=float, default=1.5, help="结构位移阈值: 份额变动 pp (默认 1.5)")
     ap.add_argument('--zthr', type=float, default=2.5, help="异常月稳健Z阈值 (默认 2.5)")
+    ap.add_argument('--hhi-medium', type=float, default=0.10, help="HHI 中度集中下限 (默认 0.10)")
+    ap.add_argument('--hhi-high', type=float, default=0.18, help="HHI 高集中下限 (默认 0.18)")
+    ap.add_argument('--top5-medium', type=float, default=30, help="客户 Top5 中风险下限%% (默认 30)")
+    ap.add_argument('--top5-high', type=float, default=45, help="客户 Top5 高风险下限%% (默认 45)")
     a = ap.parse_args()
+    if not 0 <= a.hhi_medium < a.hhi_high <= 1:
+        ap.error("HHI 阈值必须满足 0 <= medium < high <= 1")
+    if not 0 <= a.top5_medium < a.top5_high <= 100:
+        ap.error("Top5 阈值必须满足 0 <= medium < high <= 100")
 
-    M = json.load(open(a.metrics, encoding='utf-8'))
+    try:
+        with open(a.metrics, encoding='utf-8') as handle:
+            M = json.load(handle)
+    except (OSError, json.JSONDecodeError) as exc:
+        print(f"[REFUSED] 无法读取有效 metrics.json: {exc}")
+        sys.exit(2)
     status = (M.get('data_status') or {}).get('status')
     if status == 'BLOCKED':
         print("[REFUSED] metrics.json 为 BLOCKED — 脏数据上不做统计, 先按 quality.md 修数")
         sys.exit(2)
+    if status not in {'OK', 'WARN'}:
+        print(f"[REFUSED] data_status.status 缺失或未知: {status!r}")
+        sys.exit(2)
+    if M.get('schema_version') != '1.0' or not isinstance(M.get('period'), dict) or not (M.get('meta') or {}).get('period_lock'):
+        print("[REFUSED] metrics schema 不完整：要求 schema_version=1.0、period 对象与 meta.period_lock")
+        sys.exit(2)
 
-    out = {"meta": {"source_metrics": a.metrics, "generated_by": "stat-insights.py",
+    out = {"meta": {"source_metrics": os.path.basename(a.metrics), "generated_by": "stat-insights.py",
                     "thresholds": {"cliff_yoy": a.cliff, "engine_yoy": a.engine,
                                    "material_share": a.material, "share_shift_pp": a.shift,
-                                   "anomaly_robust_z": a.zthr},
+                                   "anomaly_robust_z": a.zthr, "hhi_medium": a.hhi_medium,
+                                   "hhi_high": a.hhi_high, "top5_medium": a.top5_medium,
+                                   "top5_high": a.top5_high},
                     "metrics_status": status},
            "_discipline": "洞察从本文件引用; 显著性以 significant 为准, 非显著禁写'趋势确立'; 无目标数据不谈达成缺口"}
     problems = []
@@ -149,6 +190,8 @@ def main():
                 problems.append({"type": "异常月", "object": x['month'],
                                  "evidence": f"YoY={x['yoy']}%, 稳健Z={x['robust_z']} (|z|>={a.zthr})",
                                  "impact_wan": None})
+        else:
+            out['trend_test'] = {"skipped": "锁定期间内无相邻年份的有效可比月"}
     else:
         out['trend_test'] = {"skipped": "无 trend (数据<2年), 不做趋势/异常/连续下滑检验 — 与 prep-source 单年降级一致"}
 
@@ -162,15 +205,15 @@ def main():
         if shares:
             hhi = round(sum((s / 100) ** 2 for s in shares), 3)
             scan['hhi'] = {"value": hhi,
-                           "level": "高集中" if hhi > 0.18 else ("中度集中" if hhi >= 0.10 else "分散"),
-                           "_note": "阈值沿用 0.10/0.18 (HHI 通用分级)"}
+                           "level": "高集中" if hhi >= a.hhi_high else ("中度集中" if hhi >= a.hhi_medium else "分散"),
+                           "_note": f"启发式阈值可配置: 中度>={a.hhi_medium}, 高>={a.hhi_high}"}
         for r in rows:
             yoy, share = r.get('yoy'), r.get('share')
             ac, ab = r.get('amount_cur_wan'), r.get('amount_base_wan')
             entry = {"name": r['name'], "yoy": yoy, "share": share}
             if ac is not None and ab is not None and tp:
-                entry["delta_wan"] = round(ac - ab, 1)
-                entry["contribution_pp"] = round((ac - ab) / tp * 100, 1)  # 对总增速的拉动/拖累(百分点)
+                entry["delta_wan"] = r.get('delta_wan', round(ac - ab, 1))
+                entry["contribution_pp"] = r.get('contribution_pp', round((ac - ab) / tp * 100, 1))
                 base_share = round(ab / tp * 100, 1)
                 entry["share_shift_pp"] = round((share - base_share), 1) if share is not None else None
                 scan['contributions'].append({k: entry[k] for k in
@@ -194,24 +237,34 @@ def main():
 
     # 5 集中度风险 (复述 metrics 口径 + 分级)
     conc = M.get('concentration')
-    if conc:
+    if conc and conc.get('status') == 'BLOCKED':
+        out['concentration_risk'] = {**conc, "level": None,
+                                     "_note": conc.get('_caveat') or "集中度质量门禁未通过"}
+    elif conc:
         top5 = conc.get('top5_share')
-        level = "高" if (top5 or 0) > 45 else ("中" if (top5 or 0) > 30 else "低")
+        level = "高" if (top5 or 0) >= a.top5_high else ("中" if (top5 or 0) >= a.top5_medium else "低")
         out['concentration_risk'] = {**conc, "level": level,
-                                     "_note": "Top5>45% 判高 (沿用 prep-source 阈值); 高集中建议成风险章"}
+                                     "_note": f"启发式阈值可配置: 中>={a.top5_medium}%, 高>={a.top5_high}%"}
         if level == "高":
             problems.append({"type": "客户集中度风险", "object": "客户结构",
-                             "evidence": f"Top5 占比 {top5}% (>45%), 前 {conc.get('pareto_n80')} 户贡献 80%",
+                             "evidence": f"Top5 占比 {top5}% (>={a.top5_high}%), 前 {conc.get('pareto_n80')} 户贡献 80%",
                              "impact_wan": None})
 
     # 6 量价象限
     pvm = period.get('pvm')
     if pvm is not None and period.get('qty_yoy') is not None and period.get('price_yoy') is not None:
+        if pvm.get('status') == 'BLOCKED' or pvm.get('_caveat'):
+            out['pvm_quadrant'] = {"status": "BLOCKED", "qty_yoy": period['qty_yoy'],
+                                   "price_yoy": period['price_yoy'], "quadrant": None,
+                                   "_caveat": pvm.get('_caveat') or "PVM 质量门禁未通过",
+                                   "_note": "量价强结论已禁止，不进入问题清单"}
+            pvm = None
+    if pvm is not None and period.get('qty_yoy') is not None and period.get('price_yoy') is not None:
         q, p = period['qty_yoy'], period['price_yoy']
         quad = ("量价齐升" if q >= 0 and p >= 0 else
                 "量增价减" if q >= 0 else
                 "量减价升" if p >= 0 else "量价齐跌")
-        out['pvm_quadrant'] = {"qty_yoy": q, "price_yoy": p, "quadrant": quad,
+        out['pvm_quadrant'] = {"status": "OK", "qty_yoy": q, "price_yoy": p, "quadrant": quad,
                                "vol_wan": pvm.get('vol_wan'), "price_mix_wan": pvm.get('price_mix_wan'),
                                "_note": pvm.get('_note'), **({"_caveat": pvm['_caveat']} if '_caveat' in pvm else {})}
         if quad == "量价齐跌":
@@ -226,7 +279,7 @@ def main():
         p['action_frame'] = "按 PAC 出对策: 对象+动作+期限+验证指标 (由报告作者结合业务补全, 脚本不代拟具体动作)"
     out['problem_list'] = with_amt + without
 
-    json.dump(out, open(a.out, 'w', encoding='utf-8'), ensure_ascii=False, indent=1, allow_nan=False)
+    atomic_write(a.out, json.dumps(out, ensure_ascii=False, indent=1, allow_nan=False))
 
     # 人读摘要 insights.md
     md = [f"# 统计洞察摘要 — {a.out}", ""]
@@ -239,7 +292,10 @@ def main():
     else:
         md.append(f"- 趋势检验: 跳过 ({tt.get('skipped', '无序列')})")
     if 'pvm_quadrant' in out:
-        md.append(f"- 量价象限: {out['pvm_quadrant']['quadrant']} (量 {out['pvm_quadrant']['qty_yoy']}% / 价 {out['pvm_quadrant']['price_yoy']}%)")
+        if out['pvm_quadrant'].get('status') == 'BLOCKED':
+            md.append(f"- 量价象限: BLOCKED ({out['pvm_quadrant'].get('_caveat')})")
+        else:
+            md.append(f"- 量价象限: {out['pvm_quadrant']['quadrant']} (量 {out['pvm_quadrant']['qty_yoy']}% / 价 {out['pvm_quadrant']['price_yoy']}%)")
     for dim, scan in (out.get('dimension_scan') or {}).items():
         frag = []
         if scan.get('cliffs'):
@@ -254,7 +310,7 @@ def main():
     md.append(f"- 问题清单: {len(out['problem_list'])} 条 (含影响金额的已按 |万| 降序)")
     md.append("")
     md.append("> 纪律: 显著性以 mann_kendall.significant 为准; n<8 只报方向; 无目标数据不谈达成缺口。")
-    open(a.out.replace('.json', '') + '.md', 'w', encoding='utf-8').write("\n".join(md))
+    atomic_write(a.out.replace('.json', '') + '.md', "\n".join(md))
     print(f"[OK] insights → {a.out}  |  摘要 → {a.out.replace('.json', '')}.md  |  问题 {len(out['problem_list'])} 条")
 
 def _mk_reading(mk):

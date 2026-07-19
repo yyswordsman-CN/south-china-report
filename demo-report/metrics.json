@@ -1,10 +1,32 @@
 {
+ "schema_version": "1.0",
  "meta": {
   "source": "demo_sales.csv",
+  "source_origin": "map",
+  "source_kind": "csv",
+  "source_path": "demo_sales.csv",
+  "source_sha256": "6fed1164095b2bdf221b47f704422eae83e7019b1bbbd506888ecfe012e27720",
+  "source_fingerprint_scope": "source_file_snapshot",
   "rows": 10800,
+  "current_rows": 2160,
+  "base_rows": 2160,
   "amount_field": "签收额",
-  "period": "2026-01~06 vs 2025 同期",
+  "period": "2026H1",
   "generated_by": "prep-source.py",
+  "thresholds": {
+   "time_parse_block_pct": 5.0,
+   "amount_parse_block_pct": 5.0,
+   "customer_top5_high": 45.0
+  },
+  "period_lock": {
+   "label": "2026H1",
+   "start": "2026-01-01",
+   "end": "2026-06-30",
+   "base_start": "2025-01-01",
+   "base_end": "2025-06-30",
+   "granularity": "half",
+   "inferred": false
+  },
   "yoy": {
    "current_year": 2026,
    "base_year": 2025,
@@ -16,123 +38,207 @@
     5,
     6
    ],
-   "granularity": "month",
-   "adjacent": true
+   "granularity": "half",
+   "adjacent": true,
+   "available": true
   },
-  "share_caliber": "当期(与YoY同口径)"
+  "share_caliber": "锁定当期",
+  "demo_build": {
+   "builder": "scripts/build-demo.py",
+   "map": "map.json",
+   "map_sha256": "726c206665477b5c9c8786eb0edd16d496b0c31774de810dedadd7983937407b",
+   "enrichment": "enrichment.json",
+   "enrichment_sha256": "f4a403151a309c0a23dff88f7e375255c0d56193157f3f43991c7849111db9c2",
+   "source_contract_verified": true,
+   "synthetic_source": true,
+   "longitudinal_trend": {
+    "start": "2024-01",
+    "end": "2026-06",
+    "note": "报告期仍锁定 2026H1；该配置仅为趋势检验补充历史月度序列"
+   }
+  }
  },
- "total": 310755148.36,
+ "total": 63719618.72,
  "dimensions": {
   "战区": [
    {
     "name": "北区",
-    "amount_wan": 7768.9,
-    "share": 25.0,
-    "yoy": -12.6,
+    "amount": 15929904.67,
+    "amount_wan": 1593.0,
+    "amount_cur": 15929904.67,
     "amount_cur_wan": 1593.0,
-    "amount_base_wan": 1823.1
-   },
-   {
-    "name": "南区",
-    "amount_wan": 7322.8,
-    "share": 18.0,
-    "yoy": -37.1,
-    "amount_cur_wan": 1147.0,
-    "amount_base_wan": 1823.1
-   },
-   {
-    "name": "西区",
-    "amount_wan": 6215.1,
-    "share": 20.0,
+    "share": 25.0,
+    "amount_base": 18231252.53,
+    "amount_base_wan": 1823.1,
     "yoy": -12.6,
-    "amount_cur_wan": 1274.4,
-    "amount_base_wan": 1458.5
+    "delta": -2301347.86,
+    "delta_wan": -230.1,
+    "contribution_pp": -3.2
    },
    {
     "name": "东区",
-    "amount_wan": 4979.9,
-    "share": 20.0,
-    "yoy": 16.5,
+    "amount": 12743923.76,
+    "amount_wan": 1274.4,
+    "amount_cur": 12743923.76,
     "amount_cur_wan": 1274.4,
-    "amount_base_wan": 1093.9
+    "share": 20.0,
+    "amount_base": 10938751.52,
+    "amount_base_wan": 1093.9,
+    "yoy": 16.5,
+    "delta": 1805172.24,
+    "delta_wan": 180.5,
+    "contribution_pp": 2.5
+   },
+   {
+    "name": "西区",
+    "amount": 12743923.76,
+    "amount_wan": 1274.4,
+    "amount_cur": 12743923.76,
+    "amount_cur_wan": 1274.4,
+    "share": 20.0,
+    "amount_base": 14585002.02,
+    "amount_base_wan": 1458.5,
+    "yoy": -12.6,
+    "delta": -1841078.26,
+    "delta_wan": -184.1,
+    "contribution_pp": -2.5
+   },
+   {
+    "name": "南区",
+    "amount": 11469531.39,
+    "amount_wan": 1147.0,
+    "amount_cur": 11469531.39,
+    "amount_cur_wan": 1147.0,
+    "share": 18.0,
+    "amount_base": 18231252.53,
+    "amount_base_wan": 1823.1,
+    "yoy": -37.1,
+    "delta": -6761721.14,
+    "delta_wan": -676.2,
+    "contribution_pp": -9.3
    },
    {
     "name": "中区",
-    "amount_wan": 4788.8,
-    "share": 17.0,
-    "yoy": -1.0,
+    "amount": 10832335.14,
+    "amount_wan": 1083.2,
+    "amount_cur": 10832335.14,
     "amount_cur_wan": 1083.2,
-    "amount_base_wan": 1093.9
+    "share": 17.0,
+    "amount_base": 10938751.52,
+    "amount_base_wan": 1093.9,
+    "yoy": -1.0,
+    "delta": -106416.38,
+    "delta_wan": -10.6,
+    "contribution_pp": -0.1
    }
   ],
   "品类": [
    {
     "name": "主力系列",
-    "amount_wan": 14916.2,
-    "share": 48.0,
-    "yoy": -12.6,
+    "amount": 30585417.07,
+    "amount_wan": 3058.5,
+    "amount_cur": 30585417.07,
     "amount_cur_wan": 3058.5,
-    "amount_base_wan": 3500.4
-   },
-   {
-    "name": "入门系列",
-    "amount_wan": 8812.9,
-    "share": 22.0,
-    "yoy": -35.9,
-    "amount_cur_wan": 1401.8,
-    "amount_base_wan": 2187.8
+    "share": 48.0,
+    "amount_base": 35004004.88,
+    "amount_base_wan": 3500.4,
+    "yoy": -12.6,
+    "delta": -4418587.81,
+    "delta_wan": -441.9,
+    "contribution_pp": -6.1
    },
    {
     "name": "旗舰系列",
-    "amount_wan": 7346.4,
-    "share": 30.0,
-    "yoy": 19.2,
+    "amount": 19115885.6,
+    "amount_wan": 1911.6,
+    "amount_cur": 19115885.6,
     "amount_cur_wan": 1911.6,
-    "amount_base_wan": 1604.4
+    "share": 30.0,
+    "amount_base": 16043502.16,
+    "amount_base_wan": 1604.4,
+    "yoy": 19.2,
+    "delta": 3072383.44,
+    "delta_wan": 307.2,
+    "contribution_pp": 4.2
+   },
+   {
+    "name": "入门系列",
+    "amount": 14018316.05,
+    "amount_wan": 1401.8,
+    "amount_cur": 14018316.05,
+    "amount_cur_wan": 1401.8,
+    "share": 22.0,
+    "amount_base": 21877503.08,
+    "amount_base_wan": 2187.8,
+    "yoy": -35.9,
+    "delta": -7859187.03,
+    "delta_wan": -785.9,
+    "contribution_pp": -10.8
    }
   ],
   "渠道": [
    {
     "name": "KA",
-    "amount_wan": 12366.5,
-    "share": 39.0,
-    "yoy": -14.8,
+    "amount": 24850651.19,
+    "amount_wan": 2485.1,
+    "amount_cur": 24850651.19,
     "amount_cur_wan": 2485.1,
-    "amount_base_wan": 2917.0
+    "share": 39.0,
+    "amount_base": 29170004.07,
+    "amount_base_wan": 2917.0,
+    "yoy": -14.8,
+    "delta": -4319352.88,
+    "delta_wan": -431.9,
+    "contribution_pp": -5.9
    },
    {
     "name": "电商",
-    "amount_wan": 9870.5,
-    "share": 38.0,
-    "yoy": 3.8,
+    "amount": 24213455.2,
+    "amount_wan": 2421.3,
+    "amount_cur": 24213455.2,
     "amount_cur_wan": 2421.3,
-    "amount_base_wan": 2333.6
+    "share": 38.0,
+    "amount_base": 23336003.24,
+    "amount_base_wan": 2333.6,
+    "yoy": 3.8,
+    "delta": 877451.96,
+    "delta_wan": 87.7,
+    "contribution_pp": 1.2
    },
    {
     "name": "传统",
-    "amount_wan": 8838.5,
-    "share": 23.0,
-    "yoy": -28.2,
+    "amount": 14655512.33,
+    "amount_wan": 1465.6,
+    "amount_cur": 14655512.33,
     "amount_cur_wan": 1465.6,
-    "amount_base_wan": 2041.9
+    "share": 23.0,
+    "amount_base": 20419002.81,
+    "amount_base_wan": 2041.9,
+    "yoy": -28.2,
+    "delta": -5763490.48,
+    "delta_wan": -576.3,
+    "contribution_pp": -7.9
    }
   ]
  },
- "_discipline": "报告数字一律从本文件抄，勿手敲",
+ "_discipline": "报告数字一律从本文件抄，勿手敲; 所有份额/排名/同比共用 meta.period_lock",
  "period": {
   "total_cur_wan": 6372.0,
+  "total_cur": 63719618.72,
   "total_base_wan": 7292.5,
+  "total_base": 72925010.12,
   "total_yoy": -12.6,
   "qty_cur": 20792,
   "qty_yoy": -18.5,
   "price_cur": 3065,
   "price_yoy": 7.2,
   "pvm": {
+   "status": "OK",
    "base_wan": 7292.5,
+   "cur_wan": 6372.0,
    "vol_wan": -1349.9,
    "price_mix_wan": 429.4,
-   "cur_wan": 6372.0,
-   "_note": "price_mix_wan = 总额差 − 量效应 = 价格效应 + 产品结构/mix (混合均价法, 多SKU时非纯价; 瀑布图标签应写'价+结构')"
+   "_note": "price_mix_wan = 总额差 − 量效应 = 价格效应 + 产品结构/mix"
   }
  },
  "trend": {
@@ -180,12 +286,16 @@
   ]
  },
  "concentration_scope": {
-  "period": "当期"
+  "period": "锁定当期"
  },
  "concentration": {
+  "status": "OK",
   "customers": 40,
+  "customer_coverage": 100.0,
+  "coverage_threshold": 80.0,
   "top5_share": 48.0,
   "top10_share": 64.0,
+  "top5_share_identified": 48.0,
   "pareto_n50": 6,
   "pareto_n80": 19,
   "top5_wan": [
@@ -200,8 +310,243 @@
   "status": "WARN",
   "errors": [],
   "warnings": [
-   "客户集中度高(Top5=48.0%), 建议成风险章"
+   "客户集中度高(Top5=48.0%>45.0%), 建议成风险章"
   ],
   "passed": []
+ },
+ "report_evidence": {
+  "period": {
+   "current_year": 2026,
+   "base_year": 2025,
+   "start_month": 1,
+   "end_month": 6,
+   "first_missing_month": 7
+  },
+  "trend": {
+   "comparable_months": 18,
+   "mann_kendall_z": -5.45,
+   "p_threshold": 0.05,
+   "trailing_negative_months": 5,
+   "anomaly_month": 2,
+   "anomaly_yoy": -45.0,
+   "anomaly_robust_z": -2.95
+  },
+  "income_gap_wan": 920.5,
+  "magnitude": {
+   "total_yoy": 12.6,
+   "qty_yoy": 18.5,
+   "south_contribution_pp": 9.3,
+   "entry_contribution_pp": 10.8
+  },
+  "contribution_pp": {
+   "北区": -3.2,
+   "西区": -2.5,
+   "东区": 2.5,
+   "南区": -9.3,
+   "中区": -0.1,
+   "合计": -12.6,
+   "入门系列": -10.8
+  },
+  "share_shift_pp": {
+   "北区": 0.0,
+   "东区": 5.0,
+   "西区": 0.0,
+   "南区": -7.0,
+   "中区": 2.0,
+   "主力系列": 0.0,
+   "旗舰系列": 8.0,
+   "入门系列": -8.0,
+   "KA": -1.0,
+   "电商": 6.0,
+   "传统": -5.0
+  },
+  "base_share_pct": {
+   "主力系列": 48.0,
+   "旗舰系列": 22.0,
+   "入门系列": 30.0
+  },
+  "decline_wan": {
+   "南区": 676.2
+  },
+  "concentration_threshold": 45.0,
+  "share_total": 100.0,
+  "top_n": 5,
+  "dimensions": {
+   "战区": {
+    "北区": {
+     "name": "北区",
+     "amount": 15929904.67,
+     "amount_wan": 1593.0,
+     "amount_cur": 15929904.67,
+     "amount_cur_wan": 1593.0,
+     "share": 25.0,
+     "amount_base": 18231252.53,
+     "amount_base_wan": 1823.1,
+     "yoy": -12.6,
+     "delta": -2301347.86,
+     "delta_wan": -230.1,
+     "contribution_pp": -3.2
+    },
+    "东区": {
+     "name": "东区",
+     "amount": 12743923.76,
+     "amount_wan": 1274.4,
+     "amount_cur": 12743923.76,
+     "amount_cur_wan": 1274.4,
+     "share": 20.0,
+     "amount_base": 10938751.52,
+     "amount_base_wan": 1093.9,
+     "yoy": 16.5,
+     "delta": 1805172.24,
+     "delta_wan": 180.5,
+     "contribution_pp": 2.5
+    },
+    "西区": {
+     "name": "西区",
+     "amount": 12743923.76,
+     "amount_wan": 1274.4,
+     "amount_cur": 12743923.76,
+     "amount_cur_wan": 1274.4,
+     "share": 20.0,
+     "amount_base": 14585002.02,
+     "amount_base_wan": 1458.5,
+     "yoy": -12.6,
+     "delta": -1841078.26,
+     "delta_wan": -184.1,
+     "contribution_pp": -2.5
+    },
+    "南区": {
+     "name": "南区",
+     "amount": 11469531.39,
+     "amount_wan": 1147.0,
+     "amount_cur": 11469531.39,
+     "amount_cur_wan": 1147.0,
+     "share": 18.0,
+     "amount_base": 18231252.53,
+     "amount_base_wan": 1823.1,
+     "yoy": -37.1,
+     "delta": -6761721.14,
+     "delta_wan": -676.2,
+     "contribution_pp": -9.3
+    },
+    "中区": {
+     "name": "中区",
+     "amount": 10832335.14,
+     "amount_wan": 1083.2,
+     "amount_cur": 10832335.14,
+     "amount_cur_wan": 1083.2,
+     "share": 17.0,
+     "amount_base": 10938751.52,
+     "amount_base_wan": 1093.9,
+     "yoy": -1.0,
+     "delta": -106416.38,
+     "delta_wan": -10.6,
+     "contribution_pp": -0.1
+    }
+   },
+   "品类": {
+    "主力系列": {
+     "name": "主力系列",
+     "amount": 30585417.07,
+     "amount_wan": 3058.5,
+     "amount_cur": 30585417.07,
+     "amount_cur_wan": 3058.5,
+     "share": 48.0,
+     "amount_base": 35004004.88,
+     "amount_base_wan": 3500.4,
+     "yoy": -12.6,
+     "delta": -4418587.81,
+     "delta_wan": -441.9,
+     "contribution_pp": -6.1
+    },
+    "旗舰系列": {
+     "name": "旗舰系列",
+     "amount": 19115885.6,
+     "amount_wan": 1911.6,
+     "amount_cur": 19115885.6,
+     "amount_cur_wan": 1911.6,
+     "share": 30.0,
+     "amount_base": 16043502.16,
+     "amount_base_wan": 1604.4,
+     "yoy": 19.2,
+     "delta": 3072383.44,
+     "delta_wan": 307.2,
+     "contribution_pp": 4.2
+    },
+    "入门系列": {
+     "name": "入门系列",
+     "amount": 14018316.05,
+     "amount_wan": 1401.8,
+     "amount_cur": 14018316.05,
+     "amount_cur_wan": 1401.8,
+     "share": 22.0,
+     "amount_base": 21877503.08,
+     "amount_base_wan": 2187.8,
+     "yoy": -35.9,
+     "delta": -7859187.03,
+     "delta_wan": -785.9,
+     "contribution_pp": -10.8
+    }
+   },
+   "渠道": {
+    "KA": {
+     "name": "KA",
+     "amount": 24850651.19,
+     "amount_wan": 2485.1,
+     "amount_cur": 24850651.19,
+     "amount_cur_wan": 2485.1,
+     "share": 39.0,
+     "amount_base": 29170004.07,
+     "amount_base_wan": 2917.0,
+     "yoy": -14.8,
+     "delta": -4319352.88,
+     "delta_wan": -431.9,
+     "contribution_pp": -5.9
+    },
+    "电商": {
+     "name": "电商",
+     "amount": 24213455.2,
+     "amount_wan": 2421.3,
+     "amount_cur": 24213455.2,
+     "amount_cur_wan": 2421.3,
+     "share": 38.0,
+     "amount_base": 23336003.24,
+     "amount_base_wan": 2333.6,
+     "yoy": 3.8,
+     "delta": 877451.96,
+     "delta_wan": 87.7,
+     "contribution_pp": 1.2
+    },
+    "传统": {
+     "name": "传统",
+     "amount": 14655512.33,
+     "amount_wan": 1465.6,
+     "amount_cur": 14655512.33,
+     "amount_cur_wan": 1465.6,
+     "share": 23.0,
+     "amount_base": 20419002.81,
+     "amount_base_wan": 2041.9,
+     "yoy": -28.2,
+     "delta": -5763490.48,
+     "delta_wan": -576.3,
+     "contribution_pp": -7.9
+    }
+   }
+  }
+ },
+ "report_actions": {
+  "review_month": 8,
+  "south_visit_workdays": 7,
+  "south_due_month": 8,
+  "south_due_day": 5,
+  "south_yoy_target": -15.0,
+  "entry_plan_due_month": 7,
+  "entry_target_month": 8,
+  "entry_yoy_target": -20.0,
+  "customer_program_quarter": 3,
+  "pareto_share": 80.0,
+  "current_pareto_customers": 19,
+  "target_pareto_customers": 30,
+  "top5_target": 40.0
  }
 }

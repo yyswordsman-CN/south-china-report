@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-density="compact">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,7 +17,7 @@
         /* ========== V2 Design Tokens ========== */
         :root {
             /* === Spacing (8pt grid) — 密度轴: 由 --density 缩放 ===
-                 <html data-density="compact"> 时 --density=0.6, 全间距自动收紧 */
+                 模板出厂即带 data-density="compact", 默认 --density=0.6; 显式标准档移除属性 */
             --density: 1;
             --space-1:   calc(4px  * var(--density));
             --space-2:   calc(8px  * var(--density));
@@ -34,9 +34,9 @@
             --text-3xl: clamp(28px, 3.5vw, 36px);
             --text-hero: clamp(36px, 5vw, 56px);
 
-            --font-display: 'Plus Jakarta Sans','Noto Sans SC',sans-serif;
-            --font-editorial: 'DM Sans','Noto Sans SC',-apple-system,sans-serif;
-            --font-data: 'JetBrains Mono','SF Mono','Fira Code',monospace;
+            --font-display: 'Plus Jakarta Sans','Noto Sans SC','PingFang SC','Microsoft YaHei',ui-sans-serif,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+            --font-editorial: 'DM Sans','Noto Sans SC','PingFang SC','Microsoft YaHei',ui-sans-serif,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+            --font-data: 'JetBrains Mono','SFMono-Regular','SF Mono',Menlo,Consolas,'Liberation Mono',monospace;
 
             --fw-normal: 400; --fw-medium: 500; --fw-semibold: 600; --fw-bold: 700; --fw-extrabold: 800; --fw-black: 900;
             /* Leading: 与字号反向 (Apple §15) */
@@ -50,27 +50,29 @@
             --brand-deepest: #001d3d;
             --brand-deep: #003566;
             --brand-mid: #0353a4;
-            --brand-accent: #0582ca;
+            --brand-accent: #0369a1;
             --brand-light: #006daa;
             --brand-faint: #e8f4fd;
 
-            --semantic-growth: #059669;
+            --semantic-growth: #047857;
             --semantic-growth-bg: #ecfdf5;
-            --semantic-risk: #dc2626;
+            --semantic-risk: #b91c1c;
             --semantic-risk-bg: #fef2f2;
-            --semantic-opportunity: #2563eb;
+            --semantic-opportunity: #1d4ed8;
             --semantic-opportunity-bg: #eff6ff;
-            --semantic-warning: #f59e0b;
+            --semantic-warning: #b45309;
             --semantic-warning-bg: #fffbeb;
-            --semantic-neutral: #64748b;
+            --semantic-neutral: #475569;
             --semantic-neutral-bg: #f1f5f9;
+            --semantic-growth-dark: #6ee7b7;
+            --semantic-risk-dark: #fca5a5;
 
             --surface-primary: #ffffff;
             --surface-secondary: #f8fafc;
             --surface-tertiary: #f1f5f9;
             --text-primary: #1a1a2e;
-            --text-secondary: #64748b;
-            --text-tertiary: #94a3b8;
+            --text-secondary: #475569;
+            --text-tertiary: #64748b;
             --text-inverse: #f8fafc;
             --border-default: #e2e8f0;
             --border-subtle: #f1f5f9;
@@ -102,11 +104,11 @@
         }
 
         /* ========== 密度轴: 紧凑档 (density 对齐 V2.4 = 0.6) ==========
-           叙事标准档 (默认, density=1) 即"大公司财报叙事风": 大留白、慢节奏、强沉浸。
-           紧凑档 (data-density="compact", density=0.6): 本模板仅做间距/行高/标题尺度的
+           叙事标准档 (显式可选, density=1) 即"大公司财报叙事风": 大留白、慢节奏、强沉浸。
+           紧凑档 (出厂默认, data-density="compact", density=0.6): 本模板仅做间距/行高/标题尺度的
            等比收紧 (spacing-only), 不含 scroll-narrative 的组件级版式重组 (masthead/KPI 加密/
            左线 callout/密集表格)。如需完整紧凑销售报告风版式, 用 scroll-narrative 模板。
-           切换: <html lang="zh-CN" data-density="compact">                                    */
+           默认紧凑；显式标准风移除 data-density 属性。                                      */
         :root[data-density="compact"] {
             --density: 0.6;
             --text-hero:  clamp(30px, 4vw, 46px);
@@ -119,7 +121,7 @@
 
         /* ========== Base ========== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { height: 100%; text-size-adjust: 100%; -webkit-text-size-adjust: 100%; }
+        html { height: 100%; max-width: 100%; text-size-adjust: 100%; -webkit-text-size-adjust: 100%; }
         body {
             font-family: var(--font-editorial);
             background: var(--surface-secondary);
@@ -129,6 +131,8 @@
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             font-optical-sizing: auto;
+            max-width: 100%;
+            overflow-x: clip;
         }
 
         /* ========== Brief Container ========== */
@@ -157,6 +161,7 @@
         .brief-title {
             font-family: var(--font-display); font-size: var(--text-2xl);
             font-weight: 800; letter-spacing: var(--tracking-tight); line-height: 1.2;
+            text-wrap: balance; overflow-wrap: anywhere;
         }
         .brief-subtitle {
             font-size: var(--text-sm); color: var(--text-secondary); margin-top: var(--space-1);
@@ -183,6 +188,7 @@
             display: flex; flex-direction: column;
             transition: box-shadow var(--duration-fast) var(--ease-productive);
             overflow: hidden;
+            min-width: 0;
         }
         .bento-tile:hover { box-shadow: var(--shadow-md); }
 
@@ -202,6 +208,8 @@
         .tile-dark .tile-label { color: rgba(255,255,255,0.6); }
         .tile-dark .tile-value { color: var(--text-inverse); }
         .tile-dark .tile-desc  { color: rgba(255,255,255,0.7); }
+        .tile-dark .tile-change.up { color: var(--semantic-growth-dark); }
+        .tile-dark .tile-change.down { color: var(--semantic-risk-dark); }
 
         /* === Tile Inner Elements === */
         .tile-label {
@@ -258,6 +266,10 @@
 
         /* === Mini Table === */
         .mini-table { width: 100%; border-collapse: collapse; font-size: var(--text-xs); }
+        .table-scroll {
+            width: 100%; max-width: 100%; overflow-x: auto;
+            overscroll-behavior-inline: contain; -webkit-overflow-scrolling: touch;
+        }
         .mini-table th {
             text-align: left; font-weight: 600; color: var(--text-tertiary);
             padding: var(--space-1) var(--space-2); border-bottom: 1px solid var(--border-default);
@@ -295,6 +307,10 @@
             .tile-quarter, .tile-full { grid-column: span 1; }
             .brief-header { flex-direction: column; gap: var(--space-3); }
             .brief-meta { text-align: left; }
+            .brief { width: 100%; max-width: 100%; min-width: 0; padding-inline: var(--space-4); }
+            .brief-header, .bento, .bento-tile { width: 100%; max-width: 100%; min-width: 0; }
+            .mini-table { min-width: 440px; }
+            .audit-strip { flex-wrap: wrap; }
         }
 
         /* === Apple §12 材质系统: 玻璃表面复用类 === */
@@ -335,9 +351,24 @@
     </style>
 </head>
 <body>
-    <div class="brief">
+    <!-- 报告可审计契约：生成成品时必须用实际期间、源文件指纹与关键指标整体替换。 -->
+    <script type="application/json" id="south-china-report-meta">
+    {
+      "requested_period": "[REQUESTED_PERIOD]",
+      "source": {
+        "path": "[SOURCE_PATH]",
+        "sha256": "[SOURCE_SHA256]"
+      },
+      "report_mode": "bento-brief",
+      "key_metrics": {
+        "[METRIC_PATH]": null
+      },
+      "metrics_sha256": "[METRICS_SHA256]"
+    }
+    </script>
+    <main class="brief" id="main-content">
         <!-- Header -->
-        <div class="brief-header reveal">
+        <div class="brief-header reveal" data-snap="brief-header">
             <div class="brief-title-group">
                 <div class="brief-badge">EXECUTIVE BRIEF</div>
                 <h1 class="brief-title">逆势突围，结构领跑</h1>
@@ -353,8 +384,8 @@
         <!-- Bento Grid -->
         <div class="bento">
             <!-- Hero Tile: 核心数字 -->
-            <div class="bento-tile tile-hero tile-dark reveal">
-                <div class="tile-label">累计签收量</div>
+            <div class="bento-tile tile-hero tile-dark reveal" data-snap="brief-kpi">
+                <h2 class="tile-label">累计签收量</h2>
                 <div class="tile-value" data-to="16459">0</div>
                 <div class="tile-change up">+12.3% YoY</div>
                 <div class="tile-desc" style="margin-top:auto;">
@@ -363,38 +394,39 @@
             </div>
 
             <!-- Wide Tile: 趋势图 -->
-            <div class="bento-tile tile-wide reveal">
-                <div class="tile-label">月度签收趋势</div>
-                <div class="tile-chart" id="chart-trend"></div>
+            <div class="bento-tile tile-wide reveal" data-snap="brief-trend">
+                <h2 class="tile-label" id="chart-trend-title">月度签收趋势</h2>
+                <div class="tile-chart" id="chart-trend" role="img" aria-labelledby="chart-trend-title"></div>
             </div>
 
             <!-- 3x Quarter KPI -->
-            <div class="bento-tile tile-quarter reveal">
-                <div class="tile-label">结构机渗透率</div>
+            <div class="bento-tile tile-quarter reveal" data-snap="brief-structure">
+                <h2 class="tile-label">结构机渗透率</h2>
                 <div class="tile-value-sm" data-to="35" data-suffix=".2%">0</div>
                 <div class="tile-change up">+8.3pp YoY</div>
             </div>
-            <div class="bento-tile tile-quarter reveal">
-                <div class="tile-label">签收金额</div>
+            <div class="bento-tile tile-quarter reveal" data-snap="brief-amount">
+                <h2 class="tile-label">签收金额</h2>
                 <div class="tile-value-sm" data-to="8639" data-suffix="万">0</div>
                 <div class="tile-change up">+18.6% YoY</div>
             </div>
-            <div class="bento-tile tile-quarter reveal">
-                <div class="tile-label">加权均价</div>
+            <div class="bento-tile tile-quarter reveal" data-snap="brief-asp">
+                <h2 class="tile-label">加权均价</h2>
                 <div class="tile-value-sm" data-to="5247" data-suffix="元">0</div>
                 <div class="tile-change up">+5.6% YoY</div>
             </div>
-            <div class="bento-tile tile-quarter reveal">
-                <div class="tile-label">目标达成率</div>
+            <div class="bento-tile tile-quarter reveal" data-snap="brief-achievement">
+                <h2 class="tile-label">目标达成率</h2>
                 <div class="tile-value-sm" data-to="94" data-suffix="%">0</div>
                 <div class="tile-change down">差 6pp</div>
             </div>
 
             <!-- Half Tile: 战区排名 -->
-            <div class="bento-tile tile-half reveal">
-                <div class="tile-label">战区排名 (累计签收量)</div>
-                <table class="mini-table">
-                    <thead><tr><th>排名</th><th>战区</th><th style="text-align:right">签收量</th><th style="text-align:right">同比</th><th>状态</th></tr></thead>
+            <div class="bento-tile tile-half reveal" data-snap="brief-ranking">
+                <h2 class="tile-label">战区排名 (累计签收量)</h2>
+                <div class="table-scroll" role="region" aria-label="战区排名表" tabindex="0">
+                <table class="mini-table" aria-label="战区累计签收量排名">
+                    <thead><tr><th scope="col">排名</th><th scope="col">战区</th><th scope="col" style="text-align:right">签收量</th><th scope="col" style="text-align:right">同比</th><th scope="col">状态</th></tr></thead>
                     <tbody>
                         <tr><td>1</td><td>深圳</td><td class="num">4,280</td><td class="num">+18.2%</td><td><span class="mini-badge mini-badge-g">领跑</span></td></tr>
                         <tr><td>2</td><td>广州</td><td class="num">3,960</td><td class="num">+15.1%</td><td><span class="mini-badge mini-badge-g">达标</span></td></tr>
@@ -403,11 +435,12 @@
                         <tr><td>5</td><td>南宁</td><td class="num">2,259</td><td class="num" style="color:var(--semantic-risk)">-2.1%</td><td><span class="mini-badge mini-badge-r">关注</span></td></tr>
                     </tbody>
                 </table>
+                </div>
             </div>
 
             <!-- Half Tile: 行动项 -->
-            <div class="bento-tile tile-half reveal">
-                <div class="tile-label">本周必须做</div>
+            <div class="bento-tile tile-half reveal" data-snap="brief-actions">
+                <h2 class="tile-label">本周必须做</h2>
                 <ul class="action-compact">
                     <li>
                         <span class="action-num">1</span>
@@ -426,7 +459,7 @@
         </div>
 
         <!-- Audit Strip: 数据来源 / 口径 / 审计状态 -->
-        <div class="audit-strip">
+        <div class="audit-strip" data-snap="brief-audit">
             <span class="footer-dot"></span>
             <span>数据源: DuckDB 本地库</span>
             <span>|</span>
@@ -434,7 +467,7 @@
             <span>|</span>
             <span>审计: 图表=表格=文案 一致</span>
         </div>
-    </div>
+    </main>
 
     <script>
         // === CSS Variable Reader ===
@@ -485,11 +518,11 @@
                     xAxis: { type: 'category',
                         data: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
                         axisLine: { lineStyle: { color: '#e2e8f0' } },
-                        axisLabel: { color: '#94a3b8', fontSize: 11, fontFamily: 'JetBrains Mono' }
+                        axisLabel: { color: '#64748b', fontSize: 11, fontFamily: 'JetBrains Mono' }
                     },
                     yAxis: { type: 'value',
                         splitLine: { lineStyle: { type: 'dashed', color: '#f1f5f9' } },
-                        axisLabel: { color: '#94a3b8', fontSize: 11, fontFamily: 'JetBrains Mono', formatter: function(v){ return (v/1000).toFixed(0)+'K'; } }
+                        axisLabel: { color: '#64748b', fontSize: 11, fontFamily: 'JetBrains Mono', formatter: function(v){ return (v/1000).toFixed(0)+'K'; } }
                     },
                     series: [
                         { name: '2026', type: 'line', data: [7820, 8639, null,null,null,null,null,null,null,null,null,null],

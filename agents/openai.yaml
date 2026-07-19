@@ -1,6 +1,6 @@
 interface:
-  display_name: "South China Report"
-  short_description: "Narrative business-report design system for monthly/quarterly/annual HTML reports (three-role type, semantic color, anti-default discipline, density axis, automated validation)."
-  default_prompt: "Use $south-china-report to design and generate a narrative strategic business report as a self-contained HTML file."
+  display_name: "Narrative Business Report"
+  short_description: "将经营数据转化为结论驱动、可审计且可离线交付的叙事型 HTML 报告。"
+  default_prompt: "Use $south-china-report to generate a compact-density, self-contained narrative business report; derive all numbers from metrics.json, declare the V2 runtime ECharts contract (JSON-Pointer leaf bindings for coordinate, tree, or custom data), and pass strict offline, runtime truth, four-viewport accessibility, and visual screenshot gates. Use standard narrative density only when explicitly requested."
 policy:
   allow_implicit_invocation: true

@@ -33,8 +33,9 @@
 | 9 | 帮我做套销售 PPT | 产物是 PPT 非 HTML | 边界: 描述已注"输出 HTML", 但"销售/汇报"易误触。见下 |
 | 10 | 回复这封关于销售的邮件 | 无关 | 不触发 |
 
-## 自评结论 (2026-07 · V2.5)
+## 维护契约 (V2.12.0)
 
-- 应触发 10/10、不应触发 9.5/10。唯一边界是 **#9 销售 PPT**：产物是 PPT 而非 HTML，本 Skill 不适用 (应走 `内部 PPT 生成 skill` 或 `pptx`)。已在 description 明确"输出自包含 HTML"以降低误触，但"销售汇报"类措辞仍可能擦边——遇到时先澄清产物是 HTML 还是 PPT。
-- 负向边界 (operational_monitor / analysis_workbook / 交互式 BI / 脚本 / 计算) 覆盖良好。
-- **维护规则**: 每次改 description 后回来逐条重判；新增一类误触发就补一条 should-not 用例。
+- 上表是触发回归样例，不是模型自评分数；改 frontmatter description 后必须重跑并记录实际触发结果。
+- `south-china-report` 是稳定兼容 ID，描述必须覆盖非华南的通用经营报告，不得因 ID 名称漏触发。
+- 销售 PPT 的产物是 PPT 而非 HTML，必须不触发本 Skill；frontmatter 已显式排除 PPT/Excel/交互式 BI。
+- 新增一类误触发或漏触发，就同步增加 should-not 或 should-trigger 用例。

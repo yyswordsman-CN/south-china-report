@@ -1,0 +1,20 @@
+{
+  "source": {
+    "path": "../fixtures/sales-2024-2025.csv"
+  },
+  "roles": {
+    "time": "日期",
+    "amount": "签收金额",
+    "qty": "数量",
+    "dimensions": ["战区", "渠道"],
+    "customer": "客户",
+    "product": "型号",
+    "target": null,
+    "id": null
+  },
+  "caliber": {
+    "period": "2025-12",
+    "negative_amount_policy": "allow_net",
+    "note": "eval fixture; 2025-12 单月锁定"
+  }
+}

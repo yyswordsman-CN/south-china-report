@@ -1,8 +1,40 @@
-# CHANGELOG — South China Report Style
+# CHANGELOG — south-china-report
 
-> 详细变更叙述。`SKILL.md` §11 只保留一句话摘要表，细节全部下沉到这里。
+> 详细变更叙述。`SKILL.md` §11 只保留当前版本说明，细节全部下沉到这里。
 
 ---
+
+## V2.12.0 — 2026-07-19 — P2 工程化、运行时真值与无障碍闭环
+
+- **运行时数字真值 Gate**：新增 `verify-runtime.mjs`，在阻断网络的 Chromium 中执行严格离线报告，复核最终可见 DOM。运行时合同升级为向后兼容 V2：标量保留等长 `metrics` 简写；坐标对、递归树和任意 custom 嵌套结构通过 RFC 6901 JSON Pointer 将每个数值/null/完整格式化数值字符串叶子逐一映射到 `metrics.json`。遗漏、重复、越界、原型链键、非有限值和无理由豁免均 fail-closed；支持精确多指针共享豁免理由，不支持通配符或子树吞并。
+- **无障碍专项自动化**：`snapshot.mjs` 从基础属性检查升级为四视口 DOM 语义、Chromium AX Tree、真实 Tab 可达性、焦点可见性与 WCAG AA 计算对比度 Gate；同时保留出站网络、布局、页面错误和原子截图发布门禁。三套模板和标准/紧凑 demo 均进入真实页面回归，并修复标题层级、深浅底语义色和文字对比度。
+- **多源 E2E 金样**：新增同一业务金样的 Excel、SQLite、DuckDB 三源端到端测试，实际调用 `prep-source.py profile/build`，校验字段角色、期间、业务聚合结果与跨源投影完全一致。
+- **CI 与可恢复安装**：新增 GitHub Actions（Python 3.11 / Node 22 / Chromium）、`release-profile.json`、版本/发布清单检查及 `install-skill.mjs`。安装默认只读；显式 `--apply` 才会 staging + 原子替换，保留旧目录备份并在发布后复检失败时恢复。
+- **版本与合同文档**：新增运行时 metrics 合同和发布流程说明；Quality Gate 从 48 项扩展到 52 项，快速清单扩展为 14 项 P0 + 6 项 P1；默认紧凑风保持不变。
+
+**本机回归证据**：`npm test` 全绿，包括 31 个 Python 数据测试、31 个 validator 回归、三模板 × 四视口无障碍、双 demo × 四视口截图、离线/网络/原子写入、运行时真值与安装备份 smoke；运行时 fixture 覆盖 V1 标量兼容及 V2 坐标、树、custom、格式化标签、遗漏/错值/重复/非法指针负例。双 demo 各 4 张图的 55 个业务数值叶子逐点匹配，1 个辅助系列与 21 个视觉常量逐项说明豁免。`release:check` 覆盖 84 个发布文件。真实 Codex 安装目录仅执行 `--dry-run`，确认存在漂移且未写入任何文件。
+
+**诚实边界**：AX Tree 自动检查面向读屏器结构，但不等于真实 VoiceOver/NVDA 全流程；自动 Tab/对比度不替代认知可用性、图表替代说明和强合规人工验收。运行时 V2 覆盖全部 `series.data` 数值叶子，但仍不解析 `dataset.source`、`markPoint/markLine` 或 `renderItem` 内临时生成且未落入 `series.data` 的数值。真实安装目录本次只做 `--dry-run`，未经授权不覆盖。
+
+## V2.11.1 — 2026-07-19 — 紧凑风切为出厂默认
+
+- 三套模板的 `<html>` 均默认携带 `data-density="compact"`；未指定风格时直接生成紧凑版。
+- 叙事标准风保留为显式可选档，用户明确要求大留白或沉浸式叙事时移除 `data-density`。
+- 同步更新 Skill 工作流、使用指南、设计 Token、Agent 默认提示词和密度对比 Demo；模板回归新增“紧凑默认”硬断言。
+
+## V2.11.0 — 2026-07-19 — P0/P1 可信链、离线交付与响应式专项修复
+
+本版依据项目全维评审与独立红队负向探针实施，不以模型自评分作为发布证据。修复范围覆盖数据源到报告成品的完整链路：
+
+- **期间与真源 fail-closed**：`map.caliber.period` 真正驱动月/旬/季/半年/全年/自定义区间；未确认期间、无时间列、解析失败、时区未声明或当期净额不可用时均 BLOCKED，并停止输出可误用的派生数字。map 相对路径只按 map 所在目录解析，CLI 覆盖不再丢失 sheet/table，也不会回退到 cwd 同名文件。
+- **目标口径与数量/金额防错配**：目标必须显式声明 `target_measure=amount|qty`；`auto` 仅接受锁定期间唯一目标值，多行目标必须声明聚合、粒度和频率。支持 period/month/xun/quarter/half/year 目标频率；数量目标用数量 actual，金额目标用金额 actual。数量列不再被 profile 冒充金额，`amount==qty` 全局阻断。
+- **数据质量与隐私**：文件源输出安全标签、SHA-256 和指纹范围，不暴露本机绝对路径；SQL 只记录查询哈希并明确“非数据快照”。profile 默认不打印字段样例或 SQL 正文，须显式 `--show-samples`。客户集中度增加金额覆盖率，覆盖不足或负净额时停止风险分级；目标少量坏值也必须披露。
+- **统计层 fail-closed**：`metrics` 增稳定 `schema_version=1.0`；`stat-insights.py` 拒绝缺失/未知状态与旧结构，原子写出结果；YoY 序列跳过基期非正和当期负值，PVM caveat 禁止生成强量价结论，HHI/Top5 阈值可配置。
+- **验证器与 eval 加固**：成品必须有唯一且完整的 `#south-china-report-meta`；递归占位、非法 SHA、原型链路径、审计类名换序、template 伪 DOM、隐藏正确值掩盖错值、数字豁免滥用、静态 module/importmap 与主动协议等负例均已纳入回归。可见静态 DOM 数字默认要求 100% 绑定或叶子级有理由豁免。
+- **离线、截图与无障碍**：离线器支持更多 HTML/CSS/srcset 资源并 fail-closed 处理模块依赖，限制协议、主机、私网、重定向、超时和体积；既有输出必须 `--force` 才原子替换。截图改为 1440/1360/430/390 四视口 staging 发布，失败不留半成品；阻断出站网络、布局溢出、页面错误和基础无障碍缺陷。三模板已适配演示模式与移动端宽表。
+- **演示与可复现环境**：标准/紧凑 demo 补报告契约、源指纹与全量静态数字覆盖，新增 demo 专属 eval。`build-demo.py` 把 `demo_sales.csv + map.json + enrichment.json` 固化为可审计的数据输入，区分可复算证据与人工行动假设；两份在线 HTML 明确作为人工叙事真源。`--check` 逐字节阻断 metrics/insights/在线 meta 漂移，并用在线 SHA-256 阻断陈旧离线包。版本统一到 V2.11.0，锁定 Node/Python 依赖，补数据、验证器、离线、快照、无障碍、网络和演示模式测试链。
+
+**已知边界**：静态数字 Gate 不解析 JavaScript 运行时注入或 ECharts Canvas/SVG option 内部数字，完整 chart-option→metrics 映射仍是独立后续项；基础无障碍 Gate 不替代完整键盘路径、读屏器与颜色对比度专项验收；自定义 `--allow-host` 的 DNS 重绑定风险需在高安全环境使用网络隔离或固定出口进一步约束。
 
 ## V2.10.1 — 2026-07-18 — Codex 独立审计修复 (7 项指控 → 逐条复现 → 6 修 1 加固)
 

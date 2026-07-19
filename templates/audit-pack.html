@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-density="compact">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,9 +13,9 @@
            ================================================================ */
 
         :root {
-            --font-display: 'Plus Jakarta Sans','Noto Sans SC',sans-serif;
-            --font-editorial: 'DM Sans','Noto Sans SC',-apple-system,sans-serif;
-            --font-data: 'JetBrains Mono','SF Mono',monospace;
+            --font-display: 'Plus Jakarta Sans','Noto Sans SC','PingFang SC','Microsoft YaHei',ui-sans-serif,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+            --font-editorial: 'DM Sans','Noto Sans SC','PingFang SC','Microsoft YaHei',ui-sans-serif,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+            --font-data: 'JetBrains Mono','SFMono-Regular','SF Mono',Menlo,Consolas,'Liberation Mono',monospace;
 
             --fw-normal: 400; --fw-medium: 500; --fw-semibold: 600; --fw-bold: 700; --fw-extrabold: 800; --fw-black: 900;
             /* Leading: 与字号反向 (Apple §15) */
@@ -27,7 +27,7 @@
             --tracking-wide: 0.05em; --tracking-wider: 0.08em; --tracking-widest: 0.12em;
 
             /* === Spacing (8pt grid) — 密度轴: 由 --density 缩放 ===
-                 <html data-density="compact"> 时 --density=0.6, 全间距自动收紧 */
+                 模板出厂即带 data-density="compact", 默认 --density=0.6; 显式标准档移除属性 */
             --density: 1;
             --space-1:   calc(4px  * var(--density));
             --space-2:   calc(8px  * var(--density));
@@ -45,27 +45,27 @@
             --surface-secondary: #f8fafc;
             --surface-tertiary: #f1f5f9;
             --text-primary: #1a1a2e;
-            --text-secondary: #64748b;
-            --text-tertiary: #94a3b8;
+            --text-secondary: #475569;
+            --text-tertiary: #64748b;
             --text-inverse: #f8fafc;
             --border-default: #e2e8f0;
             --border-subtle: #f1f5f9;
 
-            --semantic-growth: #059669;
+            --semantic-growth: #047857;
             --semantic-growth-bg: #ecfdf5;
-            --semantic-risk: #dc2626;
+            --semantic-risk: #b91c1c;
             --semantic-risk-bg: #fef2f2;
-            --semantic-warning: #f59e0b;
+            --semantic-warning: #b45309;
             --semantic-warning-bg: #fffbeb;
-            --semantic-opportunity: #2563eb;
+            --semantic-opportunity: #1d4ed8;
             --semantic-opportunity-bg: #eff6ff;
-            --semantic-neutral: #64748b;
+            --semantic-neutral: #475569;
             --semantic-neutral-bg: #f1f5f9;
 
             --brand-deepest: #001d3d;
             --brand-deep: #003566;
             --brand-mid: #0353a4;
-            --brand-accent: #0582ca;
+            --brand-accent: #0369a1;
             --brand-light: #006daa;
             --brand-faint: #e8f4fd;
 
@@ -96,11 +96,11 @@
         }
 
         /* ========== 密度轴: 紧凑档 (density 对齐 V2.4 = 0.6) ==========
-           叙事标准档 (默认, density=1) 即"大公司财报叙事风": 大留白、慢节奏、强沉浸。
-           紧凑档 (data-density="compact", density=0.6): 本模板仅做间距/行高/标题尺度的
+           叙事标准档 (显式可选, density=1) 即"大公司财报叙事风": 大留白、慢节奏、强沉浸。
+           紧凑档 (出厂默认, data-density="compact", density=0.6): 本模板仅做间距/行高/标题尺度的
            等比收紧 (spacing-only), 不含 scroll-narrative 的组件级版式重组 (masthead/KPI 加密/
            左线 callout/密集表格)。如需完整紧凑销售报告风版式, 用 scroll-narrative 模板。
-           切换: <html lang="zh-CN" data-density="compact">                                    */
+           默认紧凑；显式标准风移除 data-density 属性。                                      */
         :root[data-density="compact"] {
             --density: 0.6;
             --text-hero:  clamp(30px, 4vw, 46px);
@@ -112,6 +112,7 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { max-width: 100%; }
         body {
             font-family: var(--font-editorial);
             background: var(--surface-secondary);
@@ -120,6 +121,8 @@
             line-height: var(--leading-relaxed);
             -webkit-font-smoothing: antialiased;
             font-optical-sizing: auto;
+            max-width: 100%;
+            overflow-x: clip;
         }
 
         .audit-container {
@@ -139,6 +142,7 @@
             font-family: var(--font-display);
             font-size: var(--text-xl); font-weight: 800;
             letter-spacing: var(--tracking-tight);
+            text-wrap: balance; overflow-wrap: anywhere;
         }
         .audit-subtitle {
             font-size: var(--text-sm); color: var(--text-secondary);
@@ -188,6 +192,10 @@
         .status-dot.fail { color: var(--semantic-risk); }
 
         /* === Audit Table === */
+        .table-scroll {
+            width: 100%; max-width: 100%; overflow-x: auto;
+            overscroll-behavior-inline: contain; -webkit-overflow-scrolling: touch;
+        }
         .audit-table { width: 100%; border-collapse: collapse; font-size: var(--text-sm); }
         .audit-table th {
             text-align: left; font-weight: 600; color: var(--text-tertiary);
@@ -299,13 +307,38 @@
             .audit-container { padding: 0; max-width: 100%; }
             .audit-section { break-inside: avoid; }
         }
+        @media (max-width: 768px) {
+            .audit-container { width: 100%; max-width: 100%; min-width: 0; padding-inline: var(--space-4); }
+            .audit-header { flex-direction: column; gap: var(--space-3); }
+            .audit-stamp { text-align: left; }
+            .audit-section, .audit-section-body, .kv-grid, .kv-item { min-width: 0; max-width: 100%; }
+            .audit-section-header { align-items: flex-start; gap: var(--space-2); }
+            .audit-table { min-width: 600px; }
+            .kv-grid { grid-template-columns: minmax(0, 1fr); }
+            .kv-value { overflow-wrap: anywhere; }
+        }
     </style>
 </head>
 <body>
-    <div class="audit-container">
+    <!-- 报告可审计契约：生成成品时必须用实际期间、源文件指纹与关键指标整体替换。 -->
+    <script type="application/json" id="south-china-report-meta">
+    {
+      "requested_period": "[REQUESTED_PERIOD]",
+      "source": {
+        "path": "[SOURCE_PATH]",
+        "sha256": "[SOURCE_SHA256]"
+      },
+      "report_mode": "audit-pack",
+      "key_metrics": {
+        "[METRIC_PATH]": null
+      },
+      "metrics_sha256": "[METRICS_SHA256]"
+    }
+    </script>
+    <main class="audit-container" id="main-content">
 
         <!-- Header -->
-        <div class="audit-header">
+        <div class="audit-header" data-snap="audit-header">
             <div>
                 <h1 class="audit-title">数据审计包</h1>
                 <div class="audit-subtitle">[报告主体] [期间]经营报告 — 数据溯源与一致性审计</div>
@@ -315,15 +348,15 @@
                  下方各 Section 的 PASS/MATCH 均为示例占位, 同样必须逐项按实际结果回填。 -->
             <div class="audit-stamp">
                 审计时间: [校验时间]<br>
-                审计脚本: validate-report.mjs v2.0<br>
+                审计脚本: validate-report.mjs + verify-numbers.mjs<br>
                 审计结果: <span class="status-dot warn">[待校验 — 按实际结果回填]</span>
             </div>
         </div>
 
         <!-- Section 1: 数据源 -->
-        <div class="audit-section">
+        <div class="audit-section" data-snap="audit-source">
             <div class="audit-section-header">
-                <span class="audit-section-title">1. 数据源溯源</span>
+                <h2 class="audit-section-title">1. 数据源溯源</h2>
                 <span class="status-dot pass">PASS</span>
             </div>
             <div class="audit-section-body">
@@ -357,20 +390,21 @@
         </div>
 
         <!-- Section 2: 一致性检查 -->
-        <div class="audit-section">
+        <div class="audit-section" data-snap="audit-consistency">
             <div class="audit-section-header">
-                <span class="audit-section-title">2. 图表 = 表格 = 文案 一致性</span>
+                <h2 class="audit-section-title">2. 图表 = 表格 = 文案 一致性</h2>
                 <span class="status-dot pass">PASS</span>
             </div>
             <div class="audit-section-body">
-                <table class="audit-table">
+                <div class="table-scroll" role="region" aria-label="图表表格文案一致性审计表" tabindex="0">
+                <table class="audit-table" aria-label="图表表格文案一致性审计结果">
                     <thead>
                         <tr>
-                            <th>指标</th>
-                            <th style="text-align:right">图表值</th>
-                            <th style="text-align:right">表格值</th>
-                            <th style="text-align:right">文案值</th>
-                            <th>一致性</th>
+                            <th scope="col">指标</th>
+                            <th scope="col" style="text-align:right">图表值</th>
+                            <th scope="col" style="text-align:right">表格值</th>
+                            <th scope="col" style="text-align:right">文案值</th>
+                            <th scope="col">一致性</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -404,22 +438,24 @@
                         </tr>
                     </tbody>
                 </table>
+                </div>
             </div>
         </div>
 
         <!-- Section 3: 占比加总 -->
-        <div class="audit-section">
+        <div class="audit-section" data-snap="audit-share">
             <div class="audit-section-header">
-                <span class="audit-section-title">3. 占比加总 = 100% 验证</span>
+                <h2 class="audit-section-title">3. 占比加总 = 100% 验证</h2>
                 <span class="status-dot pass">PASS</span>
             </div>
             <div class="audit-section-body">
-                <table class="audit-table">
+                <div class="table-scroll" role="region" aria-label="占比加总审计表" tabindex="0">
+                <table class="audit-table" aria-label="占比加总审计结果">
                     <thead>
                         <tr>
-                            <th>维度</th>
-                            <th style="text-align:right">各项加总</th>
-                            <th>结果</th>
+                            <th scope="col">维度</th>
+                            <th scope="col" style="text-align:right">各项加总</th>
+                            <th scope="col">结果</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -440,23 +476,25 @@
                         </tr>
                     </tbody>
                 </table>
+                </div>
             </div>
         </div>
 
         <!-- Section 4: 计算规则 -->
-        <div class="audit-section">
+        <div class="audit-section" data-snap="audit-rules">
             <div class="audit-section-header">
-                <span class="audit-section-title">4. 计算规则审计</span>
+                <h2 class="audit-section-title">4. 计算规则审计</h2>
                 <span class="status-dot pass">PASS</span>
             </div>
             <div class="audit-section-body">
-                <table class="audit-table">
+                <div class="table-scroll" role="region" aria-label="计算规则审计表" tabindex="0">
+                <table class="audit-table" aria-label="计算规则审计结果">
                     <thead>
                         <tr>
-                            <th>公式</th>
-                            <th>预期</th>
-                            <th>实际</th>
-                            <th>结果</th>
+                            <th scope="col">公式</th>
+                            <th scope="col">预期</th>
+                            <th scope="col">实际</th>
+                            <th scope="col">结果</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -480,13 +518,14 @@
                         </tr>
                     </tbody>
                 </table>
+                </div>
             </div>
         </div>
 
         <!-- Section 5: 边界说明 -->
-        <div class="audit-section">
+        <div class="audit-section" data-snap="audit-boundaries">
             <div class="audit-section-header">
-                <span class="audit-section-title">5. 边界说明与已知限制</span>
+                <h2 class="audit-section-title">5. 边界说明与已知限制</h2>
                 <span class="status-dot warn">NOTE</span>
             </div>
             <div class="audit-section-body">
@@ -498,12 +537,12 @@
         </div>
 
         <!-- Footer -->
-        <div class="audit-footer">
+        <div class="audit-footer" data-snap="audit-footer">
             [机构] · [报告主体] / 数据审计包<br>
             报告生成时间: 2026-02-28 14:32<br>
-            审计引擎: validate-report.mjs v2.0 + output-quality-guard<br>
+            审计引擎: validate-report.mjs + verify-numbers.mjs + strict-offline + snapshot<br>
             本文件仅供内部审计使用，不作为对外汇报材料。
         </div>
-    </div>
+    </main>
 </body>
 </html>

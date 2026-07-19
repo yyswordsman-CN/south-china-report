@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>south-china-report · 风格档位对比 (叙事标准风 vs 紧凑销售报告风) — 开发者参考</title>
+<title>south-china-report · 风格档位对比 (紧凑默认 vs 叙事标准风) — 开发者参考</title>
 <style>
   /* ============================================================
      密度轴左右对比 (DEV ONLY)
      零脱节设计: 两栏都 iframe 载入【真实模板】scroll-narrative-skeleton.html,
-     右栏由本页 JS 在 iframe 内注入 data-density="compact"。
+     模板本身是紧凑默认；右栏由本页 JS 移除 data-density，显式展示叙事标准风。
      —— 模板一改, 这里自动跟随, 不再手抄样式 (根治历史脱节)。
      注意: 需通过本地服务打开 (python3 -m http.server); 直接双击因浏览器
        file:// 同源限制无法向 iframe 注入紧凑档属性。
@@ -50,25 +50,25 @@
   <div class="spacer"></div>
   <span class="badge-dev">DEV ONLY / 仅开发调试参考</span>
 </div>
-<div id="warn">注意: 检测到无法向 iframe 注入紧凑档：请通过本地服务打开本页（如 <code>python3 -m http.server</code>），直接双击文件会被浏览器 file:// 同源策略阻止。</div>
+  <div id="warn">注意: 检测到无法向 iframe 显式退回叙事标准档：请通过本地服务打开本页（如 <code>python3 -m http.server</code>），直接双击文件会被浏览器 file:// 同源策略阻止。</div>
 
 <div class="comparison-grid">
   <div class="panel">
-    <div class="panel-label panel-label--narrative">叙事标准风（默认）<span>--density : 1 | 大留白 / 100vh Hero / 沉浸阅读</span></div>
-    <iframe class="frame" src="../templates/scroll-narrative-skeleton.html" title="叙事标准风"></iframe>
+    <div class="panel-label panel-label--compact">紧凑销售报告风（默认）<span>--density : 0.6 | 信息密集 / Hero masthead / 快速扫读</span></div>
+    <iframe class="frame" src="../templates/scroll-narrative-skeleton.html" title="紧凑销售报告风"></iframe>
   </div>
   <div class="panel">
-    <div class="panel-label panel-label--compact">紧凑销售报告风<span>--density : 0.6 | 信息密集 / Hero masthead / 快速扫读</span></div>
-    <iframe class="frame" id="compactFrame" src="../templates/scroll-narrative-skeleton.html" title="紧凑销售报告风"></iframe>
+    <div class="panel-label panel-label--narrative">叙事标准风（显式可选）<span>--density : 1 | 大留白 / 100vh Hero / 沉浸阅读</span></div>
+    <iframe class="frame" id="standardFrame" src="../templates/scroll-narrative-skeleton.html" title="叙事标准风"></iframe>
   </div>
 </div>
 
 <script>
-  // 只在 demo 内向 iframe 注入紧凑档 —— 模板本身不含任何切换机制
-  var f = document.getElementById('compactFrame');
+  // 只在 demo 内显式退回标准档 —— 模板本身不含任何运行时切换机制
+  var f = document.getElementById('standardFrame');
   f.addEventListener('load', function () {
     try {
-      f.contentDocument.documentElement.setAttribute('data-density', 'compact');
+      f.contentDocument.documentElement.removeAttribute('data-density');
     } catch (e) {
       document.getElementById('warn').style.display = 'block';
     }

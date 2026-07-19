@@ -1,6 +1,6 @@
 # South China Report — 使用指南与提示词手册
 
-> 版本对应 SKILL V2.9.1 ｜ 面向"调用这个技能生成报告"的使用者，不是改技能源码的开发者。
+> 版本对应 SKILL V2.12.0 ｜ 面向"调用这个技能生成报告"的使用者，不是改技能源码的开发者。
 > 读完这一份，你就知道：这技能能干什么、什么场景用、要喂什么数据、产出长什么样，以及**每次生成报告时该怎么写提示词**，才能做到"维度全、挖得深、抓得住问题、读得下去"。
 > 结论先行，无 Emoji，数字口径以 `metrics.json` 为准。
 
@@ -26,8 +26,8 @@
 | 叙事设计 | 提炼统领性核心发现（Governing Thought），拆 2–4 章故事弧，每章走"现象→归因→对策"（PAC）闭环 |
 | 多维分析骨架 | 内置"经营分析覆盖面清单"：总量与量价 / 结构升级 / 渠道结构 / 区域战区 / 时间趋势，默认 4–5 章成型 |
 | 专业图表 | 选图引擎强制"业务问题→意图→图表"路由；内置瀑布图、子弹图、赛马条形、增长下滑双榜、战区×月热力表、Small Multiples 等；遵循 IBCS 视觉语法 |
-| 双风格档 | 叙事标准风（大留白沉浸，高管月报/年报）与紧凑销售报告风（信息密集扫读，销售旬报/打印/移动长图） |
-| 质量保障 | 4 道自动 Gate：结构校验 → 逐张截图自看 → 数字一致性核对 → 离线内联复检 |
+| 双风格档 | 紧凑销售报告风（默认，信息密集扫读）与叙事标准风（显式可选，大留白沉浸） |
+| 质量保障 | 4 组 Gate：结构校验 → 静态数字核对 → 离线内联严格复检 → 离线版运行时 DOM/ECharts 真值 + 四视口 DOM/AX/Tab/对比度与截图自看 |
 | 离线交付 | 一键把外链内联成单文件 HTML，飞书/内网/断网/截图场景可用 |
 
 ### 1.2 不做什么（边界）
@@ -40,8 +40,7 @@
 
 ### 1.3 拦截力的真实边界（别被"通过"骗了）
 
-`validate-report.mjs` **自动硬阻断（exit 1）的只有 3 项 P0**：Emoji、`tabular-nums` 等宽数字、图表容器高度。
-饼图误用、双 Y 轴、弱 Hero 标题等只给 **P1 警告不阻断**——`exit 0` **不等于可交付**，这些设计纪律要人工逐条清零。所以"脚本过了"≠"报告好了"。
+成品模式会硬阻断 Emoji、数字排版未覆盖、图表无高度、占位符/待校验状态和未确认审计 PASS；`--strict-offline` 还会硬阻断外部与相对资源。饼图误用、双 Y 轴、弱 Hero 标题等仍是 **P1 非阻断项**：`exit 0` 只表示当前模式无 P0，不等于可交付。
 
 ---
 
@@ -69,10 +68,10 @@
 
 > 一份报告可服务多层，但**第一屏只能服务一个第一读者**，其余下沉后续章节或明细区。
 
-### 2.3 按风格档（调用时选一次，烘焙进产物）
+### 2.3 按风格档（未指定即紧凑，调用时烘焙进产物）
 
-- **叙事标准风（默认）**：大留白、慢节奏、强 Hero 沉浸。用于高管月报/年报、对外汇报。
-- **紧凑销售报告风**：Hero 收为横幅、KPI 加密、密集图表形态。用于销售旬报快速扫读、打印存档、移动端长图。KPI 上调到 5–8、章节 3–6。
+- **紧凑销售报告风（默认）**：Hero 收为横幅、KPI 加密、密集图表形态。用于销售旬报快速扫读、打印存档、移动端长图。KPI 上调到 5–8、章节 3–6。用户不写风格时直接使用此档。
+- **叙事标准风（显式可选）**：大留白、慢节奏、强 Hero 沉浸。仅在用户明确要求沉浸式高管月报/年报或对外汇报时使用。
 > 紧凑 ≠ 简陋：密度靠换密集图表形态（子弹阵列/Small Multiples/Sparkline 表格/热力表），**禁止砍归因图和达成图**。产物不含任何页面内切换控件。
 
 ---
@@ -103,11 +102,30 @@
 
 调用时**必须**向数据/业务确认这 5 点，写进提示词：
 
-1. **数据截止日期 + 同比基线口径**是什么？
-2. **有没有目标/预算/计划字段**？没有 → 达成率/子弹图/进度条全部降级为 YoY/结构/趋势，禁止编造目标。
+1. **请求统计期间 + 数据截止日期 + 同比基线口径**是什么？期间必须写入 `map.caliber.period`，未确认默认 BLOCKED。
+2. **有没有目标/预算/计划字段**？没有 → 达成率/子弹图/进度条降级；有 → 必须确认目标衡量单位 `target_measure=amount|qty`、粒度、频率和 `target_aggregation`，禁止把销量目标与金额比较，也禁止把明细重复目标直接求和。
 3. 关键字段有无**跨年编码变更**（如"产品定位"重分类会造成假涨跌）？做同比前先验一致性。
 4. 有无**信号过弱字段**（如国补占比 <2%）？弱信号不单独成章。
 5. 时间跨度是否 **< 2 年**？是 → 自动降级，不做 YoY/量价瀑布，改"结构占比 + 排名双榜 + 集中度"。
+
+最小口径示例：
+
+```json
+{
+  "caliber": {
+    "period": "2025Q4",
+    "target_measure": "amount",
+    "target_aggregation": "first_per_group",
+    "target_grain": ["战区"],
+    "target_frequency": "quarter",
+    "negative_amount_policy": "allow_net"
+  }
+}
+```
+
+`period` 支持月、旬、季度、H1/H2、全年、`start..end` 或 `{start,end}`；`target_frequency` 支持 `period/month/xun/quarter/half/year`。没有目标列时不填目标四项；`auto` 只接受锁定期间唯一一个目标值，任何多行目标都要求显式聚合口径，否则局部 BLOCKED，不得猜测。
+
+时间列若含 `Z` 或 `+08:00` 等时区偏移，必须另填 `caliber.timezone`（IANA 名称，如 `Asia/Shanghai`）来定义业务日期；缺失时脚本会 BLOCKED，避免跨日错算。
 
 ### 3.4 数据至上纪律
 
@@ -121,7 +139,8 @@
 
 - **静态自包含 HTML**：可直接浏览器打开、截图、打印为 PDF。
 - **离线单文件**（`report.offline.html`）：外链已内联，飞书/内网/断网可用。
-- **截图集**：`desktop.png`（1440 整页）/ `mobile.png`（430 整页）/ 各 `data-snap` 分区 PNG。
+- **截图集**：`desktop.png`(1440)、`desktop-1360.png`、`mobile.png`(430)、`mobile-390.png` 四视口整页图 + 各 `data-snap` 分区 PNG。
+- **报告真源契约**：HTML 内必须包含 `#south-china-report-meta` JSON，记录请求期间、源文件 SHA-256、报告模式与关键指标；文件源可从 `metrics.meta.source_path/source_sha256` 直接回填，其中 path 是不泄露本机目录的安全标签。SQL 指纹只证明查询文本，须披露 `source_fingerprint_scope/source_caveat`，不可表述为数据快照。
 
 ### 4.2 报告结构（Scroll Narrative 默认布局）
 
@@ -133,20 +152,22 @@ Data Detail          高密度明细表（不在叙事主线）
 Closing（深色）        编号行动项：对象 + 动作 + 期限 + 验证指标
 ```
 
-### 4.3 交付前必过的 4 道 Gate
+### 4.3 交付前必过的 4 组 Gate
 
 ```bash
-# ① 结构校验（P0 全 PASS 才 exit 0）
+# ① 结构校验（exit 0=当前模式无 P0，P1 仍需处理）
 node scripts/validate-report.mjs 目标/report.html
-# ② 截图 Gate（自动截图，你必须逐张看：无空白/undefined/NaN、无截断重叠、移动端无横滚）
-node scripts/snapshot.mjs 目标/report.html 目标/shots/
-# ③ 数字一致性（有 metrics.json 必跑）
+# ② 数字一致性 + 100% 可见数字覆盖（业务数字=data-metric；非业务数字=data-number-exempt）
 node scripts/verify-numbers.mjs 目标/report.html metrics.json
-# ④ 离线复检（飞书/内网/截图交付）
+# ③ 离线内联 + 严格复检（既有输出默认不覆盖，确认替换时加 --force）
 node scripts/make-offline.mjs 目标/report.html && node scripts/validate-report.mjs 目标/report.offline.html --strict-offline
+# ④a 浏览器渲染后复核最终 DOM 与全部 ECharts series.data
+node scripts/verify-runtime.mjs 目标/report.offline.html metrics.json
+# ④b 对严格离线版截图（四视口+分区，拦截出站网络/横滚/DOM/AX/Tab/对比度/页面错误，仍须逐张看）
+node scripts/snapshot.mjs 目标/report.offline.html 目标/shots/
 ```
 
-> **没看过截图 = 没完成**。无 Playwright/Chromium 时脚本会报"截图未验证"，此时诚实标注"未做截图核对及原因"，不假装验证过。
+> **没看过截图 = 没完成**。无 Playwright/Chromium 时运行时数字与截图脚本会报“未验证”，此时必须说明原因。ECharts 新报告使用 V2 合同：标量可用 `metrics` 简写，坐标、树和 custom 嵌套数据须用 JSON Pointer 逐叶绑定。自动 AX Tree 面向读屏器结构，但不等于真实 VoiceOver/NVDA 会话；自动 Tab/对比度也不替代认知可用性、图表替代说明与强合规人工验收。完整合同见 `references/runtime-metrics-contract.md`。
 
 ---
 
@@ -163,8 +184,8 @@ node scripts/make-offline.mjs 目标/report.html && node scripts/validate-report
 【数据】数据源在 <路径>；先跑 prep-source.py profile→build 出 metrics.json，
 报告所有数字从 metrics.json 抄，不要手敲。
 
-【Data Contract】数据截止 <日期>；同比基线 <口径>；
-目标/预算字段：<有/无>（无则达成类全部降级为 YoY，禁止编造目标）；
+【Data Contract】请求统计期间 <如 2025-12/2025Q4/起止日>；数据截止 <日期>；同比基线 <口径>；
+目标/预算字段：<有/无>；有时的目标单位(amount/qty)、粒度/频率/聚合口径：<填写>（无则达成类降级，禁止编造目标）；
 跨年编码变更：<有/无，哪个字段>；弱信号字段：<如国补占比<2%，不单独成章>。
 
 【风格 + 读者】风格档：<叙事标准风/紧凑销售报告风>；第一读者：<L1 高管/L2 战区经理/L3 分析师>。
@@ -188,7 +209,7 @@ node scripts/make-offline.mjs 目标/report.html && node scripts/validate-report
 每章标题是 Action Title（对象+变化+方向，≤30 字）；图表上方必有结论标题；
 Closing 给编号行动项。
 
-【交付】跑齐 4 道 Gate（validate → snapshot 逐张看 → verify-numbers → 离线复检），
+【交付】跑齐 4 组 Gate（validate → verify-numbers → 离线内联严格复检 → verify-runtime + snapshot 逐张看），
 把未清零的 P1 逐条说明。
 ```
 
@@ -266,7 +287,7 @@ build 后跑 stat-insights.py，问题清单从 insights.json 取（断崖／连
 按影响金额排序，每个问题配"对象+动作+期限+验证指标"的对策。
 
 Hero 写核心发现一句话，每章 Action Title，每图结论标题，Closing 给编号行动项。
-生成后跑齐 4 道 Gate，逐张看截图，未清零 P1 逐条说明。
+生成后跑齐 4 组 Gate，逐张看截图，未清零 P1 逐条说明。
 ```
 
 ---
@@ -280,4 +301,4 @@ Hero 写核心发现一句话，每章 Action Title，每图结论标题，Closi
 - [ ] 要求每章 PAC + So What、归因落到机制、做跨维关联？
 - [ ] 要求先出"问题清单"并每条配可执行对策？
 - [ ] 要求 Hero=核心发现、每章 Action Title、每图结论标题、Closing 编号行动？
-- [ ] 要求跑齐 4 道 Gate 并逐张看截图、P1 逐条说明？
+- [ ] 要求跑齐 4 组 Gate（含运行时图表真值）并逐张看截图、P1 逐条说明？

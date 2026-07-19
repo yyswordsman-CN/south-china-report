@@ -1,6 +1,6 @@
 # Quick Checklist — P0/P1 生成后快速核对
 
-> 从 `mckinsey-quality-gate.md` 48 项中提取最关键的 12 项。
+> 从数据口径、结构、数字、响应式与离线交付中提取的快速门禁。
 > 生成报告后**逐项核对**，全 PASS 才允许交付。
 
 ---
@@ -15,27 +15,40 @@
 | 4 | **图表上方有结论标题** | "各渠道签收额图" | 人工：标题是结论而非描述 |
 | 5 | **同一指标文案/图/表数字一致** | 文案写"增长12%"但图表显示11.8% | 交叉验证 |
 | 6 | **数字使用 `tabular-nums` + `--font-data`** | 数字列不对齐 | `validate-report.mjs` P0 自动检测 |
+| 7 | **请求期间与实际聚合期间一致** | 请求 12 月却统计全年 | 检查 metrics.meta.period + 报告 meta |
+| 8 | **报告真源契约完整** | 期间/源 SHA/模式/关键指标仍是占位值 | `validate-report` + `run-evals` |
+| 9 | **所有可见业务数字已绑定** | 只校验 KPI，标题/洞察/图表数字漏接 | `verify-numbers.mjs` 覆盖率 100% |
+| 10 | **渲染后 DOM/ECharts 全量对账** | JS 注入错值；坐标、树或 custom 叶子脱离 metrics | V2 runtime contract + `verify-runtime.mjs` |
+| 11 | **严格离线版四视口无横滚/重叠/空图** | 390px 表格撑宽页面 | `snapshot.mjs` 自动布局/出站网络断言 + 逐图目检 |
+| 12 | **四视口无障碍自动 Gate 通过** | 跳级标题、无名控件、Tab 漏达、焦点不可见、对比度不足 | `snapshot.mjs` DOM + AX Tree + 真实 Tab + WCAG AA |
+| 13 | **严格离线无任何外部/相对资源** | CDN、字体、图片或 CSS URL 残留 | `validate-report.mjs --strict-offline` |
+| 14 | **审计 PASS 已明确终稿确认** | 模板预填 PASS/MATCH 当成真结果 | `data-audit-finalized="true"` + 成品校验 |
 
 ## P1 核心项 (应修复)
 
 | # | 检查项 | 常见失败 | 验证方式 |
 |:--|:---|:---|:---|
-| 7 | **PAC 闭环完整** | 只有现象，缺归因和对策 | 人工：每个 Chapter 检查 P+A+C |
-| 8 | **文案方向词与数据正负号一致** | 写"增长"但数据为负 | 人工 |
-| 9 | **字体三角色分工正确** | Display 用在正文段落 | `validate-report.mjs` P1 |
-| 10 | **Pull Quote 是洞察或反转** | 复述报告中已有数字 | 人工：删掉 Pull Quote 后叙事是否断裂 |
-| 11 | **Closing CTA 有对象+动作+期限** | "加强管理"(空话) | 人工 |
-| 12 | **间距来自 `--space-*` token** | 随意的 15px、22px | `validate-report.mjs` P2 |
+| 15 | **PAC 闭环完整** | 只有现象，缺归因和对策 | 人工：每个 Chapter 检查 P+A+C |
+| 16 | **文案方向词与数据正负号一致** | 写"增长"但数据为负 | 人工 |
+| 17 | **字体三角色分工正确** | Display 用在正文段落 | `validate-report.mjs` P1 |
+| 18 | **Pull Quote 是洞察或反转** | 复述报告中已有数字 | 人工：删掉 Pull Quote 后叙事是否断裂 |
+| 19 | **Closing CTA 有对象+动作+期限** | "加强管理"(空话) | 人工 |
+| 20 | **间距来自 `--space-*` token** | 随意的 15px、22px | `validate-report.mjs` P2 |
 
 ---
 
 ## 自动化验证命令
 
 ```bash
-# 运行后查看 P0/P1/P2 分级结果
+# 完整交付链；运行时与截图只对严格离线版运行
 node scripts/validate-report.mjs <report.html>
+node scripts/verify-numbers.mjs <report.html> <metrics.json>
+node scripts/make-offline.mjs <report.html>
+node scripts/validate-report.mjs <report.offline.html> --strict-offline
+node scripts/verify-runtime.mjs <report.offline.html> <metrics.json>
+node scripts/snapshot.mjs <report.offline.html> <shots-dir>
 
-# 退出码: 0=全PASS, 1=有P0失败
+# 任一 Gate 非 0 均不得冒充通过；Playwright 缺失会以 3 明确标记未验证
 ```
 
 ## 快速修复索引

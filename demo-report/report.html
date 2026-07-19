@@ -4,6 +4,80 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>增长失速，结构护价 · 2026 上半年经营复盘（模拟数据演示）</title>
+    <script type="application/json" id="south-china-report-meta">{"requested_period":"2026H1","source":{"path":"demo-report/demo_sales.csv","sha256":"6fed1164095b2bdf221b47f704422eae83e7019b1bbbd506888ecfe012e27720"},"report_mode":"demo-standard-2026-h1","key_metrics":{"period.total_cur_wan":6372.0,"period.qty_cur":20792,"period.total_yoy":-12.6},"metrics_sha256":"818dc7691080ab36a8e8bf833d5f909968c350f74cc0c495014c4d073966bec2"}</script>
+    <script type="application/json" id="south-china-report-runtime-contract">
+    {
+      "version": 2,
+      "charts": [
+        {
+          "id": "chart-trend",
+          "series": [
+            { "index": 0, "metrics": ["trend.2026.0", "trend.2026.1", "trend.2026.2", "trend.2026.3", "trend.2026.4", "trend.2026.5", "trend.2026.6", "trend.2026.7", "trend.2026.8", "trend.2026.9", "trend.2026.10", "trend.2026.11"] },
+            { "index": 1, "metrics": ["trend.2025.0", "trend.2025.1", "trend.2025.2", "trend.2025.3", "trend.2025.4", "trend.2025.5", "trend.2025.6", "trend.2025.7", "trend.2025.8", "trend.2025.9", "trend.2025.10", "trend.2025.11"] },
+            { "index": 2, "metrics": ["trend.2024.0", "trend.2024.1", "trend.2024.2", "trend.2024.3", "trend.2024.4", "trend.2024.5", "trend.2024.6", "trend.2024.7", "trend.2024.8", "trend.2024.9", "trend.2024.10", "trend.2024.11"] }
+          ]
+        },
+        {
+          "id": "chart-waterfall",
+          "series": [
+            { "index": 0, "exempt": "透明瀑布基座，只负责浮动布局，不表达业务值" },
+            {
+              "index": 1,
+              "bindings": [
+                { "dataPointer": "/0/value", "metric": "period.pvm.base_wan" },
+                { "dataPointer": "/0/label/formatter", "metric": "period.pvm.base_wan" },
+                { "dataPointer": "/1/value", "metric": { "path": "period.pvm.vol_wan", "transform": "abs" } },
+                { "dataPointer": "/1/label/formatter", "metric": "period.pvm.vol_wan" },
+                { "dataPointer": "/2/value", "metric": "period.pvm.price_mix_wan" },
+                { "dataPointer": "/2/label/formatter", "metric": "period.pvm.price_mix_wan" },
+                { "dataPointer": "/3/value", "metric": "period.pvm.cur_wan" },
+                { "dataPointer": "/3/label/formatter", "metric": "period.pvm.cur_wan" }
+              ],
+              "exemptions": [{
+                "dataPointers": [
+                  "/0/itemStyle/borderRadius/0", "/0/itemStyle/borderRadius/1", "/0/itemStyle/borderRadius/2", "/0/itemStyle/borderRadius/3",
+                  "/1/itemStyle/borderRadius/0", "/1/itemStyle/borderRadius/1", "/1/itemStyle/borderRadius/2", "/1/itemStyle/borderRadius/3",
+                  "/2/itemStyle/borderRadius/0", "/2/itemStyle/borderRadius/1", "/2/itemStyle/borderRadius/2", "/2/itemStyle/borderRadius/3",
+                  "/3/itemStyle/borderRadius/0", "/3/itemStyle/borderRadius/1", "/3/itemStyle/borderRadius/2", "/3/itemStyle/borderRadius/3"
+                ],
+                "reason": "柱形圆角视觉常量，不表达业务值"
+              }]
+            }
+          ]
+        },
+        {
+          "id": "chart-contrib",
+          "series": [
+            {
+              "index": 0,
+              "bindings": [
+                { "dataPointer": "/0/value", "metric": "report_evidence.contribution_pp.南区" },
+                { "dataPointer": "/1/value", "metric": "report_evidence.contribution_pp.北区" },
+                { "dataPointer": "/2/value", "metric": "report_evidence.contribution_pp.西区" },
+                { "dataPointer": "/3/value", "metric": "report_evidence.contribution_pp.中区" },
+                { "dataPointer": "/4/value", "metric": "report_evidence.contribution_pp.东区" }
+              ],
+              "exemptions": [{
+                "dataPointers": [
+                  "/0/itemStyle/borderRadius", "/1/itemStyle/borderRadius", "/2/itemStyle/borderRadius",
+                  "/3/itemStyle/borderRadius", "/4/itemStyle/borderRadius"
+                ],
+                "reason": "条形圆角视觉常量，不表达业务值"
+              }]
+            }
+          ]
+        },
+        {
+          "id": "chart-slope",
+          "series": [
+            { "index": 0, "metrics": ["report_evidence.base_share_pct.主力系列", "report_evidence.dimensions.品类.主力系列.share"] },
+            { "index": 1, "metrics": ["report_evidence.base_share_pct.旗舰系列", "report_evidence.dimensions.品类.旗舰系列.share"] },
+            { "index": 2, "metrics": ["report_evidence.base_share_pct.入门系列", "report_evidence.dimensions.品类.入门系列.share"] }
+          ]
+        }
+      ]
+    }
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
@@ -20,7 +94,7 @@
         :root {
             /* === Spacing (8pt grid) — 密度轴: 由 --density 缩放 ===
                  <html data-density="compact"> 时 --density=0.6, 间距收紧 + 组件级版式重组;
-                 叙事标准档默认 --density=1 (紧凑档完整规则见文件末尾"紧凑销售报告风"区块) */
+                 Skill 默认紧凑；本显式标准版回退 --density=1 */
             --density: 1;
             --space-1:   calc(4px  * var(--density));
             --space-2:   calc(8px  * var(--density));
@@ -89,20 +163,20 @@
             --brand-deep: #003566;
             --brand-mid: #0353a4;
             --brand-light: #006daa;
-            --brand-accent: #0582ca;
+            --brand-accent: #0369a1;
             --brand-faint: #e8f4fd;   /* V2 新增 */
             --brand-muted: #b8d8e8;   /* V2 新增 */
 
             /* === 第二层: 语义色 (情感固定，不随主题变) === */
-            --semantic-growth: #059669;
+            --semantic-growth: #047857;
             --semantic-growth-bg: #ecfdf5;
-            --semantic-risk: #dc2626;
+            --semantic-risk: #b91c1c;
             --semantic-risk-bg: #fef2f2;
-            --semantic-opportunity: #2563eb;
+            --semantic-opportunity: #1d4ed8;
             --semantic-opportunity-bg: #eff6ff;
-            --semantic-warning: #f59e0b;
+            --semantic-warning: #b45309;
             --semantic-warning-bg: #fffbeb;
-            --semantic-neutral: #64748b;
+            --semantic-neutral: #475569;
             --semantic-neutral-bg: #f1f5f9;
             /* 深底专用亮色 */
             --semantic-growth-dark: #6ee7b7;
@@ -128,8 +202,8 @@
             --surface-tertiary: #f1f5f9;
             --surface-inverse: #0f172a;
             --text-primary: #1a1a2e;
-            --text-secondary: #64748b;
-            --text-tertiary: #94a3b8;
+            --text-secondary: #475569;
+            --text-tertiary: #64748b;
             --text-inverse: #f8fafc;
             --text-muted: #cbd5e1;
             --border-default: #e2e8f0;
@@ -179,12 +253,12 @@
         }
 
         /* ========== 密度轴: 紧凑销售报告风 (V2.4 — 版式重组) ==========
-           叙事标准档 (默认, density=1) 即"大公司财报叙事风": 大留白、慢节奏、强沉浸。
-           紧凑销售报告风 (data-density="compact", density=0.6): 共享全部视觉主体, 但为
+           叙事标准档 (显式可选, density=1) 即"大公司财报叙事风": 大留白、慢节奏、强沉浸。
+           紧凑销售报告风 (Skill 默认, data-density="compact", density=0.6): 共享全部视觉主体, 但为
            "信息密集 · 快速扫读"重组版式 —— Hero 收为 masthead 横幅、KPI/表格/章节加密、
            Pull Quote 转左线 callout、内容列加宽。适合销售月报/旬报扫读 / 打印 / 移动端长图。
            (仍遵守 §15 排版纪律: 尺寸专属 tracking / 反向 leading / 层级三件套)
-           切换方式: <html lang="zh-CN" data-density="compact">。组件级规则见文件末尾同名区块。 */
+           Skill 模板默认紧凑；本文件是用于对照的显式标准版。组件级规则见文件末尾同名区块。 */
         /* ==================================================================
            密度轴 · 紧凑销售报告风 (data-density="compact")
            与叙事标准风共享全部视觉主体 (品牌渐变/语义色/三角色字体/Token),
@@ -224,6 +298,7 @@
             text-rendering: optimizeLegibility;
             font-optical-sizing: auto;       /* Apple §15: 字号越大字形越紧致, 自动光学尺寸 */
         }
+        body, [data-metric] { font-variant-numeric: tabular-nums; }
 
         /* ========== Scroll Progress Bar ========== */
         .scroll-progress {
@@ -288,7 +363,7 @@
         .hero-badge {
             display: inline-flex; align-items: center; gap: 6px;
             font-size: var(--text-xs); font-weight: var(--fw-semibold);
-            color: rgba(255,255,255,0.6);
+            color: rgba(255,255,255,0.78);
             text-transform: uppercase; letter-spacing: var(--tracking-widest);
             margin-bottom: var(--space-6);
             position: relative; z-index: 1;
@@ -298,15 +373,15 @@
             font-family: var(--font-display);
             font-size: var(--text-hero);
             font-weight: var(--fw-extrabold); line-height: var(--leading-tight);
-            max-width: 800px;
+            max-width: min(1000px, 92vw);
             margin-bottom: var(--space-6);
             position: relative; z-index: 1;
             letter-spacing: var(--tracking-tighter);
         }
         .hero-subtitle {
             font-size: var(--text-xl);
-            color: rgba(255,255,255,0.65);
-            max-width: 600px; line-height: 1.6;
+            color: rgba(255,255,255,0.78);
+            max-width: 680px; line-height: 1.6;
             margin-bottom: var(--space-10);
             position: relative; z-index: 1;
             font-weight: 400;
@@ -323,14 +398,14 @@
         }
         .hero-number-label {
             font-size: var(--text-sm);
-            color: rgba(255,255,255,0.5);
+            color: rgba(255,255,255,0.78);
             margin-top: var(--space-2);
             position: relative; z-index: 1;
             font-weight: var(--fw-medium); letter-spacing: var(--tracking-wide);
         }
         .hero-scroll-hint {
             position: absolute; bottom: var(--space-10);
-            font-size: var(--text-xs); color: rgba(255,255,255,0.35);
+            font-size: var(--text-xs); color: rgba(255,255,255,0.72);
             animation: bounce 2s infinite;
         }
         @keyframes bounce {
@@ -533,7 +608,7 @@
         .insight-card-icon.growth { background: var(--color-growth-bg); color: var(--color-growth); }
         .insight-card-icon.risk { background: var(--color-risk-bg); color: var(--color-risk); }
         .insight-card-icon.opportunity { background: var(--color-opportunity-bg); color: var(--color-opportunity); }
-        .insight-card h4 {
+        .insight-card h3 {
             font-size: var(--text-base); font-weight: 700;
             margin-bottom: var(--space-2); line-height: 1.4;
         }
@@ -629,26 +704,26 @@
             background: rgba(5,130,202,0.2);
             display: flex; align-items: center; justify-content: center;
             font-family: var(--font-display); font-weight: 800;
-            color: var(--brand-accent); flex-shrink: 0;
+            color: var(--text-inverse); flex-shrink: 0;
         }
-        .action-content h4 {
+        .action-content h3 {
             font-size: var(--text-lg); font-weight: 700; margin-bottom: var(--space-1);
         }
         .action-content p {
-            font-size: var(--text-sm); color: var(--color-text-tertiary); line-height: 1.6;
+            font-size: var(--text-sm); color: rgba(248,250,252,0.82); line-height: 1.6;
         }
         .action-tag {
             display: inline-block; font-size: 10px; font-weight: 700;
             padding: 2px 8px; border-radius: 12px; margin-top: var(--space-2);
         }
-        .action-tag.urgent { background: rgba(239,68,68,0.15); color: var(--color-urgent-light); }
-        .action-tag.strategic { background: rgba(59,130,246,0.15); color: var(--color-strategic-light); }
-        .action-tag.monitor { background: rgba(245,158,11,0.15); color: var(--color-monitor-light); }
+        .action-tag.urgent { background: rgba(239,68,68,0.24); color: var(--text-inverse); }
+        .action-tag.strategic { background: rgba(59,130,246,0.24); color: var(--text-inverse); }
+        .action-tag.monitor { background: rgba(245,158,11,0.24); color: var(--text-inverse); }
         .closing-footer {
             margin-top: var(--space-16);
             padding-top: var(--space-8);
             border-top: 1px solid rgba(255,255,255,0.08);
-            font-size: var(--text-xs); color: var(--color-text-secondary);
+            font-size: var(--text-xs); color: rgba(248,250,252,0.78);
             display: flex; justify-content: space-between;
         }
 
@@ -701,6 +776,8 @@
             .kpi-strip-item { border-right: none; border-bottom: 1px solid var(--color-border); }
             .chapter { padding: var(--space-16) var(--space-5); }
             .chapter-title { font-size: var(--text-2xl); }
+            .data-detail-section { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+            .data-table { min-width: 660px; }
         }
 
         /* ========== Print ========== */
@@ -845,18 +922,19 @@
     <!-- ============================================================
          HERO — 一句话定调整份报告
          ============================================================ -->
+    <main>
     <section class="hero" data-snap="hero">
         <div class="hero-badge">
             <i class="ri-bar-chart-box-line"></i>
-            模拟数据演示 · 全域智能家居业务 · 2026 上半年复盘
+            模拟数据演示 · 全域智能家居业务 · <span data-number-exempt="报告期间元数据">2026</span> 上半年复盘
         </div>
         <h1 class="hero-title">增长失速，结构护价</h1>
         <p class="hero-subtitle">
-            上半年收入同比下滑 12.6%，且 18 个可比月的增速经统计检验确认为趋势性下行——
-            唯一顶住的是结构：旗舰系列把均价撑起 7.2%。失速是主线，护价是底牌。
+            上半年收入同比下滑 <span data-metric="report_evidence.magnitude.total_yoy">12.6%</span>，且 <span data-metric="report_evidence.trend.comparable_months">18</span> 个可比月的增速经统计检验确认为趋势性下行——
+            唯一顶住的是结构：旗舰系列把均价撑起 <span data-metric="period.price_yoy">7.2%</span>。失速是主线，护价是底牌。
         </p>
         <div class="hero-number" data-from="0" data-to="6372" data-metric="period.total_cur_wan">0</div>
-        <div class="hero-number-label">上半年签收金额（万元）&nbsp;&nbsp;同比 -12.6%</div>
+        <div class="hero-number-label">上半年签收金额（万元）&nbsp;&nbsp;同比 <span data-metric="period.total_yoy">-12.6%</span></div>
         <div class="hero-scroll-hint">
             <i class="ri-arrow-down-line"></i> 向下滚动阅读完整报告
         </div>
@@ -872,9 +950,9 @@
             <div class="kpi-strip-change down"><span data-metric="period.total_yoy">-12.6%</span> 同比</div>
         </div>
         <div class="kpi-strip-item">
-            <div class="kpi-strip-value" data-metric="period.qty_yoy">-18.5%</div>
-            <div class="kpi-strip-label">销量同比</div>
-            <div class="kpi-strip-change down">量的缺口是主因</div>
+            <div class="kpi-strip-value" data-metric="period.qty_cur">20,792</div>
+            <div class="kpi-strip-label">上半年销量（台）</div>
+            <div class="kpi-strip-change down"><span data-metric="period.qty_yoy">-18.5%</span> 同比</div>
         </div>
         <div class="kpi-strip-item">
             <div class="kpi-strip-value" data-metric="period.price_yoy">+7.2%</div>
@@ -882,27 +960,28 @@
             <div class="kpi-strip-change up">结构升级护价</div>
         </div>
         <div class="kpi-strip-item">
-            <div class="kpi-strip-value" data-metric="dimensions.品类.2.share">30.0%</div>
+            <div class="kpi-strip-value" data-metric="report_evidence.dimensions.品类.旗舰系列.share">30.0%</div>
             <div class="kpi-strip-label">旗舰系列占比</div>
-            <div class="kpi-strip-change up">+8.0pp 同比</div>
+            <div class="kpi-strip-change up"><span data-metric="report_evidence.share_shift_pp.旗舰系列">+8.0pp</span> 同比</div>
         </div>
         <div class="kpi-strip-item">
             <div class="kpi-strip-value" data-metric="concentration.top5_share">48.0%</div>
-            <div class="kpi-strip-label">Top5 客户集中度</div>
-            <div class="kpi-strip-change down">高于 45% 风险线</div>
+            <div class="kpi-strip-label">Top<span data-metric="report_evidence.top_n">5</span> 客户集中度</div>
+            <div class="kpi-strip-change down">高于 <span data-metric="report_evidence.concentration_threshold">45%</span> 风险线</div>
         </div>
     </div>
 
     <!-- ============================================================
          CHAPTER 1 — 总量故事
          ============================================================ -->
-    <section class="chapter reveal" data-snap="chapter-01">
-        <div class="chapter-number">CHAPTER 01</div>
-        <h2 class="chapter-title">增速 18 个月连续下行，已是趋势而非波动</h2>
+    <section data-snap="chapter-01">
+    <section class="chapter reveal">
+        <div class="chapter-number">CHAPTER <span data-number-exempt="章节序号">01</span></div>
+        <h2 class="chapter-title">增速 <span data-metric="report_evidence.trend.comparable_months">18</span> 个月连续下行，已是趋势而非波动</h2>
         <p class="chapter-lead">
-            上半年签收 6,372.0 万元，同比 -12.6%。把 18 个可比月的同比增速连成一条线，
-            Mann-Kendall 检验给出 z=-5.45（p&lt;0.05，显著）——下行不是运气差，是趋势本身。
-            截至 6 月已连续 5 个月负增长，其中 2 月被稳健 Z 检验判为异常月（-45%）——异常月的具体归因需结合提货节奏、促销错期等业务事件核实，本演示不虚构原因。
+            上半年签收 <span data-metric="period.total_cur_wan">6,372.0</span> 万元，同比 <span data-metric="period.total_yoy">-12.6%</span>。把 <span data-metric="report_evidence.trend.comparable_months">18</span> 个可比月的同比增速连成一条线，
+            Mann-Kendall 检验给出 z=<span data-metric="report_evidence.trend.mann_kendall_z">-5.45</span>（p&lt;<span data-metric="report_evidence.trend.p_threshold">0.05</span>，显著）——下行不是运气差，是趋势本身。
+            截至 <span data-metric="report_evidence.period.end_month">6</span> 月已连续 <span data-metric="report_evidence.trend.trailing_negative_months">5</span> 个月负增长，其中 <span data-metric="report_evidence.trend.anomaly_month">2</span> 月被稳健 Z 检验判为异常月（<span data-metric="report_evidence.trend.anomaly_yoy">-45%</span>）——异常月的具体归因需结合提货节奏、促销错期等业务事件核实，本演示不虚构原因。
         </p>
     </section>
 
@@ -912,31 +991,33 @@
             每一次月度"回暖"都比上一次更弱——<br>
             这不是波动的形状，是趋势的形状。
         </blockquote>
-        <div class="quote-source">Mann-Kendall 趋势检验 z=-5.45（n=18，p&lt;0.05）· insights.json</div>
+        <div class="quote-source">Mann-Kendall 趋势检验 z=<span data-metric="report_evidence.trend.mann_kendall_z">-5.45</span>（n=<span data-metric="report_evidence.trend.comparable_months">18</span>，p&lt;<span data-metric="report_evidence.trend.p_threshold">0.05</span>）· insights.json</div>
     </div>
 
     <!-- Full-Width Chart -->
     <div class="full-chart-section reveal">
-        <div class="full-chart-title">三年同期对比：2026 年曲线整体沉到 2025 年之下</div>
-        <div class="full-chart-subtitle">全域业务 · 签收金额/万元 · 按自然月对比 2024-2026（2026 年 7 月起无数据，折线断开）· 模拟数据</div>
-        <div id="chart-trend" class="chart-container"></div>
+        <div class="full-chart-title">三年同期对比：<span data-number-exempt="图表期间元数据">2026</span> 年曲线整体沉到 <span data-number-exempt="图表期间元数据">2025</span> 年之下</div>
+        <div class="full-chart-subtitle">全域业务 · 签收金额/万元 · 按自然月对比 <span data-number-exempt="图表期间元数据">2024-2026</span>（<span data-number-exempt="图表期间元数据">2026</span> 年 <span data-number-exempt="图表期间元数据">7</span> 月起无数据，折线断开）· 模拟数据</div>
+        <div id="chart-trend" class="chart-container" role="img" aria-label="2024 至 2026 月度签收金额同期对比趋势图"></div>
         <div class="chart-annotation">
-            <span class="chart-tag neg"><i class="ri-alert-line"></i> 2026-02 异常月：YoY -45%，稳健 Z=-2.95</span>
-            <span class="chart-tag info"><i class="ri-line-chart-line"></i> 增速趋势：MK 检验显著下行，连续 5 个月负增长</span>
+            <span class="chart-tag neg"><i class="ri-alert-line"></i> <span data-number-exempt="异常月期间标签">2026-02</span> 异常月：YoY <span data-metric="report_evidence.trend.anomaly_yoy">-45%</span>，稳健 Z=<span data-metric="report_evidence.trend.anomaly_robust_z">-2.95</span></span>
+            <span class="chart-tag info"><i class="ri-line-chart-line"></i> 增速趋势：MK 检验显著下行，连续 <span data-metric="report_evidence.trend.trailing_negative_months">5</span> 个月负增长</span>
         </div>
     </div>
 
+    </section>
     <div class="divider"><hr></div>
 
     <!-- ============================================================
          CHAPTER 2 — 量价拆解
          ============================================================ -->
-    <section class="chapter reveal" data-snap="chapter-02">
-        <div class="chapter-number">CHAPTER 02</div>
-        <h2 class="chapter-title">量跌 18.5% 造成缺口，结构护价只回补三成</h2>
+    <section data-snap="chapter-02">
+    <section class="chapter reveal">
+        <div class="chapter-number">CHAPTER <span data-number-exempt="章节序号">02</span></div>
+        <h2 class="chapter-title">量跌 <span data-metric="report_evidence.magnitude.qty_yoy">18.5%</span> 造成缺口，结构护价只回补三成</h2>
         <p class="chapter-lead">
-            收入同比减少 920.5 万元。拆开看：量效应 -1,349.9 万，价+结构效应 +429.4 万——
-            旗舰系列占比提升 8pp 把均价撑起 7.2%，但只回补了量缺口的三成。缺口在量，不在价。
+            收入同比减少 <span data-metric="report_evidence.income_gap_wan">920.5</span> 万元。拆开看：量效应 <span data-metric="period.pvm.vol_wan">-1,349.9</span> 万，价+结构效应 <span data-metric="period.pvm.price_mix_wan">+429.4</span> 万——
+            旗舰系列占比提升 <span data-metric="report_evidence.share_shift_pp.旗舰系列">8pp</span> 把均价撑起 <span data-metric="period.price_yoy">7.2%</span>，但只回补了量缺口的三成。缺口在量，不在价。
         </p>
     </section>
 
@@ -946,22 +1027,22 @@
             <div class="editorial-text">
                 <h3>量从哪里漏掉的：入门盘和传统渠道</h3>
                 <p>
-                    量的流失高度集中：<span class="highlight">入门系列 -35.9%</span>、
-                    <span class="highlight">传统渠道 -28.2%</span>，二者高度重叠——入门盘主要经传统渠道走货，
+                    量的流失高度集中：<span class="highlight">入门系列 <span data-metric="report_evidence.dimensions.品类.入门系列.yoy">-35.9%</span></span>、
+                    <span class="highlight">传统渠道 <span data-metric="report_evidence.dimensions.渠道.传统.yoy">-28.2%</span></span>，二者高度重叠——入门盘主要经传统渠道走货，
                     传统收缩带走了入门的量。这是一条传导链，不是两个独立问题。
                 </p>
                 <p>
-                    护价的一侧同样清晰：<span class="highlight">旗舰系列 +19.2%</span>，
-                    是大盘 -12.6% 里唯一同时贡献收入与均价的品类。
+                    护价的一侧同样清晰：<span class="highlight">旗舰系列 <span data-metric="report_evidence.dimensions.品类.旗舰系列.yoy">+19.2%</span></span>，
+                    是大盘 <span data-metric="period.total_yoy">-12.6%</span> 里唯一同时贡献收入与均价的品类。
                 </p>
             </div>
             <div class="editorial-data">
                 <div class="big-number" data-metric="period.qty_yoy">-18.5%</div>
-                <div class="big-label">销量同比（均价同比 +7.2%）</div>
+                <div class="big-label">销量同比（均价同比 <span data-metric="period.price_yoy">+7.2%</span>）</div>
                 <div style="display:flex;gap:8px;flex-wrap:wrap;">
-                    <span class="chart-tag neg"><i class="ri-arrow-down-s-fill"></i> 入门系列 -35.9%</span>
-                    <span class="chart-tag neg"><i class="ri-arrow-down-s-fill"></i> 传统渠道 -28.2%</span>
-                    <span class="chart-tag pos"><i class="ri-arrow-up-s-fill"></i> 旗舰系列 +19.2%</span>
+                    <span class="chart-tag neg"><i class="ri-arrow-down-s-fill"></i> 入门系列 <span data-metric="report_evidence.dimensions.品类.入门系列.yoy">-35.9%</span></span>
+                    <span class="chart-tag neg"><i class="ri-arrow-down-s-fill"></i> 传统渠道 <span data-metric="report_evidence.dimensions.渠道.传统.yoy">-28.2%</span></span>
+                    <span class="chart-tag pos"><i class="ri-arrow-up-s-fill"></i> 旗舰系列 <span data-metric="report_evidence.dimensions.品类.旗舰系列.yoy">+19.2%</span></span>
                 </div>
             </div>
         </div>
@@ -969,49 +1050,53 @@
 
     <!-- Full-Width Chart: 量价瀑布 -->
     <div class="full-chart-section reveal">
-        <div class="full-chart-title">收入桥：从 7,292.5 万到 6,372.0 万，量是主因</div>
-        <div class="full-chart-subtitle">全域业务 · 签收金额/万元 · 2026-01~06 vs 2025 同期 · "价+结构"为混合均价法（含产品 mix）· 模拟数据</div>
-        <div id="chart-waterfall" class="chart-container"></div>
+        <div class="full-chart-title">收入桥：从 <span data-metric="period.total_base_wan">7,292.5</span> 万到 <span data-metric="period.total_cur_wan">6,372.0</span> 万，量是主因</div>
+        <div class="full-chart-subtitle">全域业务 · 签收金额/万元 · <span data-number-exempt="图表期间元数据">2026-01~06</span> vs <span data-number-exempt="图表期间元数据">2025</span> 同期 · "价+结构"为混合均价法（含产品 mix）· 模拟数据</div>
+        <div id="chart-waterfall" class="chart-container" role="img" aria-label="2025 同期至 2026 上半年签收金额量价结构瀑布图"></div>
     </div>
 
+    </section>
     <div class="divider"><hr></div>
 
     <!-- ============================================================
          CHAPTER 3 — 战区归因
          ============================================================ -->
-    <section class="chapter reveal" data-snap="chapter-03">
-        <div class="chapter-number">CHAPTER 03</div>
-        <h2 class="chapter-title">南区一家拖累总增速 9.3pp，东区补位仅 2.5pp</h2>
+    <section data-snap="chapter-03">
+    <section class="chapter reveal">
+        <div class="chapter-number">CHAPTER <span data-number-exempt="章节序号">03</span></div>
+        <h2 class="chapter-title">南区一家拖累总增速 <span data-metric="report_evidence.magnitude.south_contribution_pp">9.3pp</span>，东区补位仅 <span data-metric="report_evidence.contribution_pp.东区">2.5pp</span></h2>
         <p class="chapter-lead">
-            五个战区四个在跌，但跌得不一样。南区同比 -37.1%（份额 18%），
-            半年少了 676.1 万，一家就拖走总增速 9.3 个点；东区 +16.5% 是唯一引擎，
-            但 2.5 个点的拉动填不上南区的坑。总增速 -12.6% 的账，逐区可以对平。
+            五个战区四个在跌，但跌得不一样。南区同比 <span data-metric="report_evidence.dimensions.战区.南区.yoy">-37.1%</span>（份额 <span data-metric="report_evidence.dimensions.战区.南区.share">18%</span>），
+            半年少了 <span data-metric="report_evidence.decline_wan.南区">676.2</span> 万，一家就拖走总增速 <span data-metric="report_evidence.magnitude.south_contribution_pp">9.3</span> 个点；东区 <span data-metric="report_evidence.dimensions.战区.东区.yoy">+16.5%</span> 是唯一引擎，
+            但 <span data-metric="report_evidence.contribution_pp.东区">2.5</span> 个点的拉动填不上南区的坑。总增速 <span data-metric="period.total_yoy">-12.6%</span> 的账，逐区可以对平。
         </p>
     </section>
 
     <!-- Full-Width Chart: 贡献分解 -->
     <div class="full-chart-section reveal">
-        <div class="full-chart-title">总增速 -12.6% 的拆解：南区是最大的单点拖累</div>
-        <div class="full-chart-subtitle">各战区对总增速的拉动/拖累（百分点）· 当期口径同上 · 五区合计 = -12.6pp · 模拟数据</div>
-        <div id="chart-contrib" class="chart-container"></div>
+        <div class="full-chart-title">总增速 <span data-metric="period.total_yoy">-12.6%</span> 的拆解：南区是最大的单点拖累</div>
+        <div class="full-chart-subtitle">各战区对总增速的拉动/拖累（百分点）· 当期口径同上 · 五区合计 = <span data-metric="report_evidence.contribution_pp.合计">-12.6pp</span> · 模拟数据</div>
+        <div id="chart-contrib" class="chart-container" role="img" aria-label="各战区对整体同比增速的贡献度水平条形图"></div>
         <div class="chart-annotation">
-            <span class="chart-tag neg"><i class="ri-arrow-down-s-fill"></i> 南区断崖：YoY -37.1%，份额位移 -7.0pp</span>
-            <span class="chart-tag pos"><i class="ri-arrow-up-s-fill"></i> 东区引擎：YoY +16.5%，份额位移 +5.0pp</span>
+            <span class="chart-tag neg"><i class="ri-arrow-down-s-fill"></i> 南区断崖：YoY <span data-metric="report_evidence.dimensions.战区.南区.yoy">-37.1%</span>，份额位移 <span data-metric="report_evidence.share_shift_pp.南区">-7.0pp</span></span>
+            <span class="chart-tag pos"><i class="ri-arrow-up-s-fill"></i> 东区引擎：YoY <span data-metric="report_evidence.dimensions.战区.东区.yoy">+16.5%</span>，份额位移 <span data-metric="report_evidence.share_shift_pp.东区">+5.0pp</span></span>
         </div>
     </div>
 
+    </section>
     <div class="divider"><hr></div>
 
     <!-- ============================================================
          CHAPTER 4 — 结构与集中度
          ============================================================ -->
-    <section class="chapter reveal" data-snap="chapter-04">
-        <div class="chapter-number">CHAPTER 04</div>
-        <h2 class="chapter-title">入门失血、旗舰护价，收入押在 5 个客户身上</h2>
+    <section data-snap="chapter-04">
+    <section class="chapter reveal">
+        <div class="chapter-number">CHAPTER <span data-number-exempt="章节序号">04</span></div>
+        <h2 class="chapter-title">入门失血、旗舰护价，收入押在 <span data-metric="report_evidence.top_n">5</span> 个客户身上</h2>
         <p class="chapter-lead">
-            结构在快速换挡：品类上旗舰 +8pp、入门 -8pp；渠道上电商 +6pp、传统 -5pp。
-            换挡护住了均价，却暴露另一重脆弱——40 个客户里 Top5 占了 48% 的收入，
-            前 19 户就贡献 80%。集中度已越过 45% 风险线。
+            结构在快速换挡：品类上旗舰 <span data-metric="report_evidence.share_shift_pp.旗舰系列">+8pp</span>、入门 <span data-metric="report_evidence.share_shift_pp.入门系列">-8pp</span>；渠道上电商 <span data-metric="report_evidence.share_shift_pp.电商">+6pp</span>、传统 <span data-metric="report_evidence.share_shift_pp.传统">-5pp</span>。
+            换挡护住了均价，却暴露另一重脆弱——<span data-metric="concentration.customers">40</span> 个客户里 Top<span data-metric="report_evidence.top_n">5</span> 占了 <span data-metric="concentration.top5_share">48%</span> 的收入，
+            前 <span data-metric="concentration.pareto_n80">19</span> 户就贡献 <span data-metric="report_actions.pareto_share">80%</span>。集中度已越过 <span data-metric="report_evidence.concentration_threshold">45%</span> 风险线。
         </p>
     </section>
 
@@ -1020,22 +1105,22 @@
         <div class="insight-grid">
             <div class="insight-card">
                 <div class="insight-card-icon growth"><i class="ri-arrow-up-circle-line"></i></div>
-                <h4>旗舰系列 +19.2%：唯一的双料引擎</h4>
-                <p>占比从 22% 升到 30%，同时贡献收入与均价，是 -12.6% 大盘里唯一的品类正贡献。护价的底牌要保住。</p>
+                <h3>旗舰系列 <span data-metric="report_evidence.dimensions.品类.旗舰系列.yoy">+19.2%</span>：唯一的双料引擎</h3>
+                <p>占比从 <span data-metric="report_evidence.base_share_pct.旗舰系列">22%</span> 升到 <span data-metric="report_evidence.dimensions.品类.旗舰系列.share">30%</span>，同时贡献收入与均价，是 <span data-metric="period.total_yoy">-12.6%</span> 大盘里唯一的品类正贡献。护价的底牌要保住。</p>
             </div>
             <div class="insight-card">
                 <div class="insight-card-icon risk"><i class="ri-alert-line"></i></div>
-                <h4>入门系列 -35.9%：最大失血点</h4>
-                <p>拖累总增速 10.8pp，失血与传统渠道收缩高度重叠。不设"保量款"承接，量缺口会继续扩大。</p>
+                <h3>入门系列 <span data-metric="report_evidence.dimensions.品类.入门系列.yoy">-35.9%</span>：最大失血点</h3>
+                <p>拖累总增速 <span data-metric="report_evidence.magnitude.entry_contribution_pp">10.8pp</span>，失血与传统渠道收缩高度重叠。不设"保量款"承接，量缺口会继续扩大。</p>
             </div>
             <div class="insight-card">
                 <div class="insight-card-icon opportunity"><i class="ri-store-2-line"></i></div>
-                <h4>电商份额 +6pp：量的下一个承接口</h4>
-                <p>电商是三渠道中唯一正增长（+3.8%），份额升至 38% 已逼近 KA——入门盘的量应向这里迁移。</p>
+                <h3>电商份额 <span data-metric="report_evidence.share_shift_pp.电商">+6pp</span>：量的下一个承接口</h3>
+                <p>电商是三渠道中唯一正增长（<span data-metric="report_evidence.dimensions.渠道.电商.yoy">+3.8%</span>），份额升至 <span data-metric="report_evidence.dimensions.渠道.电商.share">38%</span> 已逼近 KA——入门盘的量应向这里迁移。</p>
             </div>
             <div class="insight-card">
                 <div class="insight-card-icon risk"><i class="ri-team-line"></i></div>
-                <h4>Top5 客户 = 48% 收入：结构性脆弱</h4>
+                <h3>Top<span data-metric="report_evidence.top_n">5</span> 客户 = <span data-metric="concentration.top5_share">48%</span> 收入：结构性脆弱</h3>
                 <p>任何一个大户的波动都会被放大成大盘波动——南区断崖已经演示过一次。腰部客户扩容是唯一解法。</p>
             </div>
         </div>
@@ -1043,11 +1128,12 @@
 
     <!-- Full-Width Chart: 结构斜率 -->
     <div class="full-chart-section reveal">
-        <div class="full-chart-title">品类结构两期对比：旗舰 +8pp、入门 -8pp，主力盘稳定</div>
-        <div class="full-chart-subtitle">各品类收入份额（%）· 2025 同期 vs 2026 上半年 · 绿=份额上升 红=份额下降 · 模拟数据</div>
-        <div id="chart-slope" class="chart-container"></div>
+        <div class="full-chart-title">品类结构两期对比：旗舰 <span data-metric="report_evidence.share_shift_pp.旗舰系列">+8pp</span>、入门 <span data-metric="report_evidence.share_shift_pp.入门系列">-8pp</span>，主力盘稳定</div>
+        <div class="full-chart-subtitle">各品类收入份额（%）· <span data-number-exempt="图表期间元数据">2025</span> 同期 vs <span data-number-exempt="图表期间元数据">2026</span> 上半年 · 绿=份额上升 红=份额下降 · 模拟数据</div>
+        <div id="chart-slope" class="chart-container" role="img" aria-label="2025 同期与 2026 上半年品类收入份额变化斜率图"></div>
     </div>
 
+    </section>
     <div class="divider"><hr></div>
 
     <!-- ============================================================
@@ -1057,7 +1143,7 @@
         <div class="data-detail-header">
             <div>
                 <div class="data-detail-title">战区与结构明细</div>
-                <div class="data-detail-subtitle">当期口径：2026-01~06 vs 2025 同期 · 数字与 metrics.json / insights.json 一致，可复算 · 模拟数据</div>
+                <div class="data-detail-subtitle">当期口径：<span data-number-exempt="数据表期间元数据">2026-01~06</span> vs <span data-number-exempt="数据表期间元数据">2025</span> 同期 · 数字与 metrics.json / insights.json 一致，可复算 · 模拟数据</div>
             </div>
         </div>
         <table class="data-table">
@@ -1075,47 +1161,47 @@
             <tbody>
                 <tr>
                     <td style="font-weight:600">北区</td>
-                    <td class="num" data-metric="dimensions.战区.0.amount_cur_wan">1,593.0</td>
-                    <td class="num" data-metric="dimensions.战区.0.amount_base_wan">1,823.1</td>
-                    <td class="num" style="color:var(--color-risk)" data-metric="dimensions.战区.0.yoy">-12.6%</td>
-                    <td class="num" data-metric="dimensions.战区.0.share">25.0%</td>
-                    <td class="num" style="color:var(--color-risk)">-3.2pp</td>
+                    <td class="num" data-metric="report_evidence.dimensions.战区.北区.amount_cur_wan">1,593.0</td>
+                    <td class="num" data-metric="report_evidence.dimensions.战区.北区.amount_base_wan">1,823.1</td>
+                    <td class="num" style="color:var(--color-risk)" data-metric="report_evidence.dimensions.战区.北区.yoy">-12.6%</td>
+                    <td class="num" data-metric="report_evidence.dimensions.战区.北区.share">25.0%</td>
+                    <td class="num" style="color:var(--color-risk)" data-metric="report_evidence.contribution_pp.北区">-3.2pp</td>
                     <td style="text-align:center"><span class="badge badge-b">随大盘</span></td>
                 </tr>
                 <tr>
                     <td style="font-weight:600">西区</td>
-                    <td class="num" data-metric="dimensions.战区.2.amount_cur_wan">1,274.4</td>
-                    <td class="num" data-metric="dimensions.战区.2.amount_base_wan">1,458.5</td>
-                    <td class="num" style="color:var(--color-risk)" data-metric="dimensions.战区.2.yoy">-12.6%</td>
-                    <td class="num" data-metric="dimensions.战区.2.share">20.0%</td>
-                    <td class="num" style="color:var(--color-risk)">-2.5pp</td>
+                    <td class="num" data-metric="report_evidence.dimensions.战区.西区.amount_cur_wan">1,274.4</td>
+                    <td class="num" data-metric="report_evidence.dimensions.战区.西区.amount_base_wan">1,458.5</td>
+                    <td class="num" style="color:var(--color-risk)" data-metric="report_evidence.dimensions.战区.西区.yoy">-12.6%</td>
+                    <td class="num" data-metric="report_evidence.dimensions.战区.西区.share">20.0%</td>
+                    <td class="num" style="color:var(--color-risk)" data-metric="report_evidence.contribution_pp.西区">-2.5pp</td>
                     <td style="text-align:center"><span class="badge badge-b">随大盘</span></td>
                 </tr>
                 <tr>
                     <td style="font-weight:600">东区</td>
-                    <td class="num" data-metric="dimensions.战区.3.amount_cur_wan">1,274.4</td>
-                    <td class="num" data-metric="dimensions.战区.3.amount_base_wan">1,093.9</td>
-                    <td class="num" style="color:var(--color-growth)" data-metric="dimensions.战区.3.yoy">+16.5%</td>
-                    <td class="num" data-metric="dimensions.战区.3.share">20.0%</td>
-                    <td class="num" style="color:var(--color-growth)">+2.5pp</td>
+                    <td class="num" data-metric="report_evidence.dimensions.战区.东区.amount_cur_wan">1,274.4</td>
+                    <td class="num" data-metric="report_evidence.dimensions.战区.东区.amount_base_wan">1,093.9</td>
+                    <td class="num" style="color:var(--color-growth)" data-metric="report_evidence.dimensions.战区.东区.yoy">+16.5%</td>
+                    <td class="num" data-metric="report_evidence.dimensions.战区.东区.share">20.0%</td>
+                    <td class="num" style="color:var(--color-growth)" data-metric="report_evidence.contribution_pp.东区">+2.5pp</td>
                     <td style="text-align:center"><span class="badge badge-g">引擎</span></td>
                 </tr>
                 <tr>
                     <td style="font-weight:600">南区</td>
-                    <td class="num" data-metric="dimensions.战区.1.amount_cur_wan">1,147.0</td>
-                    <td class="num" data-metric="dimensions.战区.1.amount_base_wan">1,823.1</td>
-                    <td class="num" style="color:var(--color-risk)" data-metric="dimensions.战区.1.yoy">-37.1%</td>
-                    <td class="num" data-metric="dimensions.战区.1.share">18.0%</td>
-                    <td class="num" style="color:var(--color-risk)">-9.3pp</td>
+                    <td class="num" data-metric="report_evidence.dimensions.战区.南区.amount_cur_wan">1,147.0</td>
+                    <td class="num" data-metric="report_evidence.dimensions.战区.南区.amount_base_wan">1,823.1</td>
+                    <td class="num" style="color:var(--color-risk)" data-metric="report_evidence.dimensions.战区.南区.yoy">-37.1%</td>
+                    <td class="num" data-metric="report_evidence.dimensions.战区.南区.share">18.0%</td>
+                    <td class="num" style="color:var(--color-risk)" data-metric="report_evidence.contribution_pp.南区">-9.3pp</td>
                     <td style="text-align:center"><span class="badge badge-r">断崖</span></td>
                 </tr>
                 <tr>
                     <td style="font-weight:600">中区</td>
-                    <td class="num" data-metric="dimensions.战区.4.amount_cur_wan">1,083.2</td>
-                    <td class="num" data-metric="dimensions.战区.4.amount_base_wan">1,093.9</td>
-                    <td class="num" style="color:var(--color-risk)" data-metric="dimensions.战区.4.yoy">-1.0%</td>
-                    <td class="num" data-metric="dimensions.战区.4.share">17.0%</td>
-                    <td class="num" style="color:var(--color-risk)">-0.1pp</td>
+                    <td class="num" data-metric="report_evidence.dimensions.战区.中区.amount_cur_wan">1,083.2</td>
+                    <td class="num" data-metric="report_evidence.dimensions.战区.中区.amount_base_wan">1,093.9</td>
+                    <td class="num" style="color:var(--color-risk)" data-metric="report_evidence.dimensions.战区.中区.yoy">-1.0%</td>
+                    <td class="num" data-metric="report_evidence.dimensions.战区.中区.share">17.0%</td>
+                    <td class="num" style="color:var(--color-risk)" data-metric="report_evidence.contribution_pp.中区">-0.1pp</td>
                     <td style="text-align:center"><span class="badge badge-b">企稳</span></td>
                 </tr>
                 <tr class="total-row">
@@ -1123,8 +1209,8 @@
                     <td class="num" data-metric="period.total_cur_wan">6,372.0</td>
                     <td class="num" data-metric="period.total_base_wan">7,292.5</td>
                     <td class="num" style="color:var(--color-risk)" data-metric="period.total_yoy">-12.6%</td>
-                    <td class="num">100.0%</td>
-                    <td class="num" style="color:var(--color-risk)">-12.6pp</td>
+                    <td class="num" data-metric="report_evidence.share_total">100.0%</td>
+                    <td class="num" style="color:var(--color-risk)" data-metric="report_evidence.contribution_pp.合计">-12.6pp</td>
                     <td style="text-align:center"><span class="badge badge-b">—</span></td>
                 </tr>
             </tbody>
@@ -1144,50 +1230,50 @@
             <tbody>
                 <tr>
                     <td style="font-weight:600">主力系列</td>
-                    <td class="num" data-metric="dimensions.品类.0.amount_cur_wan">3,058.5</td>
-                    <td class="num" style="color:var(--color-risk)" data-metric="dimensions.品类.0.yoy">-12.6%</td>
-                    <td class="num" data-metric="dimensions.品类.0.share">48.0%</td>
-                    <td class="num">0.0pp</td>
+                    <td class="num" data-metric="report_evidence.dimensions.品类.主力系列.amount_cur_wan">3,058.5</td>
+                    <td class="num" style="color:var(--color-risk)" data-metric="report_evidence.dimensions.品类.主力系列.yoy">-12.6%</td>
+                    <td class="num" data-metric="report_evidence.dimensions.品类.主力系列.share">48.0%</td>
+                    <td class="num" data-metric="report_evidence.share_shift_pp.主力系列">0.0pp</td>
                     <td style="text-align:center"><span class="badge badge-b">稳定</span></td>
                 </tr>
                 <tr>
                     <td style="font-weight:600">旗舰系列</td>
-                    <td class="num" data-metric="dimensions.品类.2.amount_cur_wan">1,911.6</td>
-                    <td class="num" style="color:var(--color-growth)" data-metric="dimensions.品类.2.yoy">+19.2%</td>
-                    <td class="num" data-metric="dimensions.品类.2.share">30.0%</td>
-                    <td class="num" style="color:var(--color-growth)">+8.0pp</td>
+                    <td class="num" data-metric="report_evidence.dimensions.品类.旗舰系列.amount_cur_wan">1,911.6</td>
+                    <td class="num" style="color:var(--color-growth)" data-metric="report_evidence.dimensions.品类.旗舰系列.yoy">+19.2%</td>
+                    <td class="num" data-metric="report_evidence.dimensions.品类.旗舰系列.share">30.0%</td>
+                    <td class="num" style="color:var(--color-growth)" data-metric="report_evidence.share_shift_pp.旗舰系列">+8.0pp</td>
                     <td style="text-align:center"><span class="badge badge-g">引擎</span></td>
                 </tr>
                 <tr>
                     <td style="font-weight:600">入门系列</td>
-                    <td class="num" data-metric="dimensions.品类.1.amount_cur_wan">1,401.8</td>
-                    <td class="num" style="color:var(--color-risk)" data-metric="dimensions.品类.1.yoy">-35.9%</td>
-                    <td class="num" data-metric="dimensions.品类.1.share">22.0%</td>
-                    <td class="num" style="color:var(--color-risk)">-8.0pp</td>
+                    <td class="num" data-metric="report_evidence.dimensions.品类.入门系列.amount_cur_wan">1,401.8</td>
+                    <td class="num" style="color:var(--color-risk)" data-metric="report_evidence.dimensions.品类.入门系列.yoy">-35.9%</td>
+                    <td class="num" data-metric="report_evidence.dimensions.品类.入门系列.share">22.0%</td>
+                    <td class="num" style="color:var(--color-risk)" data-metric="report_evidence.share_shift_pp.入门系列">-8.0pp</td>
                     <td style="text-align:center"><span class="badge badge-r">断崖</span></td>
                 </tr>
                 <tr>
                     <td style="font-weight:600">KA 渠道</td>
-                    <td class="num" data-metric="dimensions.渠道.0.amount_cur_wan">2,485.1</td>
-                    <td class="num" style="color:var(--color-risk)" data-metric="dimensions.渠道.0.yoy">-14.8%</td>
-                    <td class="num" data-metric="dimensions.渠道.0.share">39.0%</td>
-                    <td class="num" style="color:var(--color-risk)">-1.0pp</td>
+                    <td class="num" data-metric="report_evidence.dimensions.渠道.KA.amount_cur_wan">2,485.1</td>
+                    <td class="num" style="color:var(--color-risk)" data-metric="report_evidence.dimensions.渠道.KA.yoy">-14.8%</td>
+                    <td class="num" data-metric="report_evidence.dimensions.渠道.KA.share">39.0%</td>
+                    <td class="num" style="color:var(--color-risk)" data-metric="report_evidence.share_shift_pp.KA">-1.0pp</td>
                     <td style="text-align:center"><span class="badge badge-b">随大盘</span></td>
                 </tr>
                 <tr>
                     <td style="font-weight:600">电商渠道</td>
-                    <td class="num" data-metric="dimensions.渠道.1.amount_cur_wan">2,421.3</td>
-                    <td class="num" style="color:var(--color-growth)" data-metric="dimensions.渠道.1.yoy">+3.8%</td>
-                    <td class="num" data-metric="dimensions.渠道.1.share">38.0%</td>
-                    <td class="num" style="color:var(--color-growth)">+6.0pp</td>
+                    <td class="num" data-metric="report_evidence.dimensions.渠道.电商.amount_cur_wan">2,421.3</td>
+                    <td class="num" style="color:var(--color-growth)" data-metric="report_evidence.dimensions.渠道.电商.yoy">+3.8%</td>
+                    <td class="num" data-metric="report_evidence.dimensions.渠道.电商.share">38.0%</td>
+                    <td class="num" style="color:var(--color-growth)" data-metric="report_evidence.share_shift_pp.电商">+6.0pp</td>
                     <td style="text-align:center"><span class="badge badge-g">承接口</span></td>
                 </tr>
                 <tr>
                     <td style="font-weight:600">传统渠道</td>
-                    <td class="num" data-metric="dimensions.渠道.2.amount_cur_wan">1,465.6</td>
-                    <td class="num" style="color:var(--color-risk)" data-metric="dimensions.渠道.2.yoy">-28.2%</td>
-                    <td class="num" data-metric="dimensions.渠道.2.share">23.0%</td>
-                    <td class="num" style="color:var(--color-risk)">-5.0pp</td>
+                    <td class="num" data-metric="report_evidence.dimensions.渠道.传统.amount_cur_wan">1,465.6</td>
+                    <td class="num" style="color:var(--color-risk)" data-metric="report_evidence.dimensions.渠道.传统.yoy">-28.2%</td>
+                    <td class="num" data-metric="report_evidence.dimensions.渠道.传统.share">23.0%</td>
+                    <td class="num" style="color:var(--color-risk)" data-metric="report_evidence.share_shift_pp.传统">-5.0pp</td>
                     <td style="text-align:center"><span class="badge badge-r">收缩</span></td>
                 </tr>
             </tbody>
@@ -1199,39 +1285,40 @@
          ============================================================ -->
     <section class="closing" data-snap="closing">
         <div class="closing-inner reveal">
-            <h2 class="closing-title">三件事，8 月经营会前必须闭环</h2>
+            <h2 class="closing-title">三件事，<span data-metric="report_actions.review_month">8</span> 月经营会前必须闭环</h2>
             <ul class="action-list">
                 <li class="action-item">
-                    <div class="action-number">1</div>
+                    <div class="action-number"><span data-number-exempt="行动序号">1</span></div>
                     <div class="action-content">
-                        <h4>南区断崖专项摸排</h4>
-                        <p>南区总经理牵头，7 个工作日内完成 Top5 经销商逐户走访，查清流失与竞品渗透，8 月 5 日前提交回补方案。验证指标：8 月南区同比收窄至 -15% 以内。</p>
+                        <h3>南区断崖专项摸排</h3>
+                        <p>南区总经理牵头，<span data-metric="report_actions.south_visit_workdays">7</span> 个工作日内完成 Top<span data-metric="report_evidence.top_n">5</span> 经销商逐户走访，查清流失与竞品渗透，<span data-metric="report_actions.south_due_month">8</span> 月 <span data-metric="report_actions.south_due_day">5</span> 日前提交回补方案。验证指标：<span data-metric="report_actions.south_due_month">8</span> 月南区同比收窄至 <span data-metric="report_actions.south_yoy_target">-15%</span> 以内。</p>
                         <span class="action-tag urgent">URGENT</span>
                     </div>
                 </li>
                 <li class="action-item">
-                    <div class="action-number">2</div>
+                    <div class="action-number"><span data-number-exempt="行动序号">2</span></div>
                     <div class="action-content">
-                        <h4>入门盘"保量款"承接方案</h4>
-                        <p>产品部与渠道部联合，7 月底前明确入门系列保量款清单与电商专供价盘，把传统渠道流失的量向电商迁移。验证指标：8 月起入门系列月度同比收窄至 -20% 以内。</p>
+                        <h3>入门盘"保量款"承接方案</h3>
+                        <p>产品部与渠道部联合，<span data-metric="report_actions.entry_plan_due_month">7</span> 月底前明确入门系列保量款清单与电商专供价盘，把传统渠道流失的量向电商迁移。验证指标：<span data-metric="report_actions.entry_target_month">8</span> 月起入门系列月度同比收窄至 <span data-metric="report_actions.entry_yoy_target">-20%</span> 以内。</p>
                         <span class="action-tag urgent">URGENT</span>
                     </div>
                 </li>
                 <li class="action-item">
-                    <div class="action-number">3</div>
+                    <div class="action-number"><span data-number-exempt="行动序号">3</span></div>
                     <div class="action-content">
-                        <h4>腰部客户扩容计划</h4>
-                        <p>销售运营部 Q3 启动腰部客户扶持，把"贡献 80% 收入的客户数"从 19 户扩到 30 户以上。验证指标：年底 Top5 客户集中度降至 40% 以下。</p>
+                        <h3>腰部客户扩容计划</h3>
+                        <p>销售运营部 Q<span data-metric="report_actions.customer_program_quarter">3</span> 启动腰部客户扶持，把"贡献 <span data-metric="report_actions.pareto_share">80%</span> 收入的客户数"从 <span data-metric="report_actions.current_pareto_customers">19</span> 户扩到 <span data-metric="report_actions.target_pareto_customers">30</span> 户以上。验证指标：年底 Top<span data-metric="report_evidence.top_n">5</span> 客户集中度降至 <span data-metric="report_actions.top5_target">40%</span> 以下。</p>
                         <span class="action-tag strategic">STRATEGIC</span>
                     </div>
                 </li>
             </ul>
             <div class="closing-footer">
-                <span>模拟数据演示 · south-china-report V2.10 全链路（prep-source → stat-insights → 四道 Gate）</span>
-                <span>数据截止：2026-06-30 · 口径：2026-01~06 vs 2025 同期 · 可复算：metrics.json / insights.json</span>
+                <span>模拟数据演示 · south-china-report V<span data-number-exempt="Skill 版本号">2.12</span> 全链路（prep-source → stat-insights → 四组 Gate）</span>
+                <span>数据截止：<span data-number-exempt="数据截止元数据">2026-06-30</span> · 口径：<span data-number-exempt="报告期间元数据">2026-01~06</span> vs <span data-number-exempt="报告期间元数据">2025</span> 同期 · 可复算：metrics.json / insights.json</span>
             </div>
         </div>
     </section>
+    </main>
 
     <!-- ============================================================
          SCRIPTS
