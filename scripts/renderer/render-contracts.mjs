@@ -8,7 +8,7 @@ function requireHex(value, label) {
   return value;
 }
 
-function reportMeta({ metrics, metricsSha256, insightsSha256, generatorVersion, manifest }) {
+function reportMeta({ metrics, metricsSha256, insightsSha256, generatorVersion, manifest, spec, template }) {
   const sourcePath = metrics.meta?.source_path;
   const sourceSha256 = metrics.meta?.source_sha256;
   const lock = metrics.meta?.period_lock;
@@ -67,6 +67,10 @@ function reportMeta({ metrics, metricsSha256, insightsSha256, generatorVersion, 
     data_cutoff: dataCutoff,
     source,
     report_mode: reportMode,
+    report_type: spec.report.type,
+    report_status: spec.lifecycle?.status || 'final',
+    registry_version: spec.registry_version || 'legacy',
+    template,
     key_metrics: keyMetrics,
     metrics_sha256: requireHex(metricsSha256, 'metrics_sha256'),
     insights_sha256: requireHex(insightsSha256, 'insights_sha256'),

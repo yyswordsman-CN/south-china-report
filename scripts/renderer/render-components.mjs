@@ -36,7 +36,7 @@ function metricSemanticState(metrics, metricPath, semantic) {
   return 'neutral';
 }
 
-function renderMetric(manifest, metrics, ref, { className = '', key = false } = {}) {
+export function renderMetric(manifest, metrics, ref, { className = '', key = false } = {}) {
   const formatted = formatMetric(metrics, ref);
   addDomMetric(manifest, ref.path, { key });
   const classAttr = className ? ` class="${escapeAttribute(className)}"` : '';
@@ -48,7 +48,7 @@ function renderMetric(manifest, metrics, ref, { className = '', key = false } = 
   };
 }
 
-function registerClaims(spec, manifest) {
+export function registerClaims(spec, manifest) {
   const governing = spec.narrative.governing_thought;
   const governingId = evidenceId('GOVERNING', spec.report.id, governing.claim_kind);
   addClaim(manifest, { id: governingId, kind: governing.claim_kind, ...governing });
@@ -253,7 +253,7 @@ function renderOptional(component, callback, manifest) {
   }
 }
 
-export function renderComponents(spec, metrics, insights) {
+function renderScrollComponents(spec, metrics, insights) {
   const manifest = createBindingManifest(metrics, insights);
   const claims = registerClaims(spec, manifest);
   const definitions = [];
@@ -294,7 +294,129 @@ export function renderComponents(spec, metrics, insights) {
   return { html: sections.join('\n'), manifest, chartDefinitions: definitions };
 }
 
+function bentoTable(component, metrics, manifest) {
+  const rows = resolvePath(metrics, component.data_path, { label: `${component.id}.data_path` });
+  const selected = sortRows(rows, component.columns[0].field, component.sort || 'none')
+    .filter(({ row }) => typeof row?.name === 'string')
+    .slice(0, component.limit || 8);
+  if (!selected.length) return { skipped: 'no_eligible_table_rows' };
+  const headers = component.columns.map((column) => `<th scope="col" class="num">${escapeHtml(column.label)}</th>`).join('');
+  const body = selected.map(({ row, index }, rank) => {
+    const cells = component.columns.map((column) => {
+      const metric = renderMetric(manifest, metrics, {
+        path: `${component.data_path}.${index}.${column.field}`,
+        format: column.format || 'auto',
+        precision: column.precision,
+      });
+      return `<td class="num">${metric.html}</td>`;
+    }).join('');
+    return `<tr><td data-number-exempt="排名">${rank + 1}</td><td>${renderDimensionLabel(row.name)}</td>${cells}</tr>`;
+  }).join('\n');
+  return { html: `<div class="bento-tile tile-half reveal" data-snap="brief-${escapeAttribute(component.id)}">
+  <h2 class="tile-label">${escapeHtml(component.title)}</h2>
+  <div class="table-scroll" role="region" aria-label="${escapeAttribute(component.title)}" tabindex="0">
+    <table class="mini-table"><thead><tr><th scope="col">排名</th><th scope="col">对象</th>${headers}</tr></thead><tbody>${body}</tbody></table>
+  </div>
+</div>` };
+}
+
+function renderBentoComponents(spec, metrics, insights) {
+  const manifest = createBindingManifest(metrics, insights);
+  const claims = registerClaims(spec, manifest);
+  const definitions = [];
+  const hero = spec.components.find((item) => item.type === 'hero');
+  const kpis = spec.components.find((item) => item.type === 'kpi_strip');
+  const closing = spec.components.find((item) => item.type === 'closing_actions');
+  const primary = renderMetric(manifest, metrics, hero.primary_metric, { className: 'tile-value', key: true });
+  const kpiTiles = kpis.metrics.map((ref) => {
+    const metric = renderMetric(manifest, metrics, ref, { className: 'tile-value-sm', key: true });
+    return `<div class="bento-tile tile-quarter reveal"><h2 class="tile-label">${escapeHtml(ref.label || metric.semantic.measureId || '指标')}</h2>${metric.html}</div>`;
+  });
+  const tiles = [
+    `<div class="bento-tile tile-hero tile-dark glass-surface--dark reveal" data-snap="brief-primary"><h2 class="tile-label">${escapeHtml(hero.primary_metric.label || '核心指标')}</h2>${primary.html}</div>`,
+    ...kpiTiles,
+  ];
+  for (const component of spec.components) {
+    if (['trend_chart', 'bar_chart', 'slope_chart'].includes(component.type)) {
+      const rendered = renderOptional(component, () => renderChart(component, metrics, manifest), manifest);
+      tiles.push(`<div class="bento-tile tile-wide reveal">${rendered.html}</div>`);
+      if (rendered.definition) definitions.push(rendered.definition);
+    } else if (['rank_table', 'comparison_table', 'data_detail'].includes(component.type)) {
+      tiles.push(renderOptional(component, () => bentoTable(component, metrics, manifest), manifest).html);
+    }
+  }
+  const actionItems = spec.actions.map((action, index) => `<li ${claimAttributes(claims.actionClaims.get(action.id), action.claim_kind)}><span class="action-num" data-number-exempt="行动序号">${index + 1}</span><span>${escapeHtml(action.object)} · ${escapeHtml(action.action)} <span class="action-tag tag-${escapeAttribute(action.priority)}">${escapeHtml(action.priority.toUpperCase())}</span></span></li>`).join('');
+  tiles.push(`<div class="bento-tile tile-half reveal" data-snap="brief-actions"><h2 class="tile-label">${escapeHtml(closing.title)}</h2><ul class="action-compact">${actionItems}</ul></div>`);
+  const html = `<main class="brief" id="main-content">
+  <div class="brief-header reveal" data-snap="brief-header"><div class="brief-title-group"><div class="brief-badge">EXECUTIVE BRIEF</div><h1 class="brief-title" ${claimAttributes(claims.governingId, spec.narrative.governing_thought.claim_kind)}>${escapeHtml(spec.narrative.governing_thought.text)}</h1><div class="brief-subtitle">${escapeHtml(spec.report.subtitle)}</div></div><div class="brief-meta">${escapeHtml(spec.report.organization)} · ${escapeHtml(spec.report.subject)}</div></div>
+  <div class="bento">${tiles.join('\n')}</div>
+  <div class="audit-strip" data-snap="brief-audit"><span class="footer-dot"></span><span>真源与 Evidence 合同已嵌入</span><span>|</span><span>数字绑定可复核</span></div>
+</main>`;
+  return { html, manifest, chartDefinitions: definitions };
+}
+
+function auditMetricRows(component, metrics, manifest) {
+  return component.metrics.map((ref) => {
+    const metric = renderMetric(manifest, metrics, ref, { key: true });
+    return `<tr><td>${escapeHtml(ref.label || metric.semantic.measureId || '指标')}</td><td class="num">${metric.html}</td><td><span class="status-dot pass">BOUND</span></td></tr>`;
+  }).join('');
+}
+
+function auditTable(component, metrics, manifest) {
+  const rows = resolvePath(metrics, component.data_path, { label: `${component.id}.data_path` });
+  const selected = sortRows(rows, component.columns[0].field, component.sort || 'none')
+    .filter(({ row }) => typeof row?.name === 'string')
+    .slice(0, component.limit || 20);
+  if (!selected.length) return { skipped: 'no_eligible_table_rows' };
+  const headers = component.columns.map((column) => `<th scope="col" class="num">${escapeHtml(column.label)}</th>`).join('');
+  const body = selected.map(({ row, index }) => {
+    const cells = component.columns.map((column) => {
+      const metric = renderMetric(manifest, metrics, {
+        path: `${component.data_path}.${index}.${column.field}`,
+        format: column.format || 'auto',
+        precision: column.precision,
+      });
+      return `<td class="num">${metric.html}</td>`;
+    }).join('');
+    return `<tr><td>${renderDimensionLabel(row.name)}</td>${cells}</tr>`;
+  }).join('\n');
+  return { html: `<section class="audit-section" data-snap="audit-${escapeAttribute(component.id)}">
+  <div class="audit-section-header"><h2 class="audit-section-title">${escapeHtml(component.title)}</h2><span class="status-dot pass">BOUND</span></div>
+  <div class="audit-section-body"><p>${escapeHtml(component.subtitle)}</p><div class="table-scroll" role="region" aria-label="${escapeAttribute(component.title)}" tabindex="0"><table class="audit-table"><thead><tr><th scope="col">对象</th>${headers}</tr></thead><tbody>${body}</tbody></table></div></div>
+</section>` };
+}
+
+function renderAuditComponents(spec, metrics, insights) {
+  const manifest = createBindingManifest(metrics, insights);
+  const claims = registerClaims(spec, manifest);
+  const kpis = spec.components.find((item) => item.type === 'kpi_strip');
+  const tableSections = [];
+  for (const component of spec.components.filter((item) => ['rank_table', 'comparison_table', 'data_detail'].includes(item.type))) {
+    const rendered = renderOptional(component, () => auditTable(component, metrics, manifest), manifest);
+    tableSections.push(rendered.html);
+  }
+  const actions = spec.actions.map((action) => `<div class="note" ${claimAttributes(claims.actionClaims.get(action.id), action.claim_kind)}><div class="note-title">${escapeHtml(action.object)}</div><p>${escapeHtml(action.action)}；期限：${escapeHtml(action.deadline)}；验证：${escapeHtml(action.validation_metric)}</p></div>`).join('\n');
+  const html = `<main class="audit-container" id="main-content">
+  <div class="audit-header" data-snap="audit-header"><div><h1 class="audit-title" ${claimAttributes(claims.governingId, spec.narrative.governing_thought.claim_kind)}>${escapeHtml(spec.report.title)}</h1><div class="audit-subtitle">${escapeHtml(spec.report.subtitle)}</div></div><div class="audit-stamp">确定性审计包<br><span class="status-dot pass">CONTRACT BOUND</span></div></div>
+  <section class="audit-section" data-snap="audit-source"><div class="audit-section-header"><h2 class="audit-section-title">数据源与合同</h2><span class="status-dot pass">BOUND</span></div><div class="audit-section-body"><div class="kv-grid"><div class="kv-item"><div class="kv-label">机构</div><div class="kv-value">${escapeHtml(spec.report.organization)}</div></div><div class="kv-item"><div class="kv-label">主题</div><div class="kv-value">${escapeHtml(spec.report.subject)}</div></div></div></div></section>
+  <section class="audit-section" data-snap="audit-consistency"><div class="audit-section-header"><h2 class="audit-section-title">关键指标绑定</h2><span class="status-dot pass">BOUND</span></div><div class="audit-section-body"><div class="table-scroll" role="region" aria-label="关键指标绑定" tabindex="0"><table class="audit-table"><thead><tr><th scope="col">指标</th><th scope="col">合同值</th><th scope="col">状态</th></tr></thead><tbody>${auditMetricRows(kpis, metrics, manifest)}</tbody></table></div></div></section>
+  ${tableSections.join('\n')}
+  <section class="audit-section" data-snap="audit-boundaries"><div class="audit-section-header"><h2 class="audit-section-title">边界与复核动作</h2><span class="status-dot warn">REVIEW</span></div><div class="audit-section-body">${actions}</div></section>
+  <div class="audit-footer">${escapeHtml(spec.report.organization)} · ${escapeHtml(spec.report.subject)} / 数据审计包<br>本文件携带真源、数字绑定与 Evidence 合同。</div>
+</main>`;
+  return { html, manifest, chartDefinitions: [] };
+}
+
+export function renderComponents(spec, metrics, insights, { template = 'scroll-narrative' } = {}) {
+  if (template === 'bento-brief') return renderBentoComponents(spec, metrics, insights);
+  if (template === 'audit-pack') return renderAuditComponents(spec, metrics, insights);
+  return renderScrollComponents(spec, metrics, insights);
+}
+
 export function renderRuntimeScripts(chartDefinitions) {
+  if (chartDefinitions.length === 0) {
+    return `<script>(function(){document.querySelectorAll('.reveal').forEach(function(element){element.classList.add('visible');});})();</script>`;
+  }
   const definitions = safeJsonForScript(chartDefinitions);
   return `<script>
 (function () {

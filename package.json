@@ -1,6 +1,6 @@
 {
   "name": "south-china-report",
-  "version": "3.2.0",
+  "version": "3.3.0",
   "private": true,
   "type": "module",
   "description": "通用数据分析 HTML 报告 Skill 的数据、校验、运行时真值、截图无障碍、离线与发布工具集。",
@@ -42,7 +42,9 @@
     "test:renderer-generalized": "node tests/renderer-generalized-e2e.mjs",
     "test:renderer": "npm run test:renderer-core && npm run test:renderer-generalized",
     "test:build-report": "node tests/build-report-negative-smoke.mjs && node tests/build-report-smoke.mjs",
-    "test": "npm run test:data && npm run test:renderer && npm run test:build-report && npm run test:chart-semantics && npm run test:render-pressure && npm run test:validators && npm run test:demo-migration && npm run test:demo-repro && npm run test:demos && npm run test:templates && npm run test:templates-a11y && npm run test:demo-snapshots && npm run test:offline && npm run test:presentation && npm run test:snapshot-negative && npm run test:snapshot-a11y && npm run test:snapshot-advanced-a11y && npm run test:snapshot-atomic && npm run test:snapshot-network && npm run test:runtime && npm run test:install",
+    "test:planner": "node tests/planner-tooling-smoke.mjs",
+    "test:renderer-multitemplate": "node tests/renderer-multitemplate-smoke.mjs",
+    "test": "npm run test:data && npm run test:renderer && npm run test:planner && npm run test:renderer-multitemplate && npm run test:build-report && npm run test:chart-semantics && npm run test:render-pressure && npm run test:validators && npm run test:demo-migration && npm run test:demo-repro && npm run test:demos && npm run test:templates && npm run test:templates-a11y && npm run test:demo-snapshots && npm run test:offline && npm run test:presentation && npm run test:snapshot-negative && npm run test:snapshot-a11y && npm run test:snapshot-advanced-a11y && npm run test:snapshot-atomic && npm run test:snapshot-network && npm run test:runtime && npm run test:install",
     "setup:screenshots": "npx playwright install chromium"
   },
   "dependencies": {

@@ -28,11 +28,15 @@ else {
 for (const critical of [
   'scripts/prep-source.py', 'scripts/validate-report.mjs', 'scripts/verify-numbers.mjs',
   'scripts/verify-runtime.mjs', 'scripts/snapshot.mjs', 'scripts/install-skill.mjs',
-  'scripts/render-report.mjs', 'scripts/build-report.mjs', 'schemas/report-spec.schema.json',
-  'references/report-spec-contract.md', 'references/runtime-metrics-contract.md', 'references/release-process.md',
+  'scripts/render-report.mjs', 'scripts/build-report.mjs', 'scripts/plan-report.mjs',
+  'scripts/finalize-report-spec.mjs', 'scripts/migrate-report-spec.mjs',
+  'schemas/report-spec.schema.json', 'schemas/component-registry.json',
+  'references/report-spec-contract.md', 'references/planner-contract.md',
+  'references/runtime-metrics-contract.md', 'references/release-process.md',
   '.github/workflows/ci.yml', 'templates/scroll-narrative-skeleton.html',
   'templates/bento-brief.html', 'templates/audit-pack.html', 'tests/test_multisource_e2e.py',
-  'tests/renderer-generalized-e2e.mjs',
+  'tests/renderer-generalized-e2e.mjs', 'tests/planner-tooling-smoke.mjs',
+  'tests/renderer-multitemplate-smoke.mjs',
 ]) if (!files.has(critical)) issues.push(`发布清单遗漏关键文件: ${critical}`);
 
 if (issues.length) {

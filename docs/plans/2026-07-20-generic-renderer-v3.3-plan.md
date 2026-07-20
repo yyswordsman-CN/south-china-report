@@ -1,6 +1,6 @@
 # 通用自动 Renderer V3.3 实施计划
 
-> 状态：Phase R0–R4 已于 2026-07-20 实施并通过专项、六类完整七段 Gate、Demo 双密度等价性验收、四视口目检与全量回归；R5 为可选 Planner，另行决策。
+> 状态：Phase R0–R5 与 P2 已于 2026-07-20 实施；发布以本轮全量 Gate、三模板四视口截图、安装副本哈希与远端发布回执为最终证据。
 >
 > 计划日期：2026-07-20
 >
@@ -314,15 +314,15 @@ references/release-process.md
 
 验收记录：新增迁移金丝测试，锁定双密度逐字节重建、4 章/4 图/3 行动、业务基线与 Evidence 不退化。旧定制 PVM 瀑布图经审阅替换为通用数量趋势图，PVM 归因值仍保留在 Evidence 合同。标准/紧凑版均通过 48/48 可见数字、4 图 71 个运行时业务叶子、四视口自动 Gate 与人工目检。
 
-### Phase R5：可选 Planner，另行决策
+### Phase R5：规则 Planner 与受控 Agent 修订
 
-这一阶段不属于首版 Renderer 的完成条件。
+本阶段已由项目 owner 明确授权实施。
 
-- [ ] 规则 Planner 根据 `method_applicability`、受众、主指标和可用维度生成 draft spec。
-- [ ] Agent 只能生成或修改合法 spec，不直接写最终 HTML。
-- [ ] Planner 输出必须区分 evidence、hypothesis 和 unsupported。
-- [ ] draft spec 未经检查只能输出带草稿状态的报告，不能冒充 final。
-- [ ] 使用优秀报告 spec 做 eval，不以模型自评分作为发布证据。
+- [x] 规则 Planner 根据 `method_applicability`、受众、主指标和可用维度生成 draft spec。
+- [x] Agent 只能生成或修改合法 spec，不直接写最终 HTML。
+- [x] Planner 输出必须区分 evidence、hypothesis 和 unsupported。
+- [x] draft spec 未经检查只能输出带草稿状态的报告，不能冒充 final。
+- [x] 使用优秀报告 spec 做 eval，不以模型自评分作为发布证据。
 
 ## 8. 总待办清单
 
@@ -348,16 +348,16 @@ references/release-process.md
 - [x] 输出组件选择与跳过原因，便于审计。
 - [x] Demo 迁移为 Renderer 真源。
 - [x] 文档增加普通人可复制的一条命令示例。
-- [ ] 安装副本同步并验证哈希。
+- [x] 安装副本同步并验证哈希。
 
 ### P2：后续增强
 
-- [ ] 扩展 bento brief Renderer。
-- [ ] 扩展 audit pack Renderer。
-- [ ] 规则 Planner 自动生成 draft spec。
-- [ ] Agent 辅助改写 Governing Thought 和 PAC，但必须经过 spec Schema。
-- [ ] 报告差异对比与增量重渲染。
-- [ ] 组件注册表版本迁移工具。
+- [x] 扩展 bento brief Renderer。
+- [x] 扩展 audit pack Renderer。
+- [x] 规则 Planner 自动生成 draft spec。
+- [x] Agent 辅助改写 Governing Thought 和 PAC，但必须经过 spec Schema。
+- [x] 报告差异对比与增量重渲染。
+- [x] 组件注册表版本迁移工具。
 
 ## 9. 验收标准
 

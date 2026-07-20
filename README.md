@@ -1,6 +1,6 @@
 # south-china-report
 
-> 通用型数据分析报告叙事设计系统（Codex Skill）· 当前版本 V3.2.0
+> 通用型数据分析报告叙事设计系统（Codex Skill）· 当前版本 V3.3.0
 >
 > 报告不是仪表盘。仪表盘是给人"扫"的，报告是给人"读"的。
 
@@ -29,6 +29,8 @@
 - **一条命令交付链（V3.3 Phase R2）**：`build-report.mjs` 在隔离 staging 中依次完成在线渲染、静态 Gate、离线内联、严格复检、运行时真值和四视口截图；全通过后才原子发布输出目录，失败只保留诊断目录
 - **跨业务泛化回归（V3.3 Phase R3）**：财务、人员、库存、质量、服务工单、评分调查从真实夹具重建并跑完整七段 Gate；快照不伪造日期或趋势，低优指标、百分比、负数、零值、极端值、长标签与高基数均进入自动回归
 - **Demo 真源迁移（V3.3 Phase R4）**：`demo_sales.csv + map.json + enrichment.json + report-spec.json` 可重建标准/紧凑两版在线与离线 HTML；spec 是叙事结构真源，Renderer 是 HTML 真源，V3.2 手工版仅作一个版本周期的对照/回退
+- **规则 Planner 与生命周期门禁（V3.3 Phase R5）**：主指标、受众、方法适用性和可用维度确定性生成 draft spec；evidence / hypothesis / unsupported 分流，Agent 只能改合法 draft，显式人工审阅后才能定稿
+- **三模板与增量工具链**：`report.type` 自动路由叙事长页、一屏简报或审计包；组件注册表、Spec 迁移、结构化 diff 和字节级增量重渲染均有回归 Gate
 - **视觉纪律**：三角色字体 / 语义色三层架构 / 克制动效 / IBCS 选图语法（饼图默认禁用）/ 紧凑销售报告风默认、叙事标准风显式可选
 - **四组质量 Gate**：结构/Evidence 校验（P0 硬阻断）→ 静态数字+双哈希真源一致性 → 离线内联严格复检 → 全部 ECharts 实例运行时合同 + 四视口 DOM/AX/Tab/对比度检查与截图目检
 - **可发布工程链**：GitHub Actions 跑全量回归；发布清单、版本一致性、只读安装差异、原子替换和可恢复备份均有脚本约束
@@ -57,6 +59,10 @@ python3 scripts/stat-insights.py metrics.json --out insights.json
 node scripts/build-report.mjs \
   --metrics metrics.json --insights insights.json \
   --spec report-spec.json --out-dir report-build
+
+# 尚无 spec 时，先生成明确标记的 draft，再经人工审阅定稿；详见 references/planner-contract.md
+node scripts/plan-report.mjs --metrics metrics.json --insights insights.json \
+  --report-type strategic_narrative --out report-spec.draft.json
 
 # 开发期如显式跳过截图，命令返回 3 / UNVERIFIED，产物不得标为成品：
 # node scripts/build-report.mjs ... --out-dir report-build --skip-snapshot
@@ -99,7 +105,7 @@ npm run test:demo-repro  # 数据/Renderer 逐字节比对 + 离线来源指纹/
 | `scripts/` | 数据管线、统计洞察、demo 构建、静态/运行时/截图 Gate、发布安装与 eval 回归脚本 |
 | `evals/` | 机器断言回归用例 |
 | `USAGE-GUIDE.md` | 使用指南与提示词手册 |
-| `CHANGELOG.md` | V1.0 → V3.2.0 完整迭代记录（含缺陷复现与回归证据） |
+| `CHANGELOG.md` | V1.0 → V3.3.0 完整迭代记录（含缺陷复现与回归证据） |
 
 ## 质量证据
 

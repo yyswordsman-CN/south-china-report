@@ -1,13 +1,10 @@
 import Ajv from 'ajv';
 import { readFile } from 'node:fs/promises';
 import { blocked, RendererError } from './errors.mjs';
+import { assertRegistryVersion, COMPONENT_TYPES } from './registry.mjs';
 import { resolvePath, splitSafePath, walkOwnValues } from './resolve-path.mjs';
 
-export const COMPONENT_TYPES = new Set([
-  'hero', 'kpi_strip', 'chapter_intro', 'insight_callout', 'rank_table',
-  'comparison_table', 'trend_chart', 'bar_chart', 'slope_chart',
-  'data_detail', 'closing_actions',
-]);
+export { COMPONENT_TYPES } from './registry.mjs';
 
 const VISIBLE_DIGIT_RE = /[0-9０-９]/;
 const UNSAFE_TEXT_RE = /[<>]|\bon[a-z]+\s*=|javascript\s*:|data\s*:\s*text\/html|https?:\/\//i;
@@ -107,6 +104,16 @@ function assertStructure(spec) {
   }
 }
 
+function assertPlannerDecisions(spec, metrics, insights) {
+  for (const decision of spec.planner?.decisions || []) {
+    for (const rawPath of decision.evidence || []) {
+      const [rootName, ...parts] = rawPath.split('.');
+      const root = rootName === 'metrics' ? metrics : insights;
+      resolvePath(root, parts.join('.'), { label: `planner decision ${decision.id}` });
+    }
+  }
+}
+
 export function semanticForPath(metrics, rawPath) {
   const parts = splitSafePath(rawPath, 'metric path');
   let measureId = null;
@@ -195,9 +202,10 @@ function assertComponentSemantics(spec, metrics) {
   }
 }
 
-export async function validateSpec(spec, metrics, schemaPath) {
+export async function validateSpec(spec, metrics, schemaPath, insights = null) {
   const unknown = (spec.components || []).find((component) => !COMPONENT_TYPES.has(component?.type));
   if (unknown) blocked('unsupported_component', `不支持的组件类型: ${JSON.stringify(unknown.type)}`);
+  assertRegistryVersion(spec);
   assertNoUnsafeContent(spec);
 
   let schema;
@@ -214,5 +222,9 @@ export async function validateSpec(spec, metrics, schemaPath) {
   assertUniqueIds(spec);
   assertStructure(spec);
   assertComponentSemantics(spec, metrics);
+  if (spec.planner) {
+    if (!insights) blocked('planner_insights_required', '校验 Planner 决策时必须提供 insights.json');
+    assertPlannerDecisions(spec, metrics, insights);
+  }
   return spec;
 }

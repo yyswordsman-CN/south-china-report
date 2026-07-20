@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-density="compact">
+<html lang="zh-CN" data-density="compact" data-scr-root-anchor="REPORT_ROOT">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>数据审计包 — [报告主体]</title>
+    <title><!-- SCR:REPORT_TITLE --></title>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         /* ================================================================
@@ -114,6 +114,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { max-width: 100%; }
         body {
+            font-variant-numeric: tabular-nums;
             font-family: var(--font-editorial);
             background: var(--surface-secondary);
             color: var(--text-primary);
@@ -317,9 +318,11 @@
             .kv-grid { grid-template-columns: minmax(0, 1fr); }
             .kv-value { overflow-wrap: anywhere; }
         }
+        [data-metric] { font-variant-numeric: tabular-nums; }
     </style>
 </head>
 <body>
+    <!-- SCR:REPORT_CONTRACTS -->
     <!-- 报告可审计契约：生成成品时必须用实际期间、源文件指纹与关键指标整体替换。 -->
     <script type="application/json" id="south-china-report-meta">
     {
@@ -362,6 +365,8 @@
       ]
     }
     </script>
+    <!-- SCR:END_CONTRACTS -->
+    <!-- SCR:REPORT_CONTENT -->
     <main class="audit-container" id="main-content">
 
         <!-- Header -->
@@ -571,5 +576,8 @@
             本文件仅供内部审计使用，不作为对外汇报材料。
         </div>
     </main>
+    <!-- SCR:END_CONTENT -->
+    <!-- SCR:REPORT_SCRIPTS -->
+    <!-- SCR:END_SCRIPTS -->
 </body>
 </html>

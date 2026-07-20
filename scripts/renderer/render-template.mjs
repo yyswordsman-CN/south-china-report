@@ -43,7 +43,7 @@ export async function renderTemplate({ templatePath, density, title, contracts, 
   const rootTag = density === 'compact'
     ? '<html lang="zh-CN" data-density="compact">'
     : '<html lang="zh-CN">';
-  const rootPattern = /<html\s+lang="zh-CN"\s+data-density="compact"\s+data-scr-root-anchor="REPORT_ROOT">/g;
+  const rootPattern = /<html\s+lang="zh-CN"(?:\s+data-density="compact")?\s+data-scr-root-anchor="REPORT_ROOT">/g;
   const rootMatches = template.match(rootPattern) || [];
   if (rootMatches.length !== 1 || occurrences(template, ROOT_ANCHOR) !== 1) {
     blocked('template_anchor_invalid', `REPORT_ROOT 锚点必须恰好出现一次，实际 ${rootMatches.length}`);

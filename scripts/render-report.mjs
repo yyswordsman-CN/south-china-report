@@ -10,19 +10,20 @@ import { renderComponents, renderRuntimeScripts } from './renderer/render-compon
 import { renderContracts } from './renderer/render-contracts.mjs';
 import { renderTemplate } from './renderer/render-template.mjs';
 import { writeAtomic } from './renderer/write-atomic.mjs';
+import {
+  assertTemplateCompatible,
+  templateForReportType,
+  TEMPLATE_PATHS,
+} from './renderer/registry.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const registeredTemplates = new Map([
-  ['scroll-narrative', path.join(root, 'templates', 'scroll-narrative-skeleton.html')],
-]);
-
 function usage(message) {
   if (message) console.error(message);
-  console.error('node scripts/render-report.mjs --metrics metrics.json --insights insights.json --spec report-spec.json --out report.html [--force] [--density compact|standard] [--template scroll-narrative]');
+  console.error('node scripts/render-report.mjs --metrics metrics.json --insights insights.json --spec report-spec.json --out report.html [--force|--incremental] [--allow-draft] [--density compact|standard] [--template scroll-narrative|bento-brief|audit-pack]');
 }
 
 function parseArgs(argv) {
-  const result = { force: false, template: 'scroll-narrative', density: null };
+  const result = { force: false, incremental: false, allowDraft: false, template: null, density: null };
   const valueFlags = new Set(['--metrics', '--insights', '--spec', '--out', '--density', '--template']);
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
@@ -31,6 +32,8 @@ function parseArgs(argv) {
       result.force = true;
       continue;
     }
+    if (arg === '--incremental') { result.incremental = true; continue; }
+    if (arg === '--allow-draft') { result.allowDraft = true; continue; }
     if (!valueFlags.has(arg)) blocked('invalid_arguments', `未知参数或位置参数: ${arg}`);
     const value = argv[++index];
     if (!value || value.startsWith('--')) blocked('invalid_arguments', `${arg} 缺少参数`);
@@ -42,8 +45,9 @@ function parseArgs(argv) {
   if (result.density && !['compact', 'standard'].includes(result.density)) {
     blocked('invalid_arguments', '--density 只接受 compact|standard');
   }
-  if (!registeredTemplates.has(result.template)) {
-    blocked('unsupported_template', `首版只支持 --template scroll-narrative，得到 ${result.template}`);
+  if (result.force && result.incremental) blocked('invalid_arguments', '--force 与 --incremental 不能同时使用');
+  if (result.template && !TEMPLATE_PATHS.has(result.template)) {
+    blocked('unsupported_template', `不支持的模板: ${result.template}`);
   }
   return result;
 }
@@ -60,10 +64,16 @@ export async function renderReport(options) {
     insightsPath: options.insights,
     specPath: options.spec,
   });
-  await validateSpec(inputs.spec.value, inputs.metrics.value, path.join(root, 'schemas', 'report-spec.schema.json'));
+  await validateSpec(inputs.spec.value, inputs.metrics.value, path.join(root, 'schemas', 'report-spec.schema.json'), inputs.insights.value);
   const spec = inputs.spec.value;
+  const lifecycle = spec.lifecycle?.status || 'final';
+  if (lifecycle === 'draft' && !options.allowDraft) {
+    blocked('draft_spec_not_allowed', '草稿 spec 默认禁止渲染；仅审阅预览可显式传 --allow-draft');
+  }
+  const template = options.template || templateForReportType(spec.report.type);
+  assertTemplateCompatible(spec.report.type, template);
   const density = options.density || spec.report.density;
-  const rendered = renderComponents(spec, inputs.metrics.value, inputs.insights.value);
+  const rendered = renderComponents(spec, inputs.metrics.value, inputs.insights.value, { template });
   const generatorVersion = await packageVersion();
   const contracts = renderContracts({
     metrics: inputs.metrics.value,
@@ -71,23 +81,40 @@ export async function renderReport(options) {
     insightsSha256: inputs.insights.sha256,
     generatorVersion,
     manifest: rendered.manifest,
+    spec,
+    template,
   });
+  const draftBanner = lifecycle === 'draft'
+    ? '<aside class="scr-draft-banner" data-report-status="draft" role="status"><strong>草稿</strong> · 未经人工审阅，不得作为正式报告</aside>'
+    : '';
   const html = await renderTemplate({
-    templatePath: registeredTemplates.get(options.template),
+    templatePath: TEMPLATE_PATHS.get(template),
     density,
     title: `${spec.report.title} · ${spec.report.subtitle}`,
     contracts,
-    content: rendered.html,
+    content: `${draftBanner}${rendered.html}`,
     scripts: renderRuntimeScripts(rendered.chartDefinitions),
   });
-  const outputPath = await writeAtomic(options.out, html, { force: options.force });
+  let reused = false;
+  if (options.incremental) {
+    try {
+      reused = (await readFile(path.resolve(options.out), 'utf8')) === html;
+    } catch (error) {
+      if (error.code !== 'ENOENT') throw error;
+    }
+  }
+  const outputPath = reused
+    ? path.resolve(options.out)
+    : await writeAtomic(options.out, html, { force: options.force || options.incremental });
   const outputSha256 = createHash('sha256').update(html).digest('hex');
   return {
     status: 'OK',
     renderer: 'south-china-report',
     renderer_version: generatorVersion,
     schema_version: spec.schema_version,
-    template: options.template,
+    template,
+    lifecycle,
+    reused,
     density,
     output: outputPath,
     output_sha256: outputSha256,

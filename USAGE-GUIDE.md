@@ -1,6 +1,6 @@
 # South China Report — 使用指南与提示词手册
 
-> 版本对应 SKILL V3.2.0 ｜ 面向"调用这个技能生成报告"的使用者，不是改技能源码的开发者。
+> 版本对应 SKILL V3.3.0 ｜ 面向"调用这个技能生成报告"的使用者，不是改技能源码的开发者。
 > 读完这一份，你就知道：这技能能干什么、什么场景用、要喂什么数据、产出长什么样，以及**每次生成报告时该怎么写提示词**，才能做到"维度全、挖得深、抓得住问题、读得下去"。
 > 结论先行，无 Emoji，数字口径以 `metrics.json` 为准。
 
@@ -25,6 +25,8 @@
 | 方向感知统计洞察 | `scripts/stat-insights.py` 读 `metrics.json` 产出 `insights.json` + 问题清单；MK、稳健 Z、PVM、TopN、Pareto、HHI 均先判断适用性，指标好坏按 `direction` 解释，HHI 无业务政策只作描述 |
 | 叙事设计 | 提炼统领性核心发现（Governing Thought），拆 2–4 章故事弧，每章走"现象→归因→对策"（PAC）闭环 |
 | 确定性报告编译 | 有 `report-spec.json` 时由 `scripts/render-report.mjs` 校验受控组件、真源路径、Evidence 和数字绑定后生成 HTML；相同输入逐字节复现，失败不留下最终文件 |
+| 规则 Planner | 无现成 Spec 时由 `scripts/plan-report.mjs` 生成带 evidence / hypothesis / unsupported 决策记录的 draft；未经显式人工审阅不能作为正式报告 |
+| 三类报告渲染 | `strategic_narrative`、`executive_brief`、`audit_pack` 自动路由到叙事长页、一屏简报和数据审计包 |
 | 多维分析骨架 | 内置"经营分析覆盖面清单"：总量与量价 / 结构升级 / 渠道结构 / 区域战区 / 时间趋势，默认 4–5 章成型 |
 | 专业图表 | 选图引擎强制"业务问题→意图→图表"路由；内置瀑布图、子弹图、赛马条形、增长下滑双榜、战区×月热力表、Small Multiples 等；遵循 IBCS 视觉语法 |
 | 双风格档 | 紧凑销售报告风（默认，信息密集扫读）与叙事标准风（显式可选，大留白沉浸） |

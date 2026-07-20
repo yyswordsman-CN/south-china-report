@@ -36,7 +36,7 @@ function blocked(reasonCode, message, details = []) {
 }
 
 function usage() {
-  return 'node scripts/build-report.mjs --metrics metrics.json --insights insights.json --spec report-spec.json --out-dir report-build [--force] [--density compact|standard] [--template scroll-narrative] [--skip-snapshot]';
+  return 'node scripts/build-report.mjs --metrics metrics.json --insights insights.json --spec report-spec.json --out-dir report-build [--force] [--density compact|standard] [--template scroll-narrative|bento-brief|audit-pack] [--skip-snapshot]';
 }
 
 function parseArgs(argv) {
@@ -44,7 +44,7 @@ function parseArgs(argv) {
     force: false,
     skipSnapshot: false,
     density: null,
-    template: 'scroll-narrative',
+    template: null,
   };
   const valueFlags = new Set(['--metrics', '--insights', '--spec', '--out-dir', '--density', '--template']);
   for (let index = 0; index < argv.length; index += 1) {
@@ -69,9 +69,6 @@ function parseArgs(argv) {
   }
   if (result.density && !['compact', 'standard'].includes(result.density)) {
     blocked('invalid_arguments', '--density 只接受 compact|standard');
-  }
-  if (result.template !== 'scroll-narrative') {
-    blocked('unsupported_template', `首版只支持 --template scroll-narrative，得到 ${result.template}`);
   }
   return result;
 }
@@ -368,7 +365,7 @@ export function buildReport(options) {
   const shots = path.join(stagingDir, 'shots');
   const summary = {
     schema_version: 1,
-    build_tool: { name: 'south-china-report', version: packageVersion(), phase: 'R3' },
+    build_tool: { name: 'south-china-report', version: packageVersion(), phase: 'R5' },
     status: 'RUNNING',
     delivery_ready: false,
     reason_code: null,
@@ -393,8 +390,8 @@ export function buildReport(options) {
       '--insights', insights,
       '--spec', spec,
       '--out', online,
-      '--template', options.template,
     ];
+    if (options.template) renderArgs.push('--template', options.template);
     if (options.density) renderArgs.push('--density', options.density);
     const render = runStep(context, { id: 'render', label: '确定性 Renderer', args: renderArgs });
     summary.inputs.metrics.sha256 = render.summary.metrics_sha256;

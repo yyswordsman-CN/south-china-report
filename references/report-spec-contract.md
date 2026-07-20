@@ -1,6 +1,6 @@
 # Report Spec 合同与确定性 Renderer
 
-> `report-spec.json` 是 `metrics.json + insights.json` 到 HTML 之间的机器可读编译合同。JSON Schema 真源为 `schemas/report-spec.schema.json`；首版 Renderer 入口为 `scripts/render-report.mjs`。
+> `report-spec.json` 是 `metrics.json + insights.json` 到 HTML 之间的机器可读编译合同。JSON Schema 真源为 `schemas/report-spec.schema.json`；Renderer 入口为 `scripts/render-report.mjs`。V3.3 的注册表版本、Planner 决策、草稿/定稿、Agent 修订、diff、增量渲染与迁移边界见 `planner-contract.md`。
 
 ## 1. 角色边界
 

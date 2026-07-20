@@ -1,0 +1,30 @@
+{
+  "registry_version": "1.0",
+  "schema_version": "1.0",
+  "report_types": {
+    "strategic_narrative": "scroll-narrative",
+    "executive_brief": "bento-brief",
+    "audit_pack": "audit-pack"
+  },
+  "templates": {
+    "scroll-narrative": "templates/scroll-narrative-skeleton.html",
+    "bento-brief": "templates/bento-brief.html",
+    "audit-pack": "templates/audit-pack.html"
+  },
+  "components": {
+    "hero": { "since": "1.0" },
+    "kpi_strip": { "since": "1.0" },
+    "chapter_intro": { "since": "1.0" },
+    "insight_callout": { "since": "1.0" },
+    "rank_table": { "since": "1.0" },
+    "comparison_table": { "since": "1.0" },
+    "trend_chart": { "since": "1.0" },
+    "bar_chart": { "since": "1.0" },
+    "slope_chart": { "since": "1.0" },
+    "data_detail": { "since": "1.0" },
+    "closing_actions": { "since": "1.0" }
+  },
+  "migrations": [
+    { "from": "legacy", "to": "1.0", "kind": "add_registry_and_lifecycle" }
+  ]
+}
