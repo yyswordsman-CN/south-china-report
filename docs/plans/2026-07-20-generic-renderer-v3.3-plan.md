@@ -1,6 +1,6 @@
 # 通用自动 Renderer V3.3 实施计划
 
-> 状态：Phase R0–R3 已于 2026-07-20 实施并通过专项、六类完整七段 Gate、四视口目检与全量回归；R4 及以后阶段待办。
+> 状态：Phase R0–R4 已于 2026-07-20 实施并通过专项、六类完整七段 Gate、Demo 双密度等价性验收、四视口目检与全量回归；R5 为可选 Planner，另行决策。
 >
 > 计划日期：2026-07-20
 >
@@ -303,14 +303,16 @@ references/release-process.md
 
 目标：证明 Renderer 可以替代人工 Demo HTML 真源，同时保留旧流程回退。
 
-- [ ] 用 `demo-report/report-spec.json` 生成标准/紧凑两版 Demo。
-- [ ] 对比现有人工 HTML 的数字、章节、图表、Evidence 和截图。
-- [ ] 允许经过审阅的视觉差异，不要求逐字节兼容旧人工 HTML。
-- [ ] 修改 `build-demo.py`，让 spec 成为叙事结构真源，Renderer 成为 HTML 真源。
-- [ ] 删除“人工 HTML 是叙事真源”的旧声明前，先完成等价性验收。
-- [ ] 人工 HTML 流程保留一个版本周期，并在文档中标注 legacy/manual。
+- [x] 用 `demo-report/report-spec.json` 生成标准/紧凑两版 Demo。
+- [x] 对比现有人工 HTML 的数字、章节、图表、Evidence 和截图。
+- [x] 允许经过审阅的视觉差异，不要求逐字节兼容旧人工 HTML。
+- [x] 修改 `build-demo.py`，让 spec 成为叙事结构真源，Renderer 成为 HTML 真源。
+- [x] 删除“人工 HTML 是叙事真源”的旧声明前，先完成等价性验收。
+- [x] 人工 HTML 流程保留一个版本周期，并在文档中标注 legacy/manual。
 
 完成条件：Demo 可完全由数据、enrichment、spec 和 Renderer 重建，不再要求人工先维护最终 HTML。
+
+验收记录：新增迁移金丝测试，锁定双密度逐字节重建、4 章/4 图/3 行动、业务基线与 Evidence 不退化。旧定制 PVM 瀑布图经审阅替换为通用数量趋势图，PVM 归因值仍保留在 Evidence 合同。标准/紧凑版均通过 48/48 可见数字、4 图 71 个运行时业务叶子、四视口自动 Gate 与人工目检。
 
 ### Phase R5：可选 Planner，另行决策
 
@@ -344,7 +346,7 @@ references/release-process.md
 - [x] 组件级空态、跳过态、BLOCK 态和 hypothesis 样式统一。
 - [x] 输出结构化 `build-summary.json`。
 - [x] 输出组件选择与跳过原因，便于审计。
-- [ ] Demo 迁移为 Renderer 真源。
+- [x] Demo 迁移为 Renderer 真源。
 - [x] 文档增加普通人可复制的一条命令示例。
 - [ ] 安装副本同步并验证哈希。
 

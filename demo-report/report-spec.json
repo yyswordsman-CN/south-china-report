@@ -32,6 +32,18 @@
         ]
       },
       {
+        "id": "volume-price-gap",
+        "title": "量的缺口是主因，均价与结构只能部分对冲",
+        "lead": "数量明显回落，而均价与结构改善只形成部分对冲；恢复顺序应先修复有效量，同时保护已有结构收益。",
+        "claim_kind": "attribution",
+        "evidence": [
+          "metrics.period.qty_yoy",
+          "metrics.period.price_yoy",
+          "metrics.period.pvm.vol_wan",
+          "metrics.period.pvm.price_mix_wan"
+        ]
+      },
+      {
         "id": "regional-gap",
         "title": "区域分化加剧，南区成为主要缺口",
         "lead": "主要区域的表现方向明显分化，资源配置需要转向缺口治理与有效经验复制。",
@@ -117,6 +129,40 @@
           "name": "收入",
           "data_path": "measure_results.amount.time_series",
           "assert_unit": "currency",
+          "assert_direction": "higher_is_better"
+        }
+      ]
+    },
+    {
+      "id": "intro-volume-price",
+      "type": "chapter_intro",
+      "chapter_id": "volume-price-gap"
+    },
+    {
+      "id": "volume-price-insight",
+      "type": "insight_callout",
+      "chapter_id": "volume-price-gap",
+      "title": "量效应形成主要缺口，价格与结构回补尚不足",
+      "text": "收入桥的方向与数量及均价变化一致，本章用数量月度趋势替代旧手工版的定制瀑布图。",
+      "tone": "risk",
+      "claim_kind": "attribution",
+      "evidence": [
+        "metrics.period.pvm.vol_wan",
+        "metrics.period.pvm.price_mix_wan",
+        "metrics.measure_results.qty.change_pct"
+      ]
+    },
+    {
+      "id": "quantity-trend",
+      "type": "trend_chart",
+      "chapter_id": "volume-price-gap",
+      "title": "数量趋势证实主要缺口并非单月噪声",
+      "subtitle": "按完整月序列展示；量价归因值保留在 Evidence 合同中",
+      "series": [
+        {
+          "name": "数量",
+          "data_path": "measure_results.qty.time_series",
+          "assert_unit": "count",
           "assert_direction": "higher_is_better"
         }
       ]

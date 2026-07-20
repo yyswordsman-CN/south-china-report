@@ -2,7 +2,7 @@
  "schema_version": "1.0",
  "meta": {
   "source_metrics": "metrics.json",
-  "metrics_sha256": "72f31c53991eae0532a0b7add3b65279612499a998f829b1672d4366c024569d",
+  "metrics_sha256": "440c3c7e74f1af8305c4fb145554e8dbb907b1d168961b6dceec70ce5a4e5782",
   "generated_by": "stat-insights.py",
   "metrics_status": "OK",
   "primary_measure": "amount",

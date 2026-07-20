@@ -502,7 +502,7 @@ node scripts/snapshot.mjs <report.offline.html> <shots-dir>
 | `scripts/stat-insights.py`                 | 方向感知统计层：趋势/异常/结构/集中度/方法适用性与问题清单                     | **build 之后第二步**；问题发现章证据源 |
 | `scripts/render-report.mjs`                | 校验 `report-spec.json` 并确定性生成 Evidence、运行时合同与报告 HTML           | 有合规规格时步骤 7 使用 |
 | `scripts/build-report.mjs`                 | staging 内编排 Renderer、离线、运行时和四视口 Gate，成功后原子发布完整报告目录 | 有合规规格时步骤 9 优先使用 |
-| `scripts/build-demo.py`                    | 从模拟 CSV + map + enrichment 重建数据，同步在线 meta 并生成带真源指纹的离线版 | 修改 demo 真源或发布前检查漂移 |
+| `scripts/build-demo.py`                    | 从模拟 CSV + map + enrichment + spec 重建数据、Renderer 双密度 HTML 与离线版 | 修改 demo 真源或发布前检查漂移 |
 | `scripts/validate-report.mjs`              | 成品/模板双模式质量校验，含元数据、图表、占位符与严格离线门禁                    | 交付前运行                     |
 | `scripts/verify-numbers.mjs`               | 可见数字真值、report/insights/metrics 哈希及 Evidence 路径强绑定 Gate               | 有 `metrics.json` 时交付前必跑 |
 | `scripts/verify-runtime.mjs`               | 浏览器渲染后最终 DOM 与 ECharts 标量/结构化数值叶子逐点对账                     | 严格离线版交付前必跑           |

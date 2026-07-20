@@ -4,7 +4,7 @@
 
 ---
 
-## Unreleased — V3.3 Phase R0/R3 — 通用确定性渲染器、完整 Gate 与跨业务泛化
+## Unreleased — V3.3 Phase R0/R4 — 通用确定性渲染器、完整 Gate 与 Demo 真源迁移
 
 - **Schema 先行规格**：新增 `schemas/report-spec.schema.json` 与合同文档，用统一 `report`、`narrative`、受控 `components`、`actions`、`output` 结构表达报告；Demo 金样和财务、人员、库存、质量、服务、调查六类泛化规格进入 Schema 回归。
 - **确定性核心渲染器**：新增 `scripts/render-report.mjs` 与模块化渲染内核，校验 `metrics.json` / `insights.json` 的双 SHA、数据状态、安全路径、唯一 ID、单位/方向/比较标签和数字绑定，再从带确定性锚点的 scroll-narrative 模板生成 Evidence、运行时合同与 HTML。默认拒绝覆盖，使用临时文件原子发布，相同输入逐字节复现。
@@ -14,7 +14,8 @@
 - **R3 跨业务泛化**：财务、人员、库存、质量、服务工单、评分调查六类夹具现在从 CSV 重建 metrics/insights 后执行完整七段 Gate；可见文本禁止回流战区/渠道/产品/客户/销售默认词，snapshot 使用显式 null 日期并跳过时间模块，所有跳过项保留 `reason_code`。
 - **方向与压力边界**：DOM 指标和条形/斜率图从 metrics 的 `direction/favorable` 同源生成语义状态与颜色；水平条形图恢复零基线，极端值与其余对象使用独立零基线并明示不可跨区比较，高基数按类别数扩展高度并在移动端收紧长标签。百分比、负数、零值、极端值和 HHI 无政策描述性边界进入机器回归。
 - **本机浏览器隔离**：运行时与截图 Gate 可选读取 `SCR_CHROMIUM_EXECUTABLE`，在并行任务会清理共享无头 Chromium 时指向受控浏览器；未设置时继续使用 Playwright 默认 Chromium，不改变 CI 行为。
-- **当前边界**：本条是尚未发布的 R0-R3 源码阶段；Demo 真源迁移属于 R4。产品版本和已安装副本继续保持 V3.2.0，本次不执行安装同步、提交或推送。
+- **R4 Demo 真源迁移**：`build-demo.py` 现在从 CSV + map + enrichment + spec 重建数据、标准/紧凑在线 HTML 和离线 HTML；spec 为叙事结构真源，Renderer 为 HTML 真源。新增迁移金丝测试，锁定业务基线、双密度逐字节重建、4 章/4 图/3 行动和 Evidence 不退化。旧定制 PVM 瀑布图经审阅改为通用数量趋势图，量价归因值仍纳入 Evidence 合同；V3.2 手工 HTML 保留在 `demo-report/legacy/` 一个版本周期作对照/回退。
+- **当前边界**：本条是尚未发布的 R0-R4 源码阶段。产品版本和已安装副本继续保持 V3.2.0，本次不执行安装同步或推送。
 
 ## V3.2.0 — 2026-07-19 — P2 口径消歧、参考统一与跨运行漂移锁
 

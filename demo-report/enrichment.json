@@ -33,7 +33,7 @@
     "target_pareto_customers": 30,
     "top5_target": 40.0
   },
-  "report_modes": {
+  "legacy_manual_report_modes": {
     "report.html": "demo-standard-2026-h1",
     "report-compact.html": "demo-compact-2026-h1"
   }

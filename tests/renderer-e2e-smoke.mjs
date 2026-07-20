@@ -38,8 +38,13 @@ try {
   assert.ok(runtimeBody, '生成报告必须携带 runtime contract');
   const runtime = JSON.parse(runtimeBody);
   assert.equal(runtime.version, 2);
-  assert.equal(runtime.charts.length, 3);
-  assert.deepEqual(runtime.charts.map((chart) => chart.id), ['chart-trend-total', 'chart-region-bars', 'chart-portfolio-slope']);
+  assert.equal(runtime.charts.length, 4);
+  assert.deepEqual(runtime.charts.map((chart) => chart.id), [
+    'chart-trend-total',
+    'chart-quantity-trend',
+    'chart-region-bars',
+    'chart-portfolio-slope',
+  ]);
 
   console.log('[PASS] renderer e2e: Demo 在线报告通过 validator、数字真值与 runtime 合同检查');
 } finally {

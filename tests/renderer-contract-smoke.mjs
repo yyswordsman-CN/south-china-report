@@ -62,7 +62,9 @@ try {
   assert.match(html, /id="south-china-report-meta"/);
   assert.match(html, /id="south-china-report-evidence-contract"/);
   assert.match(html, /id="south-china-report-runtime-contract"/);
-  assert.equal((html.match(/\bdata-snap="/g) || []).length, 6);
+  const demoSpec = JSON.parse(readFileSync(spec, 'utf8'));
+  const expectedSnapSections = demoSpec.narrative.chapters.length + 3; // hero + chapters + detail + closing
+  assert.equal((html.match(/\bdata-snap="/g) || []).length, expectedSnapSections);
 
   const overwriteDenied = run(first);
   assert.equal(overwriteDenied.status, 2);

@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
-"""可审计地重建 demo-report 数据产物，并从两份在线叙事真源生成离线版。
+"""可审计地重建 demo-report 数据与双密度 HTML 产物。
 
-数据输入是 demo_sales.csv + map.json + enrichment.json；report.html 与
-report-compact.html 是人工维护的叙事/版式真源，不由数据脚本生成：
+输入真源是 demo_sales.csv + map.json + enrichment.json + report-spec.json：
 1. prep-source.py 产出锁定期间的基础 metrics；
 2. 按 enrichment 声明从同一 CSV 复算历史月度趋势，再跑 stat-insights.py；
 3. 把可复算证据与显式行动假设分层写入 metrics；
-4. 刷新两份在线 HTML 的 source/metrics_sha256，再由 make-offline 生成离线版。
+4. Renderer 以 report-spec 为叙事结构真源生成标准/紧凑在线版；
+5. make-offline 由两份 Renderer 在线真源生成离线版。
 
 默认在临时目录完整成功后原子写回；--check 不联网重打包，而是逐字节比对
-数据产物/在线 meta，并核验离线版记录的在线真源 SHA-256。
+数据产物/Renderer 在线产物，并核验离线版记录的在线真源 SHA-256。
 """
 
 from __future__ import annotations
@@ -33,6 +33,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DEMO = ROOT / "demo-report"
 MAP_PATH = DEMO / "map.json"
 ENRICHMENT_PATH = DEMO / "enrichment.json"
+REPORT_SPEC_PATH = DEMO / "report-spec.json"
 SOURCE_PATH = DEMO / "demo_sales.csv"
 GENERATED_FILES = ("metrics.json", "metrics.quality.md", "insights.json", "insights.md")
 ONLINE_HTML_FILES = ("report.html", "report-compact.html")
@@ -40,10 +41,10 @@ OFFLINE_HTML_BY_SOURCE = {
     "report.html": "report.offline.html",
     "report-compact.html": "report-compact.offline.html",
 }
-META_RE = re.compile(
-    r'(<script\s+type="application/json"\s+id="south-china-report-meta">)(.*?)(</script>)',
-    re.DOTALL,
-)
+HTML_DENSITY_BY_FILE = {
+    "report.html": "standard",
+    "report-compact.html": "compact",
+}
 OFFLINE_SOURCE_RE = re.compile(
     r'<meta\s+name="south-china-report-offline-source-sha256"\s+content="([0-9a-f]{64})"\s*/?>',
     re.IGNORECASE,
@@ -252,40 +253,26 @@ def normalized_insights_md(path: Path) -> bytes:
     return text.encode("utf-8")
 
 
-def html_with_meta(path: Path, metrics: dict[str, Any], metrics_sha: str,
-                   insights_sha: str, enrichment: dict[str, Any]) -> bytes:
-    text = path.read_text(encoding="utf-8")
-    modes = enrichment.get("report_modes") or {}
-    if path.name not in modes:
-        raise DemoBuildError(f"enrichment.report_modes 缺少 {path.name}")
-    meta = {
-        "schema_version": "1.0",
-        "generator": {"name": "south-china-report", "version": "3.2.0"},
-        "requested_period": metrics["meta"]["period_lock"]["label"],
-        "source": {
-            "path": enrichment["source_contract"]["html_path"],
-            "sha256": metrics["meta"]["source_sha256"],
-        },
-        "report_mode": modes[path.name],
-        "data_cutoff": {
-            "data_as_of": metrics["meta"]["period_lock"]["data_as_of"],
-            "comparison_as_of": metrics["meta"]["period_lock"]["comparison_as_of"],
-            "completeness": metrics["meta"]["period_lock"]["completeness"],
-            "like_for_like": metrics["meta"]["period_lock"]["like_for_like"],
-        },
-        "key_metrics": {
-            "period.total_cur_wan": metrics["period"]["total_cur_wan"],
-            "period.qty_cur": metrics["period"]["qty_cur"],
-            "period.total_yoy": metrics["period"]["total_yoy"],
-        },
-        "metrics_sha256": metrics_sha,
-        "insights_sha256": insights_sha,
-    }
-    replacement = r"\1" + json.dumps(meta, ensure_ascii=False, separators=(",", ":")) + r"\3"
-    updated, count = META_RE.subn(replacement, text, count=1)
-    if count != 1:
-        raise DemoBuildError(f"{path.name} 必须恰有一个 south-china-report-meta")
-    return updated.encode("utf-8")
+def render_html(temp_dir: Path, metrics_path: Path, insights_path: Path) -> dict[str, bytes]:
+    rendered: dict[str, bytes] = {}
+    for filename, density in HTML_DENSITY_BY_FILE.items():
+        output_path = temp_dir / filename
+        run([
+            "node",
+            str(ROOT / "scripts/render-report.mjs"),
+            "--metrics",
+            str(metrics_path),
+            "--insights",
+            str(insights_path),
+            "--spec",
+            str(REPORT_SPEC_PATH),
+            "--out",
+            str(output_path),
+            "--density",
+            density,
+        ])
+        rendered[filename] = output_path.read_bytes()
+    return rendered
 
 
 def generate(temp_dir: Path, *, include_offline: bool) -> dict[str, bytes]:
@@ -296,6 +283,9 @@ def generate(temp_dir: Path, *, include_offline: bool) -> dict[str, bytes]:
     source_contract = enrichment.get("source_contract") or {}
     if source_contract.get("path") != SOURCE_PATH.name:
         raise DemoBuildError("enrichment.source_contract.path 必须指向 demo_sales.csv")
+    html_source_path = source_contract.get("html_path")
+    if not html_source_path or (ROOT / html_source_path).resolve() != SOURCE_PATH.resolve():
+        raise DemoBuildError("enrichment.source_contract.html_path 必须是从项目根开始的 demo_sales.csv 路径")
     source_sha = sha256_file(SOURCE_PATH)
     if source_sha != source_contract.get("sha256"):
         raise DemoBuildError(
@@ -312,6 +302,8 @@ def generate(temp_dir: Path, *, include_offline: bool) -> dict[str, bytes]:
     metrics = load_json(metrics_path)
     if (metrics.get("data_status") or {}).get("status") == "BLOCKED":
         raise DemoBuildError("基础 metrics 为 BLOCKED，拒绝增强与生成报告")
+    # Demo 交付以项目根为用户可见基准，避免 HTML 中出现模糊的相对路径。
+    metrics["meta"]["source_path"] = html_source_path
     metrics["trend"] = monthly_trend(map_config, enrichment)
     metrics["meta"]["demo_build"] = {
         "builder": "scripts/build-demo.py",
@@ -319,6 +311,8 @@ def generate(temp_dir: Path, *, include_offline: bool) -> dict[str, bytes]:
         "map_sha256": sha256_file(MAP_PATH),
         "enrichment": ENRICHMENT_PATH.name,
         "enrichment_sha256": sha256_file(ENRICHMENT_PATH),
+        "report_spec": REPORT_SPEC_PATH.name,
+        "report_spec_sha256": sha256_file(REPORT_SPEC_PATH),
         "source_contract_verified": True,
         "synthetic_source": bool(source_contract.get("synthetic")),
         "longitudinal_trend": enrichment["longitudinal_trend"],
@@ -343,10 +337,7 @@ def generate(temp_dir: Path, *, include_offline: bool) -> dict[str, bytes]:
         "insights.json": insights_path.read_bytes(),
         "insights.md": normalized_insights_md(temp_dir / "insights.md"),
     }
-    metrics_sha = sha256_bytes(metrics_payload)
-    insights_sha = sha256_bytes(artifacts["insights.json"])
-    for filename in ONLINE_HTML_FILES:
-        artifacts[filename] = html_with_meta(DEMO / filename, metrics, metrics_sha, insights_sha, enrichment)
+    artifacts.update(render_html(temp_dir, metrics_path, insights_path))
     if include_offline:
         for source_name, offline_name in OFFLINE_HTML_BY_SOURCE.items():
             source_path = temp_dir / source_name
@@ -395,8 +386,8 @@ def main() -> int:
             if mismatches:
                 raise DemoBuildError("仓内演示产物已漂移: " + ", ".join(mismatches) + "；请运行 npm run build:demo")
             print(
-                "[OK] demo 可复现性: 数据产物逐字节一致，在线 meta 已同步，"
-                "两份离线版均匹配当前在线叙事真源指纹"
+                "[OK] demo 可复现性: 数据与 Renderer 在线产物逐字节一致，"
+                "两份离线版均匹配当前 Renderer 真源指纹"
             )
             return 0
         for filename, payload in artifacts.items():

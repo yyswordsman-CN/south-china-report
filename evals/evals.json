@@ -103,16 +103,16 @@
       "expected_output": "2026H1 标准密度叙事报告；契约期间、源文件 SHA-256、关键指标与 metrics.json 一致；至少 4 个章节、4 个图表容器和 3 个行动项。",
       "files": ["demo-report/demo_sales.csv", "demo-report/metrics.json"],
       "assertions": [
-        "报告契约标注 requested_period=2026H1、demo-standard-2026-h1 模式和真实源文件指纹",
+        "报告契约标注 requested_period=2026H1、period 分析模式和真实源文件指纹",
         "validator 0 FAIL",
         "标准密度且真实 DOM 中章节、图表、行动项结构完整",
         "所有可见数字均绑定或有粒度合规的显式豁免"
       ],
       "machine_checks": [
-        { "id": "report-contract", "type": "report_contract", "requested_period": "2026H1", "source_file": "demo-report/demo_sales.csv", "report_mode": "demo-standard-2026-h1", "key_metrics": [
-          { "path": "period.total_cur_wan", "expect": 6372.0, "tolerance": 0.05 },
-          { "path": "period.qty_cur", "expect": 20792, "tolerance": 0 },
-          { "path": "period.total_yoy", "expect": -12.6, "tolerance": 0.05 }
+        { "id": "report-contract", "type": "report_contract", "requested_period": "2026H1", "source_file": "demo-report/demo_sales.csv", "report_mode": "period", "key_metrics": [
+          { "path": "measure_results.amount.current", "expect": 63719618.72, "tolerance": 0.05 },
+          { "path": "measure_results.qty.current", "expect": 20792, "tolerance": 0 },
+          { "path": "measure_results.amount.change_pct", "expect": -12.6, "tolerance": 0.05 }
         ], "desc": "报告契约与 2026H1 demo 真值一致" },
         { "id": "validator", "type": "validator_exit0", "desc": "validator 0 FAIL 且 exit 0" },
         { "id": "density", "type": "density", "expect": "standard", "desc": "标准密度" },
@@ -129,16 +129,16 @@
       "expected_output": "2026H1 紧凑密度叙事报告；契约期间、源文件 SHA-256、关键指标与 metrics.json 一致；至少 4 个章节、4 个图表容器和 3 个行动项。",
       "files": ["demo-report/demo_sales.csv", "demo-report/metrics.json"],
       "assertions": [
-        "报告契约标注 requested_period=2026H1、demo-compact-2026-h1 模式和真实源文件指纹",
+        "报告契约标注 requested_period=2026H1、period 分析模式和真实源文件指纹",
         "validator 0 FAIL",
         "紧凑密度且真实 DOM 中章节、图表、行动项结构完整",
         "所有可见数字均绑定或有粒度合规的显式豁免"
       ],
       "machine_checks": [
-        { "id": "report-contract", "type": "report_contract", "requested_period": "2026H1", "source_file": "demo-report/demo_sales.csv", "report_mode": "demo-compact-2026-h1", "key_metrics": [
-          { "path": "period.total_cur_wan", "expect": 6372.0, "tolerance": 0.05 },
-          { "path": "period.qty_cur", "expect": 20792, "tolerance": 0 },
-          { "path": "period.total_yoy", "expect": -12.6, "tolerance": 0.05 }
+        { "id": "report-contract", "type": "report_contract", "requested_period": "2026H1", "source_file": "demo-report/demo_sales.csv", "report_mode": "period", "key_metrics": [
+          { "path": "measure_results.amount.current", "expect": 63719618.72, "tolerance": 0.05 },
+          { "path": "measure_results.qty.current", "expect": 20792, "tolerance": 0 },
+          { "path": "measure_results.amount.change_pct", "expect": -12.6, "tolerance": 0.05 }
         ], "desc": "报告契约与 2026H1 demo 真值一致" },
         { "id": "validator", "type": "validator_exit0", "desc": "validator 0 FAIL 且 exit 0" },
         { "id": "density", "type": "density", "expect": "compact", "desc": "紧凑密度" },

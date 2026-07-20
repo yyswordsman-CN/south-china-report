@@ -28,6 +28,7 @@
 - **确定性报告编译器（V3.3 Phase R0/R1）**：Schema 先行的 `report-spec.json` 通过受控组件生成 Evidence、运行时数字合同和 HTML；同一组输入逐字节复现，路径越界、未知组件、裸业务数字或覆盖已有文件均 fail-closed
 - **一条命令交付链（V3.3 Phase R2）**：`build-report.mjs` 在隔离 staging 中依次完成在线渲染、静态 Gate、离线内联、严格复检、运行时真值和四视口截图；全通过后才原子发布输出目录，失败只保留诊断目录
 - **跨业务泛化回归（V3.3 Phase R3）**：财务、人员、库存、质量、服务工单、评分调查从真实夹具重建并跑完整七段 Gate；快照不伪造日期或趋势，低优指标、百分比、负数、零值、极端值、长标签与高基数均进入自动回归
+- **Demo 真源迁移（V3.3 Phase R4）**：`demo_sales.csv + map.json + enrichment.json + report-spec.json` 可重建标准/紧凑两版在线与离线 HTML；spec 是叙事结构真源，Renderer 是 HTML 真源，V3.2 手工版仅作一个版本周期的对照/回退
 - **视觉纪律**：三角色字体 / 语义色三层架构 / 克制动效 / IBCS 选图语法（饼图默认禁用）/ 紧凑销售报告风默认、叙事标准风显式可选
 - **四组质量 Gate**：结构/Evidence 校验（P0 硬阻断）→ 静态数字+双哈希真源一致性 → 离线内联严格复检 → 全部 ECharts 实例运行时合同 + 四视口 DOM/AX/Tab/对比度检查与截图目检
 - **可发布工程链**：GitHub Actions 跑全量回归；发布清单、版本一致性、只读安装差异、原子替换和可恢复备份均有脚本约束
@@ -78,13 +79,13 @@ node scripts/snapshot.mjs report.offline.html shots/
 - `demo-report/report-compact.offline.html` — **紧凑销售报告风（默认）**：Hero 收为 masthead 横幅、8 KPI 密排一行、密集表格，同一份数据同一套故事，整页高度压缩约 25%，适合发群扫读 / 打印 / 移动端长图
 - `demo-report/report.offline.html` — **叙事标准风（显式可选）**：大留白沉浸、100vh Hero、滚动动效，适合明确要求的高管汇报与对外呈现
 
-四章叙事：趋势诊断（MK 检验）→ 量价拆解（PVM 瀑布）→ 战区贡献分解 → 结构与集中度；标准/紧凑版可见数字覆盖分别为 181/181、185/185（业务数字绑定，日期/序号等叶子豁免），各有 4 张图、55 个运行时业务数值叶子、1 个有理由豁免的辅助系列及 21 个逐叶声明的视觉常量，均通过报告级 eval、严格离线、运行时真值与四视口 DOM/AX/Tab/对比度 Gate。
+四章叙事：趋势诊断（MK 检验）→ 量价缺口（数量趋势 + Evidence 中的 PVM 归因）→ 战区贡献分解 → 结构变化；标准/紧凑版可见数字均为 48/48（覆盖率 100%），各有 4 张图、71 个运行时业务数值叶子，无辅助系列或结构叶子豁免，并继续通过报告级 eval、严格离线、运行时真值与四视口 DOM/AX/Tab/对比度 Gate。
 
-演示数据链不再依赖手工补丁：`demo_sales.csv + map.json + enrichment.json` 是三份显式数据输入，后者单独声明模拟源指纹、历史趋势窗口、证据阈值和行动假设；`report.html` 与 `report-compact.html` 是人工维护的叙事/版式真源。可原子重建或只读检查：
+演示数据链不再依赖手工最终 HTML：`demo_sales.csv + map.json + enrichment.json + report-spec.json` 是四份显式输入；`report-spec.json` 是叙事结构真源，Renderer 生成 `report.html` 与 `report-compact.html`。V3.2 手工版保留在 `demo-report/legacy/` 一个版本周期，只用于 R4 等价性对照和回退，不再是真源。可原子重建或只读检查：
 
 ```bash
-npm run build:demo       # 重建数据、同步在线 meta，再从在线真源生成两份离线版
-npm run test:demo-repro  # 数据逐字节比对 + 离线来源指纹/严检/数字/eval
+npm run build:demo       # 重建数据 + Renderer 双密度在线版 + 两份离线版
+npm run test:demo-repro  # 数据/Renderer 逐字节比对 + 离线来源指纹/严检/数字/eval
 ```
 
 ## 项目结构

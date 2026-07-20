@@ -1,0 +1,1596 @@
+<!DOCTYPE html>
+<!-- LEGACY/MANUAL: V3.2 人工 HTML 真源，仅供 R4 等价性对照与一个版本周期的回退。 -->
+<html lang="zh-CN" data-density="compact">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>增长失速，结构护价 · 2026 上半年经营复盘 · 紧凑销售报告风（模拟数据演示）</title>
+    <script type="application/json" id="south-china-report-meta">{"schema_version":"1.0","generator":{"name":"south-china-report","version":"3.2.0"},"requested_period":"2026H1","source":{"path":"demo-report/demo_sales.csv","sha256":"6fed1164095b2bdf221b47f704422eae83e7019b1bbbd506888ecfe012e27720"},"report_mode":"demo-compact-2026-h1","data_cutoff":{"data_as_of":"2026-06-30","comparison_as_of":"2025-06-30","completeness":"complete","like_for_like":true},"key_metrics":{"period.total_cur_wan":6372.0,"period.qty_cur":20792,"period.total_yoy":-12.6},"metrics_sha256":"72f31c53991eae0532a0b7add3b65279612499a998f829b1672d4366c024569d","insights_sha256":"ea2f9f3ce8c1e25c1069840d0249aa81d36e1b986a6c4f3343105c8db3dc3233"}</script>
+    <script type="application/json" id="south-china-report-runtime-contract">
+    {
+      "version": 2,
+      "charts": [
+        {
+          "id": "chart-trend",
+          "series": [
+            { "index": 0, "metrics": ["trend.2026.0", "trend.2026.1", "trend.2026.2", "trend.2026.3", "trend.2026.4", "trend.2026.5", "trend.2026.6", "trend.2026.7", "trend.2026.8", "trend.2026.9", "trend.2026.10", "trend.2026.11"] },
+            { "index": 1, "metrics": ["trend.2025.0", "trend.2025.1", "trend.2025.2", "trend.2025.3", "trend.2025.4", "trend.2025.5", "trend.2025.6", "trend.2025.7", "trend.2025.8", "trend.2025.9", "trend.2025.10", "trend.2025.11"] },
+            { "index": 2, "metrics": ["trend.2024.0", "trend.2024.1", "trend.2024.2", "trend.2024.3", "trend.2024.4", "trend.2024.5", "trend.2024.6", "trend.2024.7", "trend.2024.8", "trend.2024.9", "trend.2024.10", "trend.2024.11"] }
+          ]
+        },
+        {
+          "id": "chart-waterfall",
+          "series": [
+            { "index": 0, "exempt": "透明瀑布基座，只负责浮动布局，不表达业务值" },
+            {
+              "index": 1,
+              "bindings": [
+                { "dataPointer": "/0/value", "metric": "period.pvm.base_wan" },
+                { "dataPointer": "/0/label/formatter", "metric": "period.pvm.base_wan" },
+                { "dataPointer": "/1/value", "metric": { "path": "period.pvm.vol_wan", "transform": "abs" } },
+                { "dataPointer": "/1/label/formatter", "metric": "period.pvm.vol_wan" },
+                { "dataPointer": "/2/value", "metric": "period.pvm.price_mix_wan" },
+                { "dataPointer": "/2/label/formatter", "metric": "period.pvm.price_mix_wan" },
+                { "dataPointer": "/3/value", "metric": "period.pvm.cur_wan" },
+                { "dataPointer": "/3/label/formatter", "metric": "period.pvm.cur_wan" }
+              ],
+              "exemptions": [{
+                "dataPointers": [
+                  "/0/itemStyle/borderRadius/0", "/0/itemStyle/borderRadius/1", "/0/itemStyle/borderRadius/2", "/0/itemStyle/borderRadius/3",
+                  "/1/itemStyle/borderRadius/0", "/1/itemStyle/borderRadius/1", "/1/itemStyle/borderRadius/2", "/1/itemStyle/borderRadius/3",
+                  "/2/itemStyle/borderRadius/0", "/2/itemStyle/borderRadius/1", "/2/itemStyle/borderRadius/2", "/2/itemStyle/borderRadius/3",
+                  "/3/itemStyle/borderRadius/0", "/3/itemStyle/borderRadius/1", "/3/itemStyle/borderRadius/2", "/3/itemStyle/borderRadius/3"
+                ],
+                "reason": "柱形圆角视觉常量，不表达业务值"
+              }]
+            }
+          ]
+        },
+        {
+          "id": "chart-contrib",
+          "series": [
+            {
+              "index": 0,
+              "bindings": [
+                { "dataPointer": "/0/value", "metric": "report_evidence.contribution_pp.南区" },
+                { "dataPointer": "/1/value", "metric": "report_evidence.contribution_pp.北区" },
+                { "dataPointer": "/2/value", "metric": "report_evidence.contribution_pp.西区" },
+                { "dataPointer": "/3/value", "metric": "report_evidence.contribution_pp.中区" },
+                { "dataPointer": "/4/value", "metric": "report_evidence.contribution_pp.东区" }
+              ],
+              "exemptions": [{
+                "dataPointers": [
+                  "/0/itemStyle/borderRadius", "/1/itemStyle/borderRadius", "/2/itemStyle/borderRadius",
+                  "/3/itemStyle/borderRadius", "/4/itemStyle/borderRadius"
+                ],
+                "reason": "条形圆角视觉常量，不表达业务值"
+              }]
+            }
+          ]
+        },
+        {
+          "id": "chart-slope",
+          "series": [
+            { "index": 0, "metrics": ["report_evidence.base_share_pct.主力系列", "report_evidence.dimensions.品类.主力系列.share"] },
+            { "index": 1, "metrics": ["report_evidence.base_share_pct.旗舰系列", "report_evidence.dimensions.品类.旗舰系列.share"] },
+            { "index": 2, "metrics": ["report_evidence.base_share_pct.入门系列", "report_evidence.dimensions.品类.入门系列.share"] }
+          ]
+        }
+      ]
+    }
+    </script>
+    <script type="application/json" id="south-china-report-evidence-contract">
+    {
+      "version": 1,
+      "claims": [
+        {
+          "id": "E-GOVERNING",
+          "kind": "fact",
+          "sources": [
+            { "file": "metrics", "path": "period.total_yoy" },
+            { "file": "metrics", "path": "period.price_yoy" }
+          ]
+        },
+        {
+          "id": "E-TREND",
+          "kind": "fact",
+          "sources": [
+            { "file": "insights", "path": "trend_test.mann_kendall.z" },
+            { "file": "metrics", "path": "report_evidence.trend.trailing_negative_months" }
+          ]
+        },
+        {
+          "id": "E-PVM",
+          "kind": "attribution",
+          "sources": [
+            { "file": "metrics", "path": "period.pvm.vol_wan" },
+            { "file": "metrics", "path": "period.pvm.price_mix_wan" }
+          ]
+        },
+        {
+          "id": "E-ZONE",
+          "kind": "attribution",
+          "sources": [
+            { "file": "metrics", "path": "report_evidence.contribution_pp.南区" },
+            { "file": "metrics", "path": "report_evidence.contribution_pp.东区" }
+          ]
+        },
+        {
+          "id": "E-STRUCTURE",
+          "kind": "fact",
+          "sources": [
+            { "file": "metrics", "path": "concentration.top5_share" },
+            { "file": "metrics", "path": "report_evidence.share_shift_pp.旗舰系列" }
+          ]
+        },
+        {
+          "id": "H-ACTIONS",
+          "kind": "hypothesis",
+          "reason": "行动目标是管理假设，不是历史数据事实",
+          "validation_needed": "按责任人、截止日和验证指标在经营会上复核"
+        }
+      ]
+    }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    <style>
+        /* ================================================================
+           SCROLL NARRATIVE DESIGN SYSTEM V2
+           叙事沉浸式数据体验
+           哲学: Apple 叙事力 + Airbnb 设计感 + The Pudding 故事流
+                 + McKinsey 数据纪律 + Carbon 工程感
+           V2 升级: 三角色字体 / 色彩三层架构 / 动效 Recipe / Anti-Default
+           ================================================================ */
+
+        /* ========== V2 Design Tokens — 三层架构 ========== */
+        :root {
+            /* === Spacing (8pt grid) — 密度轴: 由 --density 缩放 ===
+                 <html data-density="compact"> 时 --density=0.6, 间距收紧 + 组件级版式重组;
+                 Skill 与本文件默认紧凑，属性触发 --density=0.6 */
+            --density: 1;
+            --space-1:   calc(4px  * var(--density));
+            --space-2:   calc(8px  * var(--density));
+            --space-3:   calc(12px * var(--density));
+            --space-4:   calc(16px * var(--density));
+            --space-5:   calc(20px * var(--density));
+            --space-6:   calc(24px * var(--density));
+            --space-8:   calc(32px * var(--density));
+            --space-10:  calc(40px * var(--density));
+            --space-12:  calc(48px * var(--density));
+            --space-16:  calc(64px * var(--density));
+            --space-20:  calc(80px * var(--density));
+            --space-24:  calc(96px * var(--density));
+
+            /* === V2 Type Scale (clamp 流体) === */
+            --text-xs:11px; --text-sm:13px; --text-base:16px; --text-lg:18px;
+            --text-xl:22px; --text-2xl:28px;
+            --text-3xl: clamp(28px, 3.5vw, 36px);
+            --text-4xl: clamp(32px, 5vw, 56px);
+            --text-5xl: clamp(48px, 6vw, 64px);
+            --text-hero: clamp(56px, 8vw, 96px);
+
+            /* === V2 三角色字体 === */
+            --font-display: 'Plus Jakarta Sans','Noto Sans SC',sans-serif;
+            --font-editorial: 'DM Sans','Noto Sans SC',-apple-system,sans-serif;
+            --font-data: 'JetBrains Mono','SF Mono','Fira Code',monospace;
+            /* Pull Quote 衬线: 系统衬线栈, 无需外链字体 (离线安全) */
+            --font-serif: Georgia,'Times New Roman','Songti SC','Noto Serif CJK SC',serif;
+            /* 向后兼容 V1 */
+            --font-sans: var(--font-editorial);
+            --font-mono: var(--font-data);
+            --font-kpi: var(--font-display);
+
+            /* === V2.1 排版 Token: Weight / Leading / Tracking ===
+                 集成 Apple §15 排版纪律:
+                 - Tracking 尺寸专属, 绝不固定 (大字越负, 微标越正)
+                 - Leading 与字号反向 (大字紧, 正文松)
+                 - 层级由 weight + size + leading 作为一组共同构建
+                 - font-optical-sizing: auto 让字号越大字形越紧致          */
+            /* Weight 语义 */
+            --fw-normal:     400;
+            --fw-medium:     500;
+            --fw-semibold:   600;
+            --fw-bold:       700;
+            --fw-extrabold:  800;
+            --fw-black:      900;
+            /* Leading: 与字号反向 (Apple §15) */
+            --leading-display: 1.05;   /* Hero 超大拉丁数字 */
+            --leading-tight:   1.1;    /* 大标题 (V2: 1.15→1.1 更紧凑, CJK 安全) */
+            --leading-snug:    1.3;    /* 卡片标题 / Action Title */
+            --leading-normal:  1.5;    /* 标准 */
+            --leading-relaxed: 1.7;    /* 正文 / Insight / chapter-lead */
+            --leading-loose:   1.8;    /* 长段落 */
+            /* Tracking: 尺寸专属, 绝不固定 (Apple §15) */
+            --tracking-display: -0.035em;  /* Hero 超大字, 越大越负 */
+            --tracking-tighter: -0.03em;   /* Hero 标题 */
+            --tracking-tight:   -0.02em;   /* KPI 大数字 / Chapter 标题 */
+            --tracking-normal:   0;        /* 正文 */
+            --tracking-caption:  0.01em;   /* ≤11px 微标, 轻微正 tracking 提可读性 */
+            --tracking-wide:     0.05em;   /* 大写标签 */
+            --tracking-wider:    0.08em;   /* Badge 内文字 */
+            --tracking-widest:   0.12em;   /* chapter-number / hero-badge */
+
+            /* === 第一层: 品牌色 (可通过 visual-theme-engine 替换) === */
+            --brand-deepest: #001d3d;
+            --brand-deep: #003566;
+            --brand-mid: #0353a4;
+            --brand-light: #006daa;
+            --brand-accent: #0369a1;
+            --brand-faint: #e8f4fd;   /* V2 新增 */
+            --brand-muted: #b8d8e8;   /* V2 新增 */
+
+            /* === 第二层: 语义色 (情感固定，不随主题变) === */
+            --semantic-growth: #047857;
+            --semantic-growth-bg: #ecfdf5;
+            --semantic-risk: #b91c1c;
+            --semantic-risk-bg: #fef2f2;
+            --semantic-opportunity: #1d4ed8;
+            --semantic-opportunity-bg: #eff6ff;
+            --semantic-warning: #b45309;
+            --semantic-warning-bg: #fffbeb;
+            --semantic-neutral: #475569;
+            --semantic-neutral-bg: #f1f5f9;
+            /* 深底专用亮色 */
+            --semantic-growth-dark: #6ee7b7;
+            --semantic-risk-dark: #fca5a5;
+            --semantic-opportunity-dark: #93c5fd;
+            --semantic-warning-dark: #fcd34d;
+            /* 向后兼容 V1 */
+            --color-growth: var(--semantic-growth);
+            --color-growth-bg: var(--semantic-growth-bg);
+            --color-risk: var(--semantic-risk);
+            --color-risk-bg: var(--semantic-risk-bg);
+            --color-opportunity: var(--semantic-opportunity);
+            --color-opportunity-bg: var(--semantic-opportunity-bg);
+            --color-neutral: var(--semantic-neutral);
+            --color-warning: var(--semantic-warning);
+            --color-urgent-light: var(--semantic-risk-dark);
+            --color-strategic-light: var(--semantic-opportunity-dark);
+            --color-monitor-light: var(--semantic-warning-dark);
+
+            /* === 第三层: 界面色 (跟随 Light/Dark 模式) === */
+            --surface-primary: #ffffff;
+            --surface-secondary: #f8fafc;
+            --surface-tertiary: #f1f5f9;
+            --surface-inverse: #0f172a;
+            --text-primary: #1a1a2e;
+            --text-secondary: #475569;
+            --text-tertiary: #64748b;
+            --text-inverse: #f8fafc;
+            --text-muted: #cbd5e1;
+            --border-default: #e2e8f0;
+            --border-emphasis: #cbd5e1;
+            --border-subtle: #f1f5f9;
+            /* 向后兼容 V1 */
+            --color-bg: var(--surface-primary);
+            --color-text: var(--text-primary);
+            --color-text-secondary: var(--text-secondary);
+            --color-text-tertiary: var(--text-tertiary);
+            --color-border: var(--border-default);
+            --color-bg-subtle: var(--surface-secondary);
+
+            /* === 图表色板 === */
+            --chart-1: var(--brand-mid);
+            --chart-2: var(--semantic-growth);
+            --chart-3: #d97706;
+            --chart-4: #7c3aed;
+            --chart-5: #0891b2;
+            --chart-6: #be123c;
+
+            /* === Radius & Shadow === */
+            --radius-sm: 6px;
+            --radius: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --radius-full: 100px;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+            --shadow-lg: 0 12px 32px rgba(0,0,0,0.1);
+            --shadow-elevated: 0 20px 40px -5px rgba(0,0,0,0.12);
+
+            /* === V2 Motion Tokens === */
+            --ease-productive: cubic-bezier(0.2, 0, 0.38, 0.9);
+            --ease-expressive: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-exit: cubic-bezier(0.4, 0.14, 1, 1);
+            --duration-fast: 150ms;
+            --duration-moderate: 300ms;
+            --duration-slow: 500ms;
+            --duration-slower: 700ms;
+            --duration-dramatic: 1200ms;
+            --stagger-normal: 60ms;
+
+            /* === Layout === */
+            --content-width: 960px;
+            --content-wide: 1200px;
+        }
+
+        /* ========== 密度轴: 紧凑销售报告风 (V2.4 — 版式重组) ==========
+           叙事标准档 (显式可选, density=1) 即"大公司财报叙事风": 大留白、慢节奏、强沉浸。
+           紧凑销售报告风 (Skill 默认, data-density="compact", density=0.6): 共享全部视觉主体, 但为
+           "信息密集 · 快速扫读"重组版式 —— Hero 收为 masthead 横幅、KPI/表格/章节加密、
+           Pull Quote 转左线 callout、内容列加宽。适合销售月报/旬报扫读 / 打印 / 移动端长图。
+           (仍遵守 §15 排版纪律: 尺寸专属 tracking / 反向 leading / 层级三件套)
+           Skill 模板与本文件均默认紧凑。组件级规则见文件末尾同名区块。 */
+        /* ==================================================================
+           密度轴 · 紧凑销售报告风 (data-density="compact")
+           与叙事标准风共享全部视觉主体 (品牌渐变/语义色/三角色字体/Token),
+           但版式为「信息密集 · 快速扫读」重组:
+             - Hero 收为 masthead 横幅 (结论居左 + 核心数字居右, 首屏即见结论)
+             - KPI/表格/章节加密, 内容列加宽吃掉两侧空白
+             - 沉浸式组件 (Pull Quote) 转左线紧凑 callout, 不再漂浮占屏
+           触发: <html lang="zh-CN" data-density="compact">。完整规则见文件末尾同名区块。
+           ================================================================== */
+        :root[data-density="compact"] {
+            --density: 0.6;                        /* 间距整体收紧 40% */
+            /* 排版刻度下移, 仍遵守 §15 (tracking/leading 随字号匹配) */
+            --text-hero:  clamp(32px, 4vw, 52px);
+            --text-5xl:   clamp(32px, 4vw, 44px);
+            --text-4xl:   clamp(26px, 3vw, 36px);
+            --text-3xl:   clamp(22px, 2.6vw, 28px);
+            --leading-relaxed: 1.5;
+            --leading-normal:  1.4;
+            --leading-loose:   1.55;
+        }
+
+        /* ========== Base Reset ========== */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html {
+            scroll-behavior: smooth;
+            text-size-adjust: 100%;          /* Apple §15: 尊重用户字号设置 (Dynamic Type) */
+            -webkit-text-size-adjust: 100%;
+        }
+        body {
+            font-family: var(--font-editorial);
+            background: var(--surface-primary);
+            color: var(--text-primary);
+            font-size: var(--text-base);
+            line-height: var(--leading-relaxed);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+            font-optical-sizing: auto;       /* Apple §15: 字号越大字形越紧致, 自动光学尺寸 */
+        }
+        body, [data-metric] { font-variant-numeric: tabular-nums; }
+
+        /* ========== Scroll Progress Bar ========== */
+        .scroll-progress {
+            position: fixed; top: 0; left: 0; z-index: 1000;
+            width: 0%; height: 3px;
+            background: linear-gradient(90deg, var(--brand-accent), var(--brand-mid));
+            box-shadow: 0 1px 10px rgba(5,130,202,0.35);
+            backdrop-filter: blur(6px) saturate(140%);
+            -webkit-backdrop-filter: blur(6px) saturate(140%);
+            transition: width 0.1s linear;
+        }
+
+        /* ========== Apple §12 材质系统: 玻璃表面复用类 ==========
+           毛玻璃承载浮动功能层, 内容可滚动其下 (非不透明条占据固定条带)。
+           材质重量编码层级: 越大表面越厚 (更强 blur + 更深阴影)。
+           切勿将浅色毛玻璃叠在另一浅色毛玻璃上 (可读性崩塌)。        */
+        .glass-surface {
+            background: rgba(255, 255, 255, 0.72);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-top: 1px solid rgba(255, 255, 255, 0.45);  /* 亮边 = 光打在材质上 */
+            box-shadow: 0 8px 32px rgba(15, 23, 42, 0.12);
+        }
+        /* 边缘渐隐遮罩替代硬分隔线 (Apple §12: 用滚动边缘效果, 而非 1px 边框) */
+        .glass-surface--edge-fade {
+            -webkit-mask-image: linear-gradient(to bottom, #000 85%, transparent 100%);
+            mask-image: linear-gradient(to bottom, #000 85%, transparent 100%);
+        }
+        /* 深底玻璃变体 (用于深底浮动层) */
+        .glass-surface--dark {
+            background: rgba(0, 29, 61, 0.72);
+            border-top: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+        }
+
+        /* ========== COMPONENT: Hero Banner ========== */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            background: linear-gradient(160deg, var(--brand-deepest) 0%, var(--brand-deep) 40%, var(--brand-mid) 100%);
+            color: #fff;
+            padding: var(--space-20) var(--space-8);
+            text-align: center;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: ''; position: absolute;
+            top: -30%; right: -10%;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(5,130,202,0.15), transparent 70%);
+            border-radius: 50%;
+        }
+        .hero::after {
+            content: ''; position: absolute;
+            bottom: -20%; left: -10%;
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(3,83,164,0.12), transparent 70%);
+            border-radius: 50%;
+        }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: var(--text-xs); font-weight: var(--fw-semibold);
+            color: rgba(255,255,255,0.78);
+            text-transform: uppercase; letter-spacing: var(--tracking-widest);
+            margin-bottom: var(--space-6);
+            position: relative; z-index: 1;
+        }
+        .hero-badge i { font-size: 14px; }
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: var(--text-hero);
+            font-weight: var(--fw-extrabold); line-height: var(--leading-tight);
+            max-width: min(1000px, 92vw);
+            margin-bottom: var(--space-6);
+            position: relative; z-index: 1;
+            letter-spacing: var(--tracking-tighter);
+        }
+        .hero-subtitle {
+            font-size: var(--text-xl);
+            color: rgba(255,255,255,0.78);
+            max-width: 600px; line-height: 1.6;
+            margin-bottom: var(--space-10);
+            position: relative; z-index: 1;
+            font-weight: 400;
+        }
+        .hero-number {
+            font-family: var(--font-display);
+            font-size: clamp(48px, 8vw, 120px);
+            font-weight: var(--fw-extrabold); line-height: var(--leading-display);
+            letter-spacing: var(--tracking-display);
+            position: relative; z-index: 1;
+            background: linear-gradient(135deg, #fff 30%, rgba(255,255,255,0.6));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero-number-label {
+            font-size: var(--text-sm);
+            color: rgba(255,255,255,0.78);
+            margin-top: var(--space-2);
+            position: relative; z-index: 1;
+            font-weight: var(--fw-medium); letter-spacing: var(--tracking-wide);
+        }
+        .hero-scroll-hint {
+            position: absolute; bottom: var(--space-10);
+            font-size: var(--text-xs); color: rgba(255,255,255,0.72);
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%,100% { transform: translateY(0); }
+            50% { transform: translateY(8px); }
+        }
+
+        /* ========== COMPONENT: KPI Strip ========== */
+        .kpi-strip {
+            display: flex; justify-content: center;
+            gap: var(--space-1);
+            padding: var(--space-10) var(--space-8);
+            background: var(--color-bg-subtle);
+            border-bottom: 1px solid var(--color-border);
+        }
+        .kpi-strip-item {
+            text-align: center; padding: var(--space-5) var(--space-8);
+            border-right: 1px solid var(--color-border);
+            flex: 0 1 auto;
+        }
+        .kpi-strip-item:last-child { border-right: none; }
+        .kpi-strip-value {
+            font-family: var(--font-display);
+            font-size: var(--text-3xl); font-weight: var(--fw-extrabold);
+            color: var(--brand-deep); line-height: var(--leading-tight);
+            font-variant-numeric: tabular-nums;
+        }
+        .kpi-strip-label {
+            font-family: var(--font-editorial);
+            font-size: var(--text-xs); color: var(--text-tertiary);
+            margin-top: var(--space-1); font-weight: var(--fw-medium);
+            text-transform: uppercase; letter-spacing: var(--tracking-wider);
+        }
+        .kpi-strip-change {
+            font-family: var(--font-data);
+            font-size: var(--text-sm); font-weight: 600; margin-top: var(--space-1);
+            font-variant-numeric: tabular-nums;
+        }
+        .kpi-strip-change.up { color: var(--semantic-growth); }
+        .kpi-strip-change.down { color: var(--semantic-risk); }
+
+        /* ========== COMPONENT: Chapter ========== */
+        .chapter {
+            max-width: var(--content-width);
+            margin: 0 auto;
+            padding: var(--space-24) var(--space-8) var(--space-16);
+        }
+        .chapter-wide {
+            max-width: var(--content-wide);
+        }
+        .chapter-number {
+            font-family: var(--font-display);
+            font-size: var(--text-xs); font-weight: var(--fw-bold);
+            color: var(--brand-accent);
+            text-transform: uppercase; letter-spacing: var(--tracking-widest);
+            margin-bottom: var(--space-3);
+        }
+        .chapter-title {
+            font-family: var(--font-display);
+            font-size: var(--text-4xl); font-weight: var(--fw-extrabold);
+            line-height: var(--leading-tight); letter-spacing: var(--tracking-tight);
+            color: var(--text-primary);
+            margin-bottom: var(--space-4);
+        }
+        .chapter-lead {
+            font-family: var(--font-editorial);
+            font-size: var(--text-lg);
+            color: var(--text-secondary);
+            line-height: var(--leading-loose); max-width: 680px;
+            margin-bottom: var(--space-12);
+        }
+
+        /* ========== COMPONENT: Editorial Block (文数并排) ========== */
+        .editorial {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-12);
+            align-items: start;
+            margin-bottom: var(--space-16);
+        }
+        .editorial-reverse { direction: rtl; }
+        .editorial-reverse > * { direction: ltr; }
+        .editorial-text { }
+        .editorial-text h3 {
+            font-size: var(--text-xl); font-weight: 700;
+            margin-bottom: var(--space-4); line-height: 1.3;
+        }
+        .editorial-text p {
+            color: var(--color-text-secondary);
+            line-height: 1.8; margin-bottom: var(--space-4);
+        }
+        .editorial-text .highlight {
+            color: var(--color-text);
+            font-weight: 600;
+        }
+        .editorial-data {
+            background: var(--color-bg-subtle);
+            border-radius: var(--radius-lg);
+            padding: var(--space-8);
+            border: 1px solid var(--color-border);
+        }
+        .editorial-data .big-number {
+            font-family: var(--font-display);
+            font-size: var(--text-5xl); font-weight: 800;
+            color: var(--brand-deep); line-height: 1;
+            margin-bottom: var(--space-2);
+        }
+        .editorial-data .big-label {
+            font-size: var(--text-sm); color: var(--color-text-tertiary);
+            margin-bottom: var(--space-6);
+        }
+
+        /* ========== COMPONENT: Pull Quote ========== */
+        .pull-quote {
+            max-width: var(--content-width);
+            margin: var(--space-16) auto;
+            padding: var(--space-12) var(--space-8);
+            text-align: center;
+        }
+        .pull-quote blockquote {
+            font-family: var(--font-serif);
+            font-size: var(--text-2xl);
+            font-weight: 500;
+            line-height: 1.6;
+            color: var(--color-text);
+            position: relative;
+            max-width: 720px; margin: 0 auto;
+        }
+        .pull-quote blockquote::before {
+            content: '';
+            display: block;
+            width: 48px; height: 3px;
+            background: var(--brand-accent);
+            margin: 0 auto var(--space-8);
+            border-radius: 2px;
+        }
+        .pull-quote .quote-source {
+            font-size: var(--text-sm);
+            color: var(--color-text-tertiary);
+            margin-top: var(--space-4);
+            font-weight: 500;
+        }
+
+        /* ========== COMPONENT: Full-Width Chart ========== */
+        .full-chart-section {
+            max-width: var(--content-wide);
+            margin: 0 auto var(--space-16);
+            padding: 0 var(--space-8);
+        }
+        .full-chart-title {
+            font-size: var(--text-xl); font-weight: 700;
+            margin-bottom: var(--space-2);
+        }
+        .full-chart-subtitle {
+            font-size: var(--text-sm);
+            color: var(--color-text-tertiary);
+            margin-bottom: var(--space-6);
+        }
+        .chart-container {
+            width: 100%; min-width: 0;
+            height: 420px; display: block;
+        }
+        .chart-annotation {
+            display: flex; gap: var(--space-4);
+            flex-wrap: wrap;
+            margin-top: var(--space-4);
+        }
+        .chart-tag {
+            display: inline-flex; align-items: center; gap: 4px;
+            font-size: var(--text-xs); font-weight: 600;
+            padding: 4px 12px; border-radius: 20px;
+        }
+        .chart-tag.pos { background: var(--color-growth-bg); color: var(--color-growth); }
+        .chart-tag.neg { background: var(--color-risk-bg); color: var(--color-risk); }
+        .chart-tag.info { background: var(--color-opportunity-bg); color: var(--color-opportunity); }
+
+        /* ========== COMPONENT: Insight Card Grid ========== */
+        .insight-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--space-6);
+            margin: var(--space-12) 0;
+        }
+        .insight-card {
+            padding: var(--space-6) var(--space-8);
+            border-radius: var(--radius);
+            border: 1px solid var(--color-border);
+            background: var(--color-bg);
+            transition: box-shadow 0.3s, transform 0.3s;
+        }
+        .insight-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+        .insight-card-icon {
+            width: 36px; height: 36px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; margin-bottom: var(--space-4);
+        }
+        .insight-card-icon.growth { background: var(--color-growth-bg); color: var(--color-growth); }
+        .insight-card-icon.risk { background: var(--color-risk-bg); color: var(--color-risk); }
+        .insight-card-icon.opportunity { background: var(--color-opportunity-bg); color: var(--color-opportunity); }
+        .insight-card h3 {
+            font-size: var(--text-base); font-weight: 700;
+            margin-bottom: var(--space-2); line-height: 1.4;
+        }
+        .insight-card p {
+            font-size: var(--text-sm); color: var(--color-text-secondary);
+            line-height: 1.7;
+        }
+
+        /* ========== COMPONENT: Data Detail (BI 组件放这里) ========== */
+        .data-detail-section {
+            max-width: var(--content-wide);
+            margin: 0 auto; padding: var(--space-16) var(--space-8);
+            border-top: 1px solid var(--color-border);
+        }
+        .data-detail-header {
+            display: flex; justify-content: space-between;
+            align-items: center; margin-bottom: var(--space-8);
+        }
+        .data-detail-title {
+            font-size: var(--text-xl); font-weight: 700;
+        }
+        .data-detail-subtitle {
+            font-size: var(--text-sm); color: var(--color-text-tertiary);
+        }
+        /* 表格沿用原有 mck-table 样式 */
+        .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .data-table th {
+            /* Apple §12: sticky 表头 = 浮动玻璃层, 内容滚动其下 */
+            background: rgba(0, 53, 102, 0.82);
+            backdrop-filter: blur(12px) saturate(160%);
+            -webkit-backdrop-filter: blur(12px) saturate(160%);
+            color: #fff;
+            padding: 11px 14px; font-weight: 600; text-align: left;
+            font-size: 11px; text-transform: uppercase; letter-spacing: var(--tracking-wide);
+            position: sticky; top: 0; z-index: 5;
+            -webkit-mask-image: linear-gradient(to bottom, #000 82%, transparent 100%);
+            mask-image: linear-gradient(to bottom, #000 82%, transparent 100%);
+        }
+        .data-table th:first-child { border-radius: 8px 0 0 0; }
+        .data-table th:last-child { border-radius: 0 8px 0 0; }
+        .data-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--color-border);
+        }
+        .data-table tr:hover { background: var(--color-bg-subtle); }
+        .data-table .num {
+            text-align: right; font-family: var(--font-data);
+            font-variant-numeric: tabular-nums; font-weight: 500;
+        }
+        .data-table .total-row {
+            background: var(--surface-secondary); font-weight: 700;
+            border-top: 2px solid var(--border-default);
+        }
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 700; font-family: var(--font-editorial); }
+        .badge-g { background: var(--semantic-growth-bg); color: var(--semantic-growth); }
+        .badge-r { background: var(--semantic-risk-bg); color: var(--semantic-risk); }
+        .badge-b { background: var(--semantic-opportunity-bg); color: var(--semantic-opportunity); }
+
+        /* ========== COMPONENT: Closing CTA ========== */
+        .closing {
+            background: linear-gradient(160deg, var(--brand-deepest), var(--brand-deep), var(--brand-mid));
+            color: var(--color-bg-subtle);
+            padding: var(--space-24) var(--space-8);
+            position: relative; overflow: hidden;
+        }
+        .closing::before {
+            content: ''; position: absolute;
+            top: -40%; right: -5%;
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(5,130,202,0.1), transparent 70%);
+            border-radius: 50%;
+        }
+        .closing-inner {
+            max-width: var(--content-width);
+            margin: 0 auto;
+            position: relative; z-index: 1;
+        }
+        .closing-title {
+            font-family: var(--font-display);
+            font-size: var(--text-3xl); font-weight: 800;
+            margin-bottom: var(--space-10);
+            line-height: 1.2;
+        }
+        .action-list { list-style: none; }
+        .action-item {
+            display: flex; align-items: flex-start; gap: var(--space-5);
+            padding: var(--space-6) 0;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .action-item:last-child { border-bottom: none; }
+        .action-number {
+            width: 36px; height: 36px; border-radius: 10px;
+            background: rgba(5,130,202,0.2);
+            display: flex; align-items: center; justify-content: center;
+            font-family: var(--font-display); font-weight: 800;
+            color: var(--text-inverse); flex-shrink: 0;
+        }
+        .action-content h3 {
+            font-size: var(--text-lg); font-weight: 700; margin-bottom: var(--space-1);
+        }
+        .action-content p {
+            font-size: var(--text-sm); color: rgba(248,250,252,0.82); line-height: 1.6;
+        }
+        .action-tag {
+            display: inline-block; font-size: 10px; font-weight: 700;
+            padding: 2px 8px; border-radius: 12px; margin-top: var(--space-2);
+        }
+        .action-tag.urgent { background: rgba(239,68,68,0.24); color: var(--text-inverse); }
+        .action-tag.strategic { background: rgba(59,130,246,0.24); color: var(--text-inverse); }
+        .action-tag.monitor { background: rgba(245,158,11,0.24); color: var(--text-inverse); }
+        .closing-footer {
+            margin-top: var(--space-16);
+            padding-top: var(--space-8);
+            border-top: 1px solid rgba(255,255,255,0.08);
+            font-size: var(--text-xs); color: rgba(248,250,252,0.78);
+            display: flex; justify-content: space-between;
+        }
+
+        /* ========== Divider ========== */
+        .divider {
+            max-width: var(--content-width);
+            margin: 0 auto;
+            padding: 0 var(--space-8);
+        }
+        .divider hr {
+            border: none; height: 1px;
+            background: var(--color-border);
+        }
+
+        /* ========== Scroll Reveal (V2: 使用 Motion Tokens) ========== */
+        .reveal {
+            opacity: 0; transform: translateY(24px);
+            transition: opacity var(--duration-slower) var(--ease-expressive),
+                        transform var(--duration-slower) var(--ease-expressive);
+        }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        /* === 无障碍降级 (Apple §14: 三个独立信号) === */
+        @media (prefers-reduced-motion: reduce) {
+            .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+            .hero-number { animation: none !important; }
+            .scroll-progress { transition: none !important; }
+            .hero-scroll-hint { animation: none !important; }
+            .glass-surface, .data-table th { transition: none !important; }
+        }
+        /* 降低透明度: 毛玻璃转实底, 去除 blur (避免可读性崩塌) */
+        @media (prefers-reduced-transparency: reduce) {
+            .glass-surface { background: var(--surface-primary); backdrop-filter: none; -webkit-backdrop-filter: none; }
+            .glass-surface--dark, .data-table th { background: var(--brand-deep); backdrop-filter: none; -webkit-backdrop-filter: none; }
+            .scroll-progress { backdrop-filter: none; -webkit-backdrop-filter: none; }
+        }
+        /* 增强对比: 实底 + 定义对比边框 */
+        @media (prefers-contrast: more) {
+            .glass-surface { background: var(--surface-primary); border: 1px solid var(--text-primary); }
+            .glass-surface--dark, .data-table th { background: var(--brand-deep); border: 1px solid #fff; }
+        }
+
+        /* ========== Responsive ========== */
+        @media (max-width: 768px) {
+            .hero-title { font-size: 28px; }
+            .hero-number { font-size: 56px; }
+            .editorial { grid-template-columns: 1fr; }
+            .editorial-reverse { direction: ltr; }
+            .kpi-strip { flex-wrap: wrap; }
+            .kpi-strip-item { border-right: none; border-bottom: 1px solid var(--color-border); }
+            .chapter { padding: var(--space-16) var(--space-5); }
+            .chapter-title { font-size: var(--text-2xl); }
+            .data-detail-section { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+            .data-table { min-width: 660px; }
+        }
+
+        /* ========== Print ========== */
+        @media print {
+            .scroll-progress, .hero-scroll-hint { display: none !important; }
+            .glass-surface, .data-table th { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; -webkit-mask-image: none !important; mask-image: none !important; }
+            .data-table th { background: var(--brand-deep) !important; }
+            .hero { min-height: auto; padding: var(--space-10); break-after: page; }
+            .chapter { padding: var(--space-8); break-inside: avoid; }
+            .closing { break-before: page; }
+            .reveal { opacity: 1 !important; transform: none !important; }
+            body { font-size: 12px; }
+        }
+
+        /* ==================================================================
+           密度轴 · 紧凑销售报告风 — 组件级重组层
+           (Token 覆盖见文件顶部同名区块; 此处为版式/组件重组, 靠更高特指度覆盖基样式)
+           ================================================================== */
+
+        /* Hero → 紧凑 masthead: 结论居左 + 核心数字居右, 一条横幅带完首屏定调 */
+        :root[data-density="compact"] .hero {
+            min-height: auto;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            grid-template-areas:
+                "badge     badge"
+                "title     number"
+                "subtitle  numlabel";
+            align-items: end;
+            text-align: left;
+            gap: var(--space-2) var(--space-12);
+            padding: var(--space-10) var(--space-8) var(--space-8);
+        }
+        :root[data-density="compact"] .hero::after { display: none; }   /* 收掉一个光晕, 横幅更干净 */
+        :root[data-density="compact"] .hero-badge { grid-area: badge; margin: 0 0 var(--space-2); }
+        :root[data-density="compact"] .hero-title { grid-area: title; margin: 0; max-width: 100%; }
+        :root[data-density="compact"] .hero-subtitle {
+            grid-area: subtitle; margin: var(--space-3) 0 0; max-width: 100%;
+            font-size: var(--text-base); line-height: var(--leading-normal);
+        }
+        :root[data-density="compact"] .hero-number {
+            grid-area: number; align-self: end; text-align: right;
+            font-size: clamp(40px, 5vw, 64px); line-height: 1;
+        }
+        :root[data-density="compact"] .hero-number-label { grid-area: numlabel; margin: var(--space-1) 0 0; text-align: right; }
+        :root[data-density="compact"] .hero-scroll-hint { display: none; }
+
+        /* KPI Strip → 更密: 允许换行, 卡片收紧, 一行可容 5-6 项, 左对齐 */
+        :root[data-density="compact"] .kpi-strip {
+            flex-wrap: wrap; justify-content: flex-start;
+            padding: var(--space-5) var(--space-8);
+        }
+        :root[data-density="compact"] .kpi-strip-item { padding: var(--space-2) var(--space-6); text-align: left; }
+        :root[data-density="compact"] .kpi-strip-value { font-size: var(--text-2xl); }
+
+        /* Chapter → 内容列加宽吃掉两侧空白, 标题/间距收紧, 多章节可同屏 */
+        :root[data-density="compact"] .chapter {
+            max-width: var(--content-wide);
+            padding: var(--space-10) var(--space-8) var(--space-6);
+        }
+        :root[data-density="compact"] .chapter-title { margin-bottom: var(--space-2); }
+        :root[data-density="compact"] .chapter-lead {
+            max-width: 100%; margin-bottom: var(--space-5);
+            font-size: var(--text-base); line-height: var(--leading-normal);
+        }
+
+        /* Editorial → 更紧, 数据卡内边距收窄 */
+        :root[data-density="compact"] .editorial { gap: var(--space-8); margin-bottom: var(--space-8); }
+        :root[data-density="compact"] .editorial-data { padding: var(--space-5); }
+
+        /* Pull Quote → 从「居中大空带」改为「左线紧凑 callout」, 不再漂浮占屏 */
+        :root[data-density="compact"] .pull-quote {
+            max-width: var(--content-wide);
+            margin: var(--space-6) auto; padding: var(--space-2) var(--space-8);
+            text-align: left;
+        }
+        :root[data-density="compact"] .pull-quote blockquote {
+            max-width: 100%; margin: 0; text-align: left;
+            font-size: var(--text-lg); line-height: var(--leading-normal);
+            padding-left: var(--space-5); border-left: 3px solid var(--brand-accent);
+        }
+        :root[data-density="compact"] .pull-quote blockquote::before { display: none; }
+
+        /* Chart → 矮一档, 段落间距收紧 */
+        :root[data-density="compact"] .full-chart-section { margin-bottom: var(--space-8); }
+        :root[data-density="compact"] .chart-container { height: 300px; }
+
+        /* Insight Grid → 更密网格 + 卡片收紧 */
+        :root[data-density="compact"] .insight-grid {
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: var(--space-4); margin: var(--space-6) 0;
+        }
+        :root[data-density="compact"] .insight-card { padding: var(--space-4) var(--space-5); }
+
+        /* Data Table → 密集行 (销售排名/渠道表主战场) */
+        :root[data-density="compact"] .data-detail-section { padding: var(--space-10) var(--space-8); }
+        :root[data-density="compact"] .data-table { font-size: 12px; }
+        :root[data-density="compact"] .data-table th { padding: 7px 12px; }
+        :root[data-density="compact"] .data-table td { padding: 5px 12px; }
+
+        /* Closing → 收紧 */
+        :root[data-density="compact"] .closing { padding: var(--space-16) var(--space-8); }
+        :root[data-density="compact"] .closing-title { margin-bottom: var(--space-6); }
+
+        /* 截图优先: 紧凑档是"截图/长图/打印"格式, 禁用 scroll-reveal 隐藏态 ——
+           否则整页长图/打印时未滚动到的区块停在 opacity:0 出现空白段。
+           (叙事标准档保留 reveal 作为沉浸滚动体验) */
+        :root[data-density="compact"] .reveal { opacity: 1 !important; transform: none !important; }
+    </style>
+</head>
+<body>
+
+    <!-- CSS Variable Helper for ECharts -->
+    <script>
+        // 读取 CSS 变量，让 ECharts 配色也走 Token 系统
+        const _root = document.documentElement;
+        const cssVar = (name) => getComputedStyle(_root).getPropertyValue(name).trim();
+        const BRAND = {
+            deepest: cssVar('--brand-deepest'),
+            deep: cssVar('--brand-deep'),
+            mid: cssVar('--brand-mid'),
+            light: cssVar('--brand-light'),
+            accent: cssVar('--brand-accent'),
+        };
+        const COLOR = {
+            growth: cssVar('--color-growth'),
+            risk: cssVar('--color-risk'),
+            opportunity: cssVar('--color-opportunity'),
+            neutral: cssVar('--color-neutral'),
+            text: cssVar('--color-text'),
+            textSecondary: cssVar('--color-text-secondary'),
+            textTertiary: cssVar('--color-text-tertiary'),
+            border: cssVar('--color-border'),
+            bgSubtle: cssVar('--color-bg-subtle'),
+        };
+    </script>
+
+
+    <!-- Scroll Progress -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <!-- ============================================================
+         HERO — 一句话定调整份报告
+         ============================================================ -->
+    <main>
+    <section class="hero" data-snap="hero">
+        <div class="hero-badge">
+            <i class="ri-bar-chart-box-line"></i>
+            模拟数据演示 · 全域智能家居业务 · <span data-number-exempt="报告期间元数据">2026</span> 上半年复盘
+        </div>
+        <h1 class="hero-title" data-evidence-id="E-GOVERNING">增长失速，结构护价</h1>
+        <p class="hero-subtitle">
+            收入同比 <span data-metric="period.total_yoy">-12.6%</span>，增速经 MK 检验确认趋势性下行；旗舰系列把均价撑起 <span data-metric="period.price_yoy">7.2%</span>——失速是主线，护价是底牌。
+        </p>
+        <div class="hero-number" data-from="0" data-to="6372" data-metric="period.total_cur_wan">0</div>
+        <div class="hero-number-label">上半年签收金额（万元）&nbsp;&nbsp;同比 <span data-metric="period.total_yoy">-12.6%</span></div>
+        <div class="hero-scroll-hint">
+            <i class="ri-arrow-down-line"></i> 向下滚动阅读完整报告
+        </div>
+    </section>
+
+    <!-- ============================================================
+         KPI STRIP — 关键指标横向扫视
+         ============================================================ -->
+    <div class="kpi-strip reveal">
+        <div class="kpi-strip-item">
+            <div class="kpi-strip-value" data-from="0" data-to="6372" data-suffix="万" data-metric="period.total_cur_wan">0</div>
+            <div class="kpi-strip-label">上半年签收金额</div>
+            <div class="kpi-strip-change down"><span data-metric="period.total_yoy">-12.6%</span> 同比</div>
+        </div>
+        <div class="kpi-strip-item">
+            <div class="kpi-strip-value" data-metric="period.qty_cur">20,792</div>
+            <div class="kpi-strip-label">上半年销量（台）</div>
+            <div class="kpi-strip-change down"><span data-metric="period.qty_yoy">-18.5%</span> 同比</div>
+        </div>
+        <div class="kpi-strip-item">
+            <div class="kpi-strip-value" data-metric="period.price_yoy">+7.2%</div>
+            <div class="kpi-strip-label">均价同比</div>
+            <div class="kpi-strip-change up">结构升级护价</div>
+        </div>
+        <div class="kpi-strip-item">
+            <div class="kpi-strip-value" data-metric="report_evidence.dimensions.品类.旗舰系列.share">30.0%</div>
+            <div class="kpi-strip-label">旗舰系列占比</div>
+            <div class="kpi-strip-change up"><span data-metric="report_evidence.share_shift_pp.旗舰系列">+8.0pp</span> 同比</div>
+        </div>
+        <div class="kpi-strip-item">
+            <div class="kpi-strip-value" data-metric="concentration.top5_share">48.0%</div>
+            <div class="kpi-strip-label">Top<span data-metric="report_evidence.top_n">5</span> 客户集中度</div>
+            <div class="kpi-strip-change down">高于 <span data-metric="report_evidence.concentration_threshold">45%</span> 风险线</div>
+        </div>
+        <div class="kpi-strip-item">
+            <div class="kpi-strip-value" data-metric="report_evidence.income_gap_wan">920.5万</div>
+            <div class="kpi-strip-label">同比收入缺口</div>
+            <div class="kpi-strip-change down">量效应 <span data-metric="period.pvm.vol_wan">-1,349.9</span> 万</div>
+        </div>
+        <div class="kpi-strip-item">
+            <div class="kpi-strip-value" data-metric="concentration.customers">40</div>
+            <div class="kpi-strip-label">有效客户数</div>
+            <div class="kpi-strip-change down">腰部薄弱</div>
+        </div>
+        <div class="kpi-strip-item">
+            <div class="kpi-strip-value" data-metric="concentration.pareto_n80">19</div>
+            <div class="kpi-strip-label">贡献 <span data-metric="report_actions.pareto_share">80%</span> 收入的客户数</div>
+            <div class="kpi-strip-change down">帕累托高度集中</div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         CHAPTER 1 — 总量故事
+         ============================================================ -->
+    <section data-snap="chapter-01">
+    <section class="chapter reveal">
+        <div class="chapter-number">CHAPTER <span data-number-exempt="章节序号">01</span></div>
+        <h2 class="chapter-title" data-evidence-id="E-TREND">增速 <span data-metric="report_evidence.trend.comparable_months">18</span> 个月连续下行，已是趋势而非波动</h2>
+        <p class="chapter-lead" data-evidence-id="E-TREND">
+            上半年签收 <span data-metric="period.total_cur_wan">6,372.0</span> 万元，同比 <span data-metric="period.total_yoy">-12.6%</span>。把 <span data-metric="report_evidence.trend.comparable_months">18</span> 个可比月的同比增速连成一条线，
+            Mann-Kendall 检验给出 z=<span data-metric="report_evidence.trend.mann_kendall_z">-5.45</span>（p&lt;<span data-metric="report_evidence.trend.p_threshold">0.05</span>，显著）——下行不是运气差，是趋势本身。
+            截至 <span data-metric="report_evidence.period.end_month">6</span> 月已连续 <span data-metric="report_evidence.trend.trailing_negative_months">5</span> 个月负增长，其中 <span data-metric="report_evidence.trend.anomaly_month">2</span> 月被稳健 Z 检验判为异常月（<span data-metric="report_evidence.trend.anomaly_yoy">-45%</span>）——异常月的具体归因需结合提货节奏、促销错期等业务事件核实，本演示不虚构原因。
+        </p>
+    </section>
+
+    <!-- Pull Quote -->
+    <div class="pull-quote reveal" data-evidence-id="E-TREND">
+        <blockquote>
+            每一次月度"回暖"都比上一次更弱——<br>
+            这不是波动的形状，是趋势的形状。
+        </blockquote>
+        <div class="quote-source">Mann-Kendall 趋势检验 z=<span data-metric="report_evidence.trend.mann_kendall_z">-5.45</span>（n=<span data-metric="report_evidence.trend.comparable_months">18</span>，p&lt;<span data-metric="report_evidence.trend.p_threshold">0.05</span>）· insights.json</div>
+    </div>
+
+    <!-- Full-Width Chart -->
+    <div class="full-chart-section reveal">
+        <div class="full-chart-title">三年同期对比：<span data-number-exempt="图表期间元数据">2026</span> 年曲线整体沉到 <span data-number-exempt="图表期间元数据">2025</span> 年之下</div>
+        <div class="full-chart-subtitle">全域业务 · 签收金额/万元 · 按自然月对比 <span data-number-exempt="图表期间元数据">2024-2026</span>（<span data-number-exempt="图表期间元数据">2026</span> 年 <span data-number-exempt="图表期间元数据">7</span> 月起无数据，折线断开）· 模拟数据</div>
+        <div id="chart-trend" class="chart-container" role="img" aria-label="2024 至 2026 月度签收金额同期对比趋势图"></div>
+        <div class="chart-annotation">
+            <span class="chart-tag neg"><i class="ri-alert-line"></i> <span data-number-exempt="异常月期间标签">2026-02</span> 异常月：YoY <span data-metric="report_evidence.trend.anomaly_yoy">-45%</span>，稳健 Z=<span data-metric="report_evidence.trend.anomaly_robust_z">-2.95</span></span>
+            <span class="chart-tag info"><i class="ri-line-chart-line"></i> 增速趋势：MK 检验显著下行，连续 <span data-metric="report_evidence.trend.trailing_negative_months">5</span> 个月负增长</span>
+        </div>
+    </div>
+
+    </section>
+    <div class="divider"><hr></div>
+
+    <!-- ============================================================
+         CHAPTER 2 — 量价拆解
+         ============================================================ -->
+    <section data-snap="chapter-02">
+    <section class="chapter reveal">
+        <div class="chapter-number">CHAPTER <span data-number-exempt="章节序号">02</span></div>
+        <h2 class="chapter-title" data-evidence-id="E-PVM">量跌 <span data-metric="report_evidence.magnitude.qty_yoy">18.5%</span> 造成缺口，结构护价只回补三成</h2>
+        <p class="chapter-lead" data-evidence-id="E-PVM">
+            收入同比减少 <span data-metric="report_evidence.income_gap_wan">920.5</span> 万元。拆开看：量效应 <span data-metric="period.pvm.vol_wan">-1,349.9</span> 万，价+结构效应 <span data-metric="period.pvm.price_mix_wan">+429.4</span> 万——
+            旗舰系列占比提升 <span data-metric="report_evidence.share_shift_pp.旗舰系列">8pp</span> 把均价撑起 <span data-metric="period.price_yoy">7.2%</span>，但只回补了量缺口的三成。缺口在量，不在价。
+        </p>
+    </section>
+
+    <!-- Editorial Block: 文+数并排 -->
+    <div class="chapter reveal">
+        <div class="editorial">
+            <div class="editorial-text">
+                <h3>量从哪里漏掉的：入门盘和传统渠道</h3>
+                <p>
+                    量的流失高度集中：<span class="highlight">入门系列 <span data-metric="report_evidence.dimensions.品类.入门系列.yoy">-35.9%</span></span>、
+                    <span class="highlight">传统渠道 <span data-metric="report_evidence.dimensions.渠道.传统.yoy">-28.2%</span></span>，二者高度重叠——入门盘主要经传统渠道走货，
+                    传统收缩带走了入门的量。这是一条传导链，不是两个独立问题。
+                </p>
+                <p>
+                    护价的一侧同样清晰：<span class="highlight">旗舰系列 <span data-metric="report_evidence.dimensions.品类.旗舰系列.yoy">+19.2%</span></span>，
+                    是大盘 <span data-metric="period.total_yoy">-12.6%</span> 里唯一同时贡献收入与均价的品类。
+                </p>
+            </div>
+            <div class="editorial-data">
+                <div class="big-number" data-metric="period.qty_yoy">-18.5%</div>
+                <div class="big-label">销量同比（均价同比 <span data-metric="period.price_yoy">+7.2%</span>）</div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                    <span class="chart-tag neg"><i class="ri-arrow-down-s-fill"></i> 入门系列 <span data-metric="report_evidence.dimensions.品类.入门系列.yoy">-35.9%</span></span>
+                    <span class="chart-tag neg"><i class="ri-arrow-down-s-fill"></i> 传统渠道 <span data-metric="report_evidence.dimensions.渠道.传统.yoy">-28.2%</span></span>
+                    <span class="chart-tag pos"><i class="ri-arrow-up-s-fill"></i> 旗舰系列 <span data-metric="report_evidence.dimensions.品类.旗舰系列.yoy">+19.2%</span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Full-Width Chart: 量价瀑布 -->
+    <div class="full-chart-section reveal">
+        <div class="full-chart-title">收入桥：从 <span data-metric="period.total_base_wan">7,292.5</span> 万到 <span data-metric="period.total_cur_wan">6,372.0</span> 万，量是主因</div>
+        <div class="full-chart-subtitle">全域业务 · 签收金额/万元 · <span data-number-exempt="图表期间元数据">2026-01~06</span> vs <span data-number-exempt="图表期间元数据">2025</span> 同期 · "价+结构"为混合均价法（含产品 mix）· 模拟数据</div>
+        <div id="chart-waterfall" class="chart-container" role="img" aria-label="2025 同期至 2026 上半年签收金额量价结构瀑布图"></div>
+    </div>
+
+    </section>
+    <div class="divider"><hr></div>
+
+    <!-- ============================================================
+         CHAPTER 3 — 战区归因
+         ============================================================ -->
+    <section data-snap="chapter-03">
+    <section class="chapter reveal">
+        <div class="chapter-number">CHAPTER <span data-number-exempt="章节序号">03</span></div>
+        <h2 class="chapter-title" data-evidence-id="E-ZONE">南区一家拖累总增速 <span data-metric="report_evidence.magnitude.south_contribution_pp">9.3pp</span>，东区补位仅 <span data-metric="report_evidence.contribution_pp.东区">2.5pp</span></h2>
+        <p class="chapter-lead" data-evidence-id="E-ZONE">
+            五个战区四个在跌，但跌得不一样。南区同比 <span data-metric="report_evidence.dimensions.战区.南区.yoy">-37.1%</span>（份额 <span data-metric="report_evidence.dimensions.战区.南区.share">18%</span>），
+            半年少了 <span data-metric="report_evidence.decline_wan.南区">676.2</span> 万，一家就拖走总增速 <span data-metric="report_evidence.magnitude.south_contribution_pp">9.3</span> 个点；东区 <span data-metric="report_evidence.dimensions.战区.东区.yoy">+16.5%</span> 是唯一引擎，
+            但 <span data-metric="report_evidence.contribution_pp.东区">2.5</span> 个点的拉动填不上南区的坑。总增速 <span data-metric="period.total_yoy">-12.6%</span> 的账，逐区可以对平。
+        </p>
+    </section>
+
+    <!-- Full-Width Chart: 贡献分解 -->
+    <div class="full-chart-section reveal">
+        <div class="full-chart-title">总增速 <span data-metric="period.total_yoy">-12.6%</span> 的拆解：南区是最大的单点拖累</div>
+        <div class="full-chart-subtitle">各战区对总增速的拉动/拖累（百分点）· 当期口径同上 · 五区合计 = <span data-metric="report_evidence.contribution_pp.合计">-12.6pp</span> · 模拟数据</div>
+        <div id="chart-contrib" class="chart-container" role="img" aria-label="各战区对整体同比增速的贡献度水平条形图"></div>
+        <div class="chart-annotation">
+            <span class="chart-tag neg"><i class="ri-arrow-down-s-fill"></i> 南区断崖：YoY <span data-metric="report_evidence.dimensions.战区.南区.yoy">-37.1%</span>，份额位移 <span data-metric="report_evidence.share_shift_pp.南区">-7.0pp</span></span>
+            <span class="chart-tag pos"><i class="ri-arrow-up-s-fill"></i> 东区引擎：YoY <span data-metric="report_evidence.dimensions.战区.东区.yoy">+16.5%</span>，份额位移 <span data-metric="report_evidence.share_shift_pp.东区">+5.0pp</span></span>
+        </div>
+    </div>
+
+    </section>
+    <div class="divider"><hr></div>
+
+    <!-- ============================================================
+         CHAPTER 4 — 结构与集中度
+         ============================================================ -->
+    <section data-snap="chapter-04">
+    <section class="chapter reveal">
+        <div class="chapter-number">CHAPTER <span data-number-exempt="章节序号">04</span></div>
+        <h2 class="chapter-title" data-evidence-id="E-STRUCTURE">入门失血、旗舰护价，收入押在 <span data-metric="report_evidence.top_n">5</span> 个客户身上</h2>
+        <p class="chapter-lead" data-evidence-id="E-STRUCTURE">
+            结构在快速换挡：品类上旗舰 <span data-metric="report_evidence.share_shift_pp.旗舰系列">+8pp</span>、入门 <span data-metric="report_evidence.share_shift_pp.入门系列">-8pp</span>；渠道上电商 <span data-metric="report_evidence.share_shift_pp.电商">+6pp</span>、传统 <span data-metric="report_evidence.share_shift_pp.传统">-5pp</span>。
+            换挡护住了均价，却暴露另一重脆弱——<span data-metric="concentration.customers">40</span> 个客户里 Top<span data-metric="report_evidence.top_n">5</span> 占了 <span data-metric="concentration.top5_share">48%</span> 的收入，
+            前 <span data-metric="concentration.pareto_n80">19</span> 户就贡献 <span data-metric="report_actions.pareto_share">80%</span>。集中度已越过 <span data-metric="report_evidence.concentration_threshold">45%</span> 风险线。
+        </p>
+    </section>
+
+    <!-- Insight Cards -->
+    <div class="chapter reveal">
+        <div class="insight-grid">
+            <div class="insight-card" data-evidence-id="E-STRUCTURE">
+                <div class="insight-card-icon growth"><i class="ri-arrow-up-circle-line"></i></div>
+                <h3>旗舰系列 <span data-metric="report_evidence.dimensions.品类.旗舰系列.yoy">+19.2%</span>：唯一的双料引擎</h3>
+                <p>占比从 <span data-metric="report_evidence.base_share_pct.旗舰系列">22%</span> 升到 <span data-metric="report_evidence.dimensions.品类.旗舰系列.share">30%</span>，同时贡献收入与均价，是 <span data-metric="period.total_yoy">-12.6%</span> 大盘里唯一的品类正贡献。护价的底牌要保住。</p>
+            </div>
+            <div class="insight-card" data-evidence-id="E-STRUCTURE">
+                <div class="insight-card-icon risk"><i class="ri-alert-line"></i></div>
+                <h3>入门系列 <span data-metric="report_evidence.dimensions.品类.入门系列.yoy">-35.9%</span>：最大失血点</h3>
+                <p>拖累总增速 <span data-metric="report_evidence.magnitude.entry_contribution_pp">10.8pp</span>，失血与传统渠道收缩高度重叠。不设"保量款"承接，量缺口会继续扩大。</p>
+            </div>
+            <div class="insight-card" data-evidence-id="E-STRUCTURE">
+                <div class="insight-card-icon opportunity"><i class="ri-store-2-line"></i></div>
+                <h3>电商份额 <span data-metric="report_evidence.share_shift_pp.电商">+6pp</span>：量的下一个承接口</h3>
+                <p>电商是三渠道中唯一正增长（<span data-metric="report_evidence.dimensions.渠道.电商.yoy">+3.8%</span>），份额升至 <span data-metric="report_evidence.dimensions.渠道.电商.share">38%</span> 已逼近 KA——入门盘的量应向这里迁移。</p>
+            </div>
+            <div class="insight-card" data-evidence-id="E-STRUCTURE">
+                <div class="insight-card-icon risk"><i class="ri-team-line"></i></div>
+                <h3>Top<span data-metric="report_evidence.top_n">5</span> 客户 = <span data-metric="concentration.top5_share">48%</span> 收入：结构性脆弱</h3>
+                <p>任何一个大户的波动都会被放大成大盘波动——南区断崖已经演示过一次。腰部客户扩容是唯一解法。</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Full-Width Chart: 结构斜率 -->
+    <div class="full-chart-section reveal">
+        <div class="full-chart-title">品类结构两期对比：旗舰 <span data-metric="report_evidence.share_shift_pp.旗舰系列">+8pp</span>、入门 <span data-metric="report_evidence.share_shift_pp.入门系列">-8pp</span>，主力盘稳定</div>
+        <div class="full-chart-subtitle">各品类收入份额（%）· <span data-number-exempt="图表期间元数据">2025</span> 同期 vs <span data-number-exempt="图表期间元数据">2026</span> 上半年 · 绿=份额上升 红=份额下降 · 模拟数据</div>
+        <div id="chart-slope" class="chart-container" role="img" aria-label="2025 同期与 2026 上半年品类收入份额变化斜率图"></div>
+    </div>
+
+    </section>
+    <div class="divider"><hr></div>
+
+    <!-- ============================================================
+         CHAPTER 3 — 明细数据 (BI 组件放在这里)
+         ============================================================ -->
+    <div class="data-detail-section reveal" data-snap="data-detail">
+        <div class="data-detail-header">
+            <div>
+                <div class="data-detail-title">战区与结构明细</div>
+                <div class="data-detail-subtitle">当期口径：<span data-number-exempt="数据表期间元数据">2026-01~06</span> vs <span data-number-exempt="数据表期间元数据">2025</span> 同期 · 数字与 metrics.json / insights.json 一致，可复算 · 模拟数据</div>
+            </div>
+        </div>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th style="width:100px">战区</th>
+                    <th class="num">当期金额(万)</th>
+                    <th class="num">同期金额(万)</th>
+                    <th class="num">同比</th>
+                    <th class="num">当期份额</th>
+                    <th class="num">对总增速贡献</th>
+                    <th style="text-align:center">状态</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="font-weight:600">北区</td>
+                    <td class="num" data-metric="report_evidence.dimensions.战区.北区.amount_cur_wan">1,593.0</td>
+                    <td class="num" data-metric="report_evidence.dimensions.战区.北区.amount_base_wan">1,823.1</td>
+                    <td class="num" style="color:var(--color-risk)" data-metric="report_evidence.dimensions.战区.北区.yoy">-12.6%</td>
+                    <td class="num" data-metric="report_evidence.dimensions.战区.北区.share">25.0%</td>
+                    <td class="num" style="color:var(--color-risk)" data-metric="report_evidence.contribution_pp.北区">-3.2pp</td>
+                    <td style="text-align:center"><span class="badge badge-b">随大盘</span></td>
+                </tr>
+                <tr>
+                    <td style="font-weight:600">西区</td>
+                    <td class="num" data-metric="report_evidence.dimensions.战区.西区.amount_cur_wan">1,274.4</td>
+                    <td class="num" data-metric="report_evidence.dimensions.战区.西区.amount_base_wan">1,458.5</td>
+                    <td class="num" style="color:var(--color-risk)" data-metric="report_evidence.dimensions.战区.西区.yoy">-12.6%</td>
+                    <td class="num" data-metric="report_evidence.dimensions.战区.西区.share">20.0%</td>
+                    <td class="num" style="color:var(--color-risk)" data-metric="report_evidence.contribution_pp.西区">-2.5pp</td>
+                    <td style="text-align:center"><span class="badge badge-b">随大盘</span></td>
+                </tr>
+                <tr>
+                    <td style="font-weight:600">东区</td>
+                    <td class="num" data-metric="report_evidence.dimensions.战区.东区.amount_cur_wan">1,274.4</td>
+                    <td class="num" data-metric="report_evidence.dimensions.战区.东区.amount_base_wan">1,093.9</td>
+                    <td class="num" style="color:var(--color-growth)" data-metric="report_evidence.dimensions.战区.东区.yoy">+16.5%</td>
+                    <td class="num" data-metric="report_evidence.dimensions.战区.东区.share">20.0%</td>
+                    <td class="num" style="color:var(--color-growth)" data-metric="report_evidence.contribution_pp.东区">+2.5pp</td>
+                    <td style="text-align:center"><span class="badge badge-g">引擎</span></td>
+                </tr>
+                <tr>
+                    <td style="font-weight:600">南区</td>
+                    <td class="num" data-metric="report_evidence.dimensions.战区.南区.amount_cur_wan">1,147.0</td>
+                    <td class="num" data-metric="report_evidence.dimensions.战区.南区.amount_base_wan">1,823.1</td>
+                    <td class="num" style="color:var(--color-risk)" data-metric="report_evidence.dimensions.战区.南区.yoy">-37.1%</td>
+                    <td class="num" data-metric="report_evidence.dimensions.战区.南区.share">18.0%</td>
+                    <td class="num" style="color:var(--color-risk)" data-metric="report_evidence.contribution_pp.南区">-9.3pp</td>
+                    <td style="text-align:center"><span class="badge badge-r">断崖</span></td>
+                </tr>
+                <tr>
+                    <td style="font-weight:600">中区</td>
+                    <td class="num" data-metric="report_evidence.dimensions.战区.中区.amount_cur_wan">1,083.2</td>
+                    <td class="num" data-metric="report_evidence.dimensions.战区.中区.amount_base_wan">1,093.9</td>
+                    <td class="num" style="color:var(--color-risk)" data-metric="report_evidence.dimensions.战区.中区.yoy">-1.0%</td>
+                    <td class="num" data-metric="report_evidence.dimensions.战区.中区.share">17.0%</td>
+                    <td class="num" style="color:var(--color-risk)" data-metric="report_evidence.contribution_pp.中区">-0.1pp</td>
+                    <td style="text-align:center"><span class="badge badge-b">企稳</span></td>
+                </tr>
+                <tr class="total-row">
+                    <td style="font-weight:700">合计</td>
+                    <td class="num" data-metric="period.total_cur_wan">6,372.0</td>
+                    <td class="num" data-metric="period.total_base_wan">7,292.5</td>
+                    <td class="num" style="color:var(--color-risk)" data-metric="period.total_yoy">-12.6%</td>
+                    <td class="num" data-metric="report_evidence.share_total">100.0%</td>
+                    <td class="num" style="color:var(--color-risk)" data-metric="report_evidence.contribution_pp.合计">-12.6pp</td>
+                    <td style="text-align:center"><span class="badge badge-b">—</span></td>
+                </tr>
+            </tbody>
+        </table>
+        <div style="height: var(--space-8)"></div>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th style="width:120px">品类 / 渠道</th>
+                    <th class="num">当期金额(万)</th>
+                    <th class="num">同比</th>
+                    <th class="num">当期份额</th>
+                    <th class="num">份额位移</th>
+                    <th style="text-align:center">状态</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="font-weight:600">主力系列</td>
+                    <td class="num" data-metric="report_evidence.dimensions.品类.主力系列.amount_cur_wan">3,058.5</td>
+                    <td class="num" style="color:var(--color-risk)" data-metric="report_evidence.dimensions.品类.主力系列.yoy">-12.6%</td>
+                    <td class="num" data-metric="report_evidence.dimensions.品类.主力系列.share">48.0%</td>
+                    <td class="num" data-metric="report_evidence.share_shift_pp.主力系列">0.0pp</td>
+                    <td style="text-align:center"><span class="badge badge-b">稳定</span></td>
+                </tr>
+                <tr>
+                    <td style="font-weight:600">旗舰系列</td>
+                    <td class="num" data-metric="report_evidence.dimensions.品类.旗舰系列.amount_cur_wan">1,911.6</td>
+                    <td class="num" style="color:var(--color-growth)" data-metric="report_evidence.dimensions.品类.旗舰系列.yoy">+19.2%</td>
+                    <td class="num" data-metric="report_evidence.dimensions.品类.旗舰系列.share">30.0%</td>
+                    <td class="num" style="color:var(--color-growth)" data-metric="report_evidence.share_shift_pp.旗舰系列">+8.0pp</td>
+                    <td style="text-align:center"><span class="badge badge-g">引擎</span></td>
+                </tr>
+                <tr>
+                    <td style="font-weight:600">入门系列</td>
+                    <td class="num" data-metric="report_evidence.dimensions.品类.入门系列.amount_cur_wan">1,401.8</td>
+                    <td class="num" style="color:var(--color-risk)" data-metric="report_evidence.dimensions.品类.入门系列.yoy">-35.9%</td>
+                    <td class="num" data-metric="report_evidence.dimensions.品类.入门系列.share">22.0%</td>
+                    <td class="num" style="color:var(--color-risk)" data-metric="report_evidence.share_shift_pp.入门系列">-8.0pp</td>
+                    <td style="text-align:center"><span class="badge badge-r">断崖</span></td>
+                </tr>
+                <tr>
+                    <td style="font-weight:600">KA 渠道</td>
+                    <td class="num" data-metric="report_evidence.dimensions.渠道.KA.amount_cur_wan">2,485.1</td>
+                    <td class="num" style="color:var(--color-risk)" data-metric="report_evidence.dimensions.渠道.KA.yoy">-14.8%</td>
+                    <td class="num" data-metric="report_evidence.dimensions.渠道.KA.share">39.0%</td>
+                    <td class="num" style="color:var(--color-risk)" data-metric="report_evidence.share_shift_pp.KA">-1.0pp</td>
+                    <td style="text-align:center"><span class="badge badge-b">随大盘</span></td>
+                </tr>
+                <tr>
+                    <td style="font-weight:600">电商渠道</td>
+                    <td class="num" data-metric="report_evidence.dimensions.渠道.电商.amount_cur_wan">2,421.3</td>
+                    <td class="num" style="color:var(--color-growth)" data-metric="report_evidence.dimensions.渠道.电商.yoy">+3.8%</td>
+                    <td class="num" data-metric="report_evidence.dimensions.渠道.电商.share">38.0%</td>
+                    <td class="num" style="color:var(--color-growth)" data-metric="report_evidence.share_shift_pp.电商">+6.0pp</td>
+                    <td style="text-align:center"><span class="badge badge-g">承接口</span></td>
+                </tr>
+                <tr>
+                    <td style="font-weight:600">传统渠道</td>
+                    <td class="num" data-metric="report_evidence.dimensions.渠道.传统.amount_cur_wan">1,465.6</td>
+                    <td class="num" style="color:var(--color-risk)" data-metric="report_evidence.dimensions.渠道.传统.yoy">-28.2%</td>
+                    <td class="num" data-metric="report_evidence.dimensions.渠道.传统.share">23.0%</td>
+                    <td class="num" style="color:var(--color-risk)" data-metric="report_evidence.share_shift_pp.传统">-5.0pp</td>
+                    <td style="text-align:center"><span class="badge badge-r">收缩</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- ============================================================
+         CLOSING — 行动号召
+         ============================================================ -->
+    <section class="closing" data-snap="closing">
+        <div class="closing-inner reveal">
+            <h2 class="closing-title" data-evidence-id="H-ACTIONS" data-claim-kind="hypothesis">三件事，<span data-metric="report_actions.review_month">8</span> 月经营会前必须闭环</h2>
+            <ul class="action-list">
+                <li class="action-item">
+                    <div class="action-number"><span data-number-exempt="行动序号">1</span></div>
+                    <div class="action-content">
+                        <h3>南区断崖专项摸排</h3>
+                        <p>南区总经理牵头，<span data-metric="report_actions.south_visit_workdays">7</span> 个工作日内完成 Top<span data-metric="report_evidence.top_n">5</span> 经销商逐户走访，查清流失与竞品渗透，<span data-metric="report_actions.south_due_month">8</span> 月 <span data-metric="report_actions.south_due_day">5</span> 日前提交回补方案。验证指标：<span data-metric="report_actions.south_due_month">8</span> 月南区同比收窄至 <span data-metric="report_actions.south_yoy_target">-15%</span> 以内。</p>
+                        <span class="action-tag urgent">URGENT</span>
+                    </div>
+                </li>
+                <li class="action-item">
+                    <div class="action-number"><span data-number-exempt="行动序号">2</span></div>
+                    <div class="action-content">
+                        <h3>入门盘"保量款"承接方案</h3>
+                        <p>产品部与渠道部联合，<span data-metric="report_actions.entry_plan_due_month">7</span> 月底前明确入门系列保量款清单与电商专供价盘，把传统渠道流失的量向电商迁移。验证指标：<span data-metric="report_actions.entry_target_month">8</span> 月起入门系列月度同比收窄至 <span data-metric="report_actions.entry_yoy_target">-20%</span> 以内。</p>
+                        <span class="action-tag urgent">URGENT</span>
+                    </div>
+                </li>
+                <li class="action-item">
+                    <div class="action-number"><span data-number-exempt="行动序号">3</span></div>
+                    <div class="action-content">
+                        <h3>腰部客户扩容计划</h3>
+                        <p>销售运营部 Q<span data-metric="report_actions.customer_program_quarter">3</span> 启动腰部客户扶持，把"贡献 <span data-metric="report_actions.pareto_share">80%</span> 收入的客户数"从 <span data-metric="report_actions.current_pareto_customers">19</span> 户扩到 <span data-metric="report_actions.target_pareto_customers">30</span> 户以上。验证指标：年底 Top<span data-metric="report_evidence.top_n">5</span> 客户集中度降至 <span data-metric="report_actions.top5_target">40%</span> 以下。</p>
+                        <span class="action-tag strategic">STRATEGIC</span>
+                    </div>
+                </li>
+            </ul>
+            <div class="closing-footer">
+                <span>模拟数据演示 · south-china-report V<span data-number-exempt="Skill 版本号">3.0</span> 全链路（prep-source → stat-insights → 四组 Gate）</span>
+                <span>数据截止：<span data-number-exempt="数据截止元数据">2026-06-30</span> · 口径：<span data-number-exempt="报告期间元数据">2026-01~06</span> vs <span data-number-exempt="报告期间元数据">2025</span> 同期 · 可复算：metrics.json / insights.json</span>
+            </div>
+        </div>
+    </section>
+    </main>
+
+    <!-- ============================================================
+         SCRIPTS
+         ============================================================ -->
+    <script>
+        // === Scroll Progress ===
+        window.addEventListener('scroll', function() {
+            var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+            var scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            var progress = (scrollTop / scrollHeight) * 100;
+            document.getElementById('scrollProgress').style.width = progress + '%';
+        });
+
+        // === Scroll Reveal ===
+        var revealObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(function(e) {
+                if (e.isIntersecting) {
+                    e.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+        document.querySelectorAll('.reveal').forEach(function(el) { revealObserver.observe(el); });
+
+        // === Number Animation ===
+        function animateValue(el, start, end, duration, suffix) {
+            var range = end - start, startTime = null;
+            function step(ts) {
+                if (!startTime) startTime = ts;
+                var progress = Math.min((ts - startTime) / duration, 1);
+                var eased = 1 - Math.pow(1 - progress, 3);
+                var current = start + range * eased;
+                el.textContent = Math.floor(current).toLocaleString();
+                if (suffix) el.textContent += suffix;
+                if (progress < 1) requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+        }
+
+        // === ECharts Init ===
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate hero number
+            var heroNumber = document.querySelector('.hero-number');
+            if (heroNumber && heroNumber.dataset.to) {
+                animateValue(heroNumber, 0, parseInt(heroNumber.dataset.to), 2000, '');
+            }
+            // Animate KPI strip numbers
+            document.querySelectorAll('.kpi-strip-value[data-to]').forEach(function(el) {
+                animateValue(el, 0, parseInt(el.dataset.to), 1800, el.dataset.suffix || '');
+            });
+
+            // === 数据来源纪律: 以下数组均从 metrics.json / insights.json 抄录, 勿手改 ===
+            var MONTHS = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+            var TREND = {  // metrics.json → trend (万元, null = 尚无数据, 折线断开)
+                y2024: [759.5, 840.0, 950.0, 1060.0, 1140.5, 1170.0, 1140.5, 1060.0, 950.0, 840.0, 759.5, 730.0],
+                y2025: [987.3, 1071.2, 1188.1, 1299.4, 1370.0, 1376.5, 1313.6, 1194.7, 1047.2, 905.2, 799.7, 750.6],
+                y2026: [990.8, 589.2, 1133.5, 1207.7, 1239.4, 1211.3, null, null, null, null, null, null]
+            };
+            var PVM = { base: 7292.5, vol: -1349.9, priceMix: 429.4, cur: 6372.0 };  // metrics.json → period.pvm
+            var CONTRIB = [  // insights.json → dimension_scan.战区.contributions (升序 = 最差在前)
+                { name: '南区', pp: -9.3 }, { name: '北区', pp: -3.2 }, { name: '西区', pp: -2.5 },
+                { name: '中区', pp: -0.1 }, { name: '东区', pp: 2.5 }
+            ];
+            var SLOPE = [  // 品类份额: 基期(amount_base_wan/total_base_wan) → 当期(share)
+                { name: '主力系列', from: 48.0, to: 48.0 },
+                { name: '旗舰系列', from: 22.0, to: 30.0 },
+                { name: '入门系列', from: 30.0, to: 22.0 }
+            ];
+
+            var axisCommon = {
+                axisLine: { lineStyle: { color: COLOR.border } },
+                axisLabel: { color: COLOR.textTertiary, fontSize: 12 }
+            };
+
+            // --- Chart 1: 三年同期对比折线 (YoY 同期对比, 时间=横轴) ---
+            var chartTrend = echarts.init(document.getElementById('chart-trend'));
+            chartTrend.setOption({
+                tooltip: { trigger: 'axis' },
+                legend: { top: 0, right: 0, icon: 'roundRect', itemWidth: 14, itemHeight: 3,
+                    textStyle: { color: COLOR.textSecondary, fontSize: 12 } },
+                grid: { top: 36, left: 60, right: 25, bottom: 35 },
+                xAxis: Object.assign({ type: 'category', data: MONTHS }, axisCommon),
+                yAxis: { type: 'value',
+                    splitLine: { lineStyle: { type: 'dashed', color: COLOR.bgSubtle } },
+                    axisLabel: { color: COLOR.textTertiary, fontSize: 11, formatter: '{value}' }
+                },
+                series: [
+                    { name: '2026', type: 'line', data: TREND.y2026,
+                      smooth: true, symbol: 'circle', symbolSize: 7,
+                      lineStyle: { width: 3, color: BRAND.mid }, itemStyle: { color: BRAND.mid },
+                      areaStyle: {
+                          color: new echarts.graphic.LinearGradient(0,0,0,1,[
+                              { offset: 0, color: 'rgba(3,83,164,0.16)' },
+                              { offset: 1, color: 'rgba(3,83,164,0.02)' }
+                          ])
+                      },
+                      markPoint: { data: [{ coord: ['2月', 589.2], symbol: 'pin', symbolSize: 46,
+                          itemStyle: { color: COLOR.risk },
+                          label: { show: true, formatter: '异常月', fontSize: 10, color: '#fff' } }] }
+                    },
+                    { name: '2025', type: 'line', data: TREND.y2025,
+                      smooth: true, symbol: 'none', itemStyle: { color: COLOR.textTertiary },
+                      lineStyle: { width: 1.5, color: COLOR.textTertiary, type: 'dashed' } },
+                    { name: '2024', type: 'line', data: TREND.y2024,
+                      smooth: true, symbol: 'none', itemStyle: { color: COLOR.border },
+                      lineStyle: { width: 1.5, color: COLOR.border, type: 'dashed' } }
+                ]
+            });
+
+            // --- Chart 2: 收入桥瀑布 (增量归因唯一解) ---
+            var chartWaterfall = echarts.init(document.getElementById('chart-waterfall'));
+            var wfCats = ['2025 同期', '量效应', '价+结构', '2026 上半年'];
+            var wfAfterVol = PVM.base + PVM.vol;            // 5942.6
+            var wfBase = [0, wfAfterVol, wfAfterVol, 0];    // 透明垫底
+            chartWaterfall.setOption({
+                tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+                grid: { top: 30, left: 65, right: 25, bottom: 40 },
+                xAxis: Object.assign({ type: 'category', data: wfCats }, axisCommon,
+                    { axisLabel: { color: COLOR.textSecondary, fontSize: 12 } }),
+                yAxis: { type: 'value',
+                    splitLine: { lineStyle: { type: 'dashed', color: COLOR.bgSubtle } },
+                    axisLabel: { color: COLOR.textTertiary, fontSize: 11 }
+                },
+                series: [
+                    { name: 'base', type: 'bar', stack: 'a', data: wfBase,
+                      itemStyle: { color: 'transparent' }, emphasis: { itemStyle: { color: 'transparent' } },
+                      tooltip: { show: false } },
+                    { name: '金额', type: 'bar', stack: 'a', barMaxWidth: 56,
+                      data: [
+                          { value: PVM.base, itemStyle: { color: BRAND.deep, borderRadius: [4,4,0,0] },
+                            label: { formatter: '7,292.5' } },
+                          { value: -PVM.vol, itemStyle: { color: COLOR.risk, borderRadius: [4,4,0,0] },
+                            label: { formatter: '-1,349.9', color: COLOR.risk } },
+                          { value: PVM.priceMix, itemStyle: { color: COLOR.growth, borderRadius: [4,4,0,0] },
+                            label: { formatter: '+429.4', color: COLOR.growth } },
+                          { value: PVM.cur, itemStyle: { color: BRAND.mid, borderRadius: [4,4,0,0] },
+                            label: { formatter: '6,372.0' } }
+                      ],
+                      label: { show: true, position: 'top', fontSize: 12, fontWeight: 700, color: COLOR.text }
+                    }
+                ]
+            });
+
+            // --- Chart 3: 战区贡献分解 (发散水平条形, 红=拖累 绿=拉动) ---
+            var chartContrib = echarts.init(document.getElementById('chart-contrib'));
+            chartContrib.setOption({
+                tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' },
+                    formatter: function(ps){ var p = ps[0]; return p.name + '：' + (p.value > 0 ? '+' : '') + p.value + 'pp'; } },
+                grid: { top: 20, left: 70, right: 60, bottom: 35 },
+                xAxis: { type: 'value',
+                    splitLine: { lineStyle: { type: 'dashed', color: COLOR.bgSubtle } },
+                    axisLabel: { color: COLOR.textTertiary, fontSize: 11, formatter: '{value}pp' }
+                },
+                yAxis: Object.assign({ type: 'category', inverse: true,
+                    data: CONTRIB.map(function(d){ return d.name; }) }, axisCommon,
+                    { axisLabel: { color: COLOR.textSecondary, fontSize: 13 } }),
+                series: [{ type: 'bar', barMaxWidth: 30,
+                    data: CONTRIB.map(function(d){
+                        return { value: d.pp,
+                            itemStyle: { color: d.pp < 0 ? COLOR.risk : COLOR.growth, borderRadius: 4 } };
+                    }),
+                    label: { show: true, fontSize: 12, fontWeight: 700,
+                        position: 'right',
+                        formatter: function(p){ return (p.value > 0 ? '+' : '') + p.value + 'pp'; },
+                        color: COLOR.text }
+                }]
+            });
+
+            // --- Chart 4: 品类份额两期斜率 (绿=升 红=降 灰=平) ---
+            var chartSlope = echarts.init(document.getElementById('chart-slope'));
+            chartSlope.setOption({
+                tooltip: { trigger: 'axis' },
+                grid: { top: 30, left: 60, right: 110, bottom: 35 },
+                xAxis: Object.assign({ type: 'category', data: ['2025 同期', '2026 上半年'],
+                    boundaryGap: true }, axisCommon,
+                    { axisLabel: { color: COLOR.textSecondary, fontSize: 13 } }),
+                yAxis: { type: 'value', min: 15, max: 55,
+                    splitLine: { lineStyle: { type: 'dashed', color: COLOR.bgSubtle } },
+                    axisLabel: { color: COLOR.textTertiary, fontSize: 11, formatter: '{value}%' }
+                },
+                series: SLOPE.map(function(s){
+                    var c = s.to > s.from ? COLOR.growth : (s.to < s.from ? COLOR.risk : COLOR.neutral);
+                    return { name: s.name, type: 'line', data: [s.from, s.to],
+                        symbol: 'circle', symbolSize: 9,
+                        lineStyle: { width: 3, color: c }, itemStyle: { color: c },
+                        endLabel: { show: true, formatter: s.name + ' {c}%', fontSize: 12,
+                            fontWeight: 600, color: c, distance: 8 },
+                        label: { show: true, position: 'left', fontSize: 11, color: COLOR.textTertiary,
+                            formatter: function(p){ return p.dataIndex === 0 ? p.value + '%' : ''; } }
+                    };
+                })
+            });
+
+            // Global resize
+            var resizeTimer;
+            window.addEventListener('resize', function() {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(function() {
+                    chartTrend.resize();
+                    chartWaterfall.resize();
+                    chartContrib.resize();
+                    chartSlope.resize();
+                }, 200);
+            });
+        });
+    </script>
+</body>
+</html>
