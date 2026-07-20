@@ -1,6 +1,6 @@
 {
   "name": "south-china-report",
-  "version": "2.12.0",
+  "version": "3.2.0",
   "private": true,
   "type": "module",
   "description": "通用数据分析 HTML 报告 Skill 的数据、校验、运行时真值、截图无障碍、离线与发布工具集。",
@@ -19,8 +19,8 @@
     "build:demo": "python3 -B scripts/build-demo.py",
     "test:data": "python3 -B -m unittest discover -s tests -p 'test_*.py'",
     "test:validators": "node evals/tests/validator-regression.mjs",
-    "test:demo-repro": "python3 -B scripts/build-demo.py --check && node scripts/validate-report.mjs demo-report/report.offline.html --strict-offline && node scripts/validate-report.mjs demo-report/report-compact.offline.html --strict-offline && node scripts/verify-numbers.mjs demo-report/report.offline.html demo-report/metrics.json && node scripts/verify-numbers.mjs demo-report/report-compact.offline.html demo-report/metrics.json && node scripts/verify-runtime.mjs demo-report/report.offline.html demo-report/metrics.json && node scripts/verify-runtime.mjs demo-report/report-compact.offline.html demo-report/metrics.json && node scripts/run-evals.mjs demo-report/report.offline.html --eval 4 --metrics demo-report/metrics.json && node scripts/run-evals.mjs demo-report/report-compact.offline.html --eval 5 --metrics demo-report/metrics.json",
-    "test:demos": "node scripts/run-evals.mjs demo-report/report.html --eval 4 --metrics demo-report/metrics.json && node scripts/run-evals.mjs demo-report/report-compact.html --eval 5 --metrics demo-report/metrics.json",
+    "test:demo-repro": "python3 -B scripts/build-demo.py --check && node scripts/validate-report.mjs demo-report/report.offline.html --strict-offline && node scripts/validate-report.mjs demo-report/report-compact.offline.html --strict-offline && node scripts/verify-numbers.mjs demo-report/report.offline.html demo-report/metrics.json --insights demo-report/insights.json && node scripts/verify-numbers.mjs demo-report/report-compact.offline.html demo-report/metrics.json --insights demo-report/insights.json && node scripts/verify-runtime.mjs demo-report/report.offline.html demo-report/metrics.json && node scripts/verify-runtime.mjs demo-report/report-compact.offline.html demo-report/metrics.json && node scripts/run-evals.mjs demo-report/report.offline.html --eval 4 --metrics demo-report/metrics.json --insights demo-report/insights.json && node scripts/run-evals.mjs demo-report/report-compact.offline.html --eval 5 --metrics demo-report/metrics.json --insights demo-report/insights.json",
+    "test:demos": "node scripts/run-evals.mjs demo-report/report.html --eval 4 --metrics demo-report/metrics.json --insights demo-report/insights.json && node scripts/run-evals.mjs demo-report/report-compact.html --eval 5 --metrics demo-report/metrics.json --insights demo-report/insights.json",
     "test:templates": "node tests/templates-smoke.mjs",
     "test:templates-a11y": "node tests/templates-accessibility-smoke.mjs",
     "test:demo-snapshots": "node tests/demo-snapshot-smoke.mjs",
@@ -32,8 +32,10 @@
     "test:snapshot-atomic": "node tests/snapshot-atomic-smoke.mjs",
     "test:snapshot-network": "node tests/snapshot-network-smoke.mjs",
     "test:runtime": "node tests/runtime-metrics-smoke.mjs",
+    "test:chart-semantics": "node tests/chart-semantics-smoke.mjs",
+    "test:render-pressure": "node tests/render-pressure-smoke.mjs",
     "test:install": "node tests/install-skill-smoke.mjs",
-    "test": "npm run test:data && npm run test:validators && npm run test:demo-repro && npm run test:demos && npm run test:templates && npm run test:templates-a11y && npm run test:demo-snapshots && npm run test:offline && npm run test:presentation && npm run test:snapshot-negative && npm run test:snapshot-a11y && npm run test:snapshot-advanced-a11y && npm run test:snapshot-atomic && npm run test:snapshot-network && npm run test:runtime && npm run test:install",
+    "test": "npm run test:data && npm run test:chart-semantics && npm run test:render-pressure && npm run test:validators && npm run test:demo-repro && npm run test:demos && npm run test:templates && npm run test:templates-a11y && npm run test:demo-snapshots && npm run test:offline && npm run test:presentation && npm run test:snapshot-negative && npm run test:snapshot-a11y && npm run test:snapshot-advanced-a11y && npm run test:snapshot-atomic && npm run test:snapshot-network && npm run test:runtime && npm run test:install",
     "setup:screenshots": "npx playwright install chromium"
   },
   "optionalDependencies": {

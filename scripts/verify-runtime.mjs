@@ -317,9 +317,14 @@ function inspectRuntimePage() {
     });
   }
 
-  const chartSelector = '.chart-container, .tile-chart, [data-chart], [id^="chart-"]';
-  const charts = Array.from(document.querySelectorAll(chartSelector))
-    .filter((element, index, all) => all.indexOf(element) === index)
+  // ECharts 容器名不是信任边界。遍历全部元素调用官方 getInstanceByDom，
+  // 再与约定容器取并集，既发现任意命名的真实实例，也保留“容器存在但未渲染”诊断。
+  const allElements = Array.from(document.querySelectorAll('*'));
+  const instanceElements = typeof window.echarts?.getInstanceByDom === 'function'
+    ? allElements.filter((element) => Boolean(window.echarts.getInstanceByDom(element)))
+    : [];
+  const declaredElements = Array.from(document.querySelectorAll('.chart-container, .tile-chart, [data-chart], [id^="chart-"]'));
+  const charts = [...new Set([...instanceElements, ...declaredElements])]
     .map((element) => {
       const instance = window.echarts?.getInstanceByDom?.(element);
       if (!instance) return { id: element.id || '', missingInstance: true, option: null };

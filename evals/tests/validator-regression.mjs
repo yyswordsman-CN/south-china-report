@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'fs';
+import { createHash } from 'crypto';
 import { tmpdir } from 'os';
 import { dirname, join, resolve } from 'path';
 import { spawnSync } from 'child_process';
@@ -35,28 +36,43 @@ function write(name, content) {
 
 const tokens = Array.from({ length: 41 }, (_, i) => '--t' + i + ':' + i + ';').join('');
 const defaultMeta = {
+  schema_version: '1.0',
+  generator: { name: 'south-china-report', version: '3.2.0' },
   requested_period: '2025-12',
   source: {
     path: 'evals/fixtures/sales-2024-2025.csv',
     sha256: '27547dddb3bd182642f9551b8876acdf2411009f8c890217f7d8b1442fb3092d',
   },
   report_mode: 'regression-fixture',
+  data_cutoff: {
+    data_as_of: '2025-12-31', comparison_as_of: '2024-12-31',
+    completeness: 'complete', like_for_like: true,
+  },
   key_metrics: { 'period.total_cur_wan': 172.0 },
+  metrics_sha256: 'a'.repeat(64),
+  insights_sha256: 'b'.repeat(64),
 };
-function report(extraHead = '', extraBody = '', extraScript = '', meta = defaultMeta) {
+const defaultEvidence = {
+  version: 1,
+  claims: [{ id: 'E-REGRESSION', kind: 'fact', sources: [{ file: 'metrics', path: 'period.total_cur_wan' }] }],
+};
+function report(extraHead = '', extraBody = '', extraScript = '', meta = defaultMeta, evidence = defaultEvidence) {
   const metaScript = meta
     ? '<script type="application/json" id="south-china-report-meta">' + JSON.stringify(meta) + '</script>'
+    : '';
+  const evidenceScript = evidence
+    ? '<script type="application/json" id="south-china-report-evidence-contract">' + JSON.stringify(evidence) + '</script>'
     : '';
   return '<!doctype html><html data-density="compact"><head><meta charset="utf-8">' +
     '<style>:root{' + tokens +
     '--font-display:sans-serif;--font-editorial:sans-serif;--font-data:monospace}' +
     '.num,.kpi-value,[data-metric]{font-variant-numeric:tabular-nums}' +
-    '</style>' + extraHead + metaScript + '</head><body>' +
-    '<h1 class="hero-title">结构改善带动增长</h1>' +
-    '<h2 class="chapter-title">收入企稳，结构改善</h2>' +
-    '<h2 class="chapter-title">区域分化，需要聚焦</h2>' +
-    '<h2 class="chapter-title">渠道修复，效率优先</h2>' +
-    '<h2 class="chapter-title">动作明确，责任到位</h2>' +
+    '</style>' + extraHead + metaScript + evidenceScript + '</head><body>' +
+    '<h1 class="hero-title" data-evidence-id="E-REGRESSION">结构改善带动增长</h1>' +
+    '<h2 class="chapter-title" data-evidence-id="E-REGRESSION">收入企稳，结构改善</h2>' +
+    '<h2 class="chapter-title" data-evidence-id="E-REGRESSION">区域分化，需要聚焦</h2>' +
+    '<h2 class="chapter-title" data-evidence-id="E-REGRESSION">渠道修复，效率优先</h2>' +
+    '<h2 class="chapter-title" data-evidence-id="E-REGRESSION">动作明确，责任到位</h2>' +
     '<span class="num" data-metric="period.total_cur_wan">172.0</span>' +
     '<span class="num" data-metric="period.qty_cur">577</span>' +
     '<span class="num" data-metric="period.total_yoy">-2.2%</span>' +
@@ -71,8 +87,8 @@ try {
   assert(result.status === 0, '--template-mode 显式放行模板占位符', result.stdout + result.stderr);
 
   const inlineChapterTitle = write('inline-chapter-title.html', report().replace(
-    '<h2 class="chapter-title">收入企稳，结构改善</h2>',
-    '<h2 class="chapter-title">销售分析<span data-metric="period.qty_cur">577</span></h2>',
+    '<h2 class="chapter-title" data-evidence-id="E-REGRESSION">收入企稳，结构改善</h2>',
+    '<h2 class="chapter-title" data-evidence-id="E-REGRESSION">销售分析<span data-metric="period.qty_cur">577</span></h2>',
   ));
   result = run(VALIDATOR, [inlineChapterTitle]);
   assert(result.stdout.includes('Chapter 1 标题') && result.stdout.includes('Action Title') &&
@@ -168,6 +184,38 @@ try {
   result = run(VALIDATOR, [banned]);
   assert(result.status === 0 && result.stdout.includes('检出 饼图/环形图'), '禁用图表检查覆盖带引号 JSON key', result.stdout + result.stderr);
 
+  const unnamedContractEscape = write('arbitrary-chart-no-contract.html', report('',
+    '<div id="salesGraph" style="height:180px"></div>',
+    "echarts.init(document.getElementById('salesGraph'));"));
+  result = run(VALIDATOR, [unnamedContractEscape]);
+  assert(result.status === 1 && result.stdout.includes('ECharts 运行时合同') && result.stdout.includes('缺少唯一'),
+    '任意命名的 echarts.init 也必须提供运行时合同', result.stdout + result.stderr);
+
+  const missingEvidence = write('missing-evidence.html', report('', '', '', defaultMeta, null));
+  result = run(VALIDATOR, [missingEvidence]);
+  assert(result.status === 1 && result.stdout.includes('Evidence ID 证据合同') && result.stdout.includes('缺少唯一'),
+    '成品模式阻断缺失 Evidence 合同', result.stdout + result.stderr);
+
+  const unsupportedAttribution = {
+    version: 1,
+    claims: [{ id: 'E-REGRESSION', kind: 'attribution', sources: [] }],
+  };
+  const unsupportedAttributionReport = write('unsupported-attribution.html',
+    report('', '', '', defaultMeta, unsupportedAttribution));
+  result = run(VALIDATOR, [unsupportedAttributionReport]);
+  assert(result.status === 1 && result.stdout.includes('必须绑定至少一个 sources 路径'),
+    '无证据的因果归因不得冒充事实', result.stdout + result.stderr);
+
+  const implicitHypothesis = {
+    version: 1,
+    claims: [{ id: 'E-REGRESSION', kind: 'hypothesis', reason: '待业务核实', validation_needed: '下周用事件记录复核' }],
+  };
+  const implicitHypothesisReport = write('implicit-hypothesis.html',
+    report('', '', '', defaultMeta, implicitHypothesis));
+  result = run(VALIDATOR, [implicitHypothesisReport]);
+  assert(result.status === 1 && result.stdout.includes('data-claim-kind="hypothesis"'),
+    '无数据支撑的原因必须在 DOM 显式标注 hypothesis', result.stdout + result.stderr);
+
   const metricFile = write('metrics.json', JSON.stringify({ period: { total_cur_wan: 172.0 } }));
   const verifyBad = write('verify-bad.html',
     '<!doctype html><html><body><span data-metric="period.total_cur_wan">172.0</span><p>同比 -2.2%</p></body></html>');
@@ -221,8 +269,49 @@ try {
   assert(result.status === 1 && result.stderr.includes('metrics.json 无此有限数值'),
     'verify-numbers 禁止通过原型链伪造 metrics 命中', result.stdout + result.stderr);
 
+  const provenanceMetricsText = JSON.stringify({
+    period: { total_cur_wan: 172.0, qty_cur: 577, total_yoy: -2.2 },
+  });
+  const provenanceMetrics = write('provenance-metrics.json', provenanceMetricsText);
+  const provenanceMetricsSha = createHash('sha256').update(provenanceMetricsText).digest('hex');
+  const provenanceInsightsText = JSON.stringify({
+    schema_version: '1.0',
+    meta: { metrics_sha256: provenanceMetricsSha },
+    trend_test: { mann_kendall: { z: -2.1 } },
+  });
+  const provenanceInsights = write('provenance-insights.json', provenanceInsightsText);
+  const provenanceInsightsSha = createHash('sha256').update(provenanceInsightsText).digest('hex');
+  const provenanceMeta = {
+    ...defaultMeta,
+    metrics_sha256: provenanceMetricsSha,
+    insights_sha256: provenanceInsightsSha,
+  };
+  const provenanceReport = write('verify-provenance.html', report('', '', '', provenanceMeta));
+  result = run(VERIFY, [provenanceReport, provenanceMetrics, '--insights', provenanceInsights]);
+  assert(result.status === 0 && result.stdout.includes('数字一致性与可见数字覆盖率均通过'),
+    'verify-numbers 通过 report→insights→metrics 双哈希强绑定', result.stdout + result.stderr);
+
+  const staleMetricsReport = write('verify-stale-metrics.html', report('', '', '', {
+    ...provenanceMeta,
+    metrics_sha256: '0'.repeat(64),
+  }));
+  result = run(VERIFY, [staleMetricsReport, provenanceMetrics, '--insights', provenanceInsights]);
+  assert(result.status === 1 && result.stderr.includes('报告 metrics_sha256'),
+    'verify-numbers 阻断报告绑定的旧 metrics 指纹', result.stdout + result.stderr);
+
+  const badEvidence = {
+    version: 1,
+    claims: [{ id: 'E-REGRESSION', kind: 'fact', sources: [{ file: 'metrics', path: 'period.not_found' }] }],
+  };
+  const badEvidenceReport = write('verify-bad-evidence.html',
+    report('', '', '', provenanceMeta, badEvidence));
+  result = run(VERIFY, [badEvidenceReport, provenanceMetrics, '--insights', provenanceInsights]);
+  assert(result.status === 1 && result.stderr.includes('Evidence 路径不存在或为空'),
+    'verify-numbers 阻断 Evidence ID 引用不存在的真源路径', result.stdout + result.stderr);
+
   const sourceHash = '27547dddb3bd182642f9551b8876acdf2411009f8c890217f7d8b1442fb3092d';
   const correctMeta = {
+    ...defaultMeta,
     requested_period: '2025-12',
     source: { path: 'evals/fixtures/sales-2024-2025.csv', sha256: sourceHash },
     report_mode: 'compact-monthly',
@@ -234,7 +323,7 @@ try {
     'eval 使用真实 DOM 和报告契约通过正确期间', result.stdout + result.stderr);
 
   const withoutVisibleChapters = report('', '', '', correctMeta)
-    .replace(/<h2 class="chapter-title">[\s\S]*?<\/h2>/g, '');
+    .replace(/<h2 class="chapter-title"[^>]*>[\s\S]*?<\/h2>/g, '');
   const templateOnlyChapters = write('eval-template-only-chapters.html', withoutVisibleChapters
     .replace('<body>', '<body><template>' + '<h2 class="chapter-title">伪章节</h2>'.repeat(4) + '</template>'));
   result = run(EVAL_RUNNER, [templateOnlyChapters, '--eval', '1']);

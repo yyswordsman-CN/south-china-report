@@ -14,9 +14,17 @@ const output = path.join(fixtureDir, 'shots');
 
 try {
   writeFileSync(input, `<!doctype html><html><head><meta name="viewport" content="width=device-width"></head><body>
-    <section data-snap="../unsafe"></section>
-    <section data-snap="../unsafe"></section>
-    <div style="width: 1800px; height: 20px">overflow</div>
+    <main>
+      <section data-snap="../unsafe"></section>
+      <section data-snap="../unsafe"></section>
+      <div style="width: 1800px; height: 20px">overflow</div>
+      <div id="salesGraph" style="width:320px;height:180px"><canvas></canvas></div>
+    </main>
+    <script>
+      const salesGraph = document.getElementById('salesGraph');
+      const chartInstance = { resize() {} };
+      window.echarts = { getInstanceByDom(element) { return element === salesGraph ? chartInstance : null; } };
+    </script>
   </body></html>`);
   const result = spawnSync(process.execPath, [script, input, output], { encoding: 'utf8' });
   if (result.status === 3) {
@@ -28,8 +36,9 @@ try {
   assert.match(log, /横向溢出/);
   assert.match(log, /data-snap 不安全/);
   assert.match(log, /data-snap 重复/);
+  assert.match(log, /图表缺少 aria-label\/aria-labelledby: div#salesGraph/);
   assert.equal(existsSync(path.join(output, 'desktop.png')), false, '闸门失败时不得标记桌面截图为通过');
-  console.log('[PASS] snapshot negative smoke: 横向溢出、不安全/重复 data-snap 均会阻断');
+  console.log('[PASS] snapshot negative smoke: 横向溢出、不安全/重复 data-snap 与任意命名 ECharts 无障碍缺失均会阻断');
 } finally {
   rmSync(fixtureDir, { recursive: true, force: true });
 }

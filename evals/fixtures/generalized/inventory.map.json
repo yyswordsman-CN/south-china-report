@@ -1,0 +1,6 @@
+{
+  "source": {"path": "inventory.csv"},
+  "roles": {"time": null, "measures": [{"id": "on_hand", "field": "on_hand_units", "label": "On-hand units", "semantic_type": "inventory", "aggregation": "sum", "unit": "unit", "direction": "neutral", "additivity": "semi_additive", "primary": true, "required": true}], "dimensions": ["facility"], "id": "record_id"},
+  "analysis_scope": {"mode": "snapshot", "comparisons": [{"id": "snapshot", "type": "none"}]},
+  "schema": {"business_grain": "facility snapshot", "primary_key": ["record_id"], "fields": {"record_id": {"required": true, "type": "string"}, "on_hand_units": {"required": true, "type": "number", "unit": "unit", "aggregation": "sum"}}}
+}

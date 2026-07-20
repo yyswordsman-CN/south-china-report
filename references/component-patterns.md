@@ -186,7 +186,7 @@ function progressColor(pct) {
 
 ### 1.4 Comparison Block (对比块)
 
-**适用**: Before/After、去年/今年，配合动效 Recipe `comparison`
+**适用**: Before/After 或任意两个明确可比期间，配合动效 Recipe `comparison`
 
 ```css
 .comparison {

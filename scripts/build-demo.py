@@ -252,24 +252,34 @@ def normalized_insights_md(path: Path) -> bytes:
     return text.encode("utf-8")
 
 
-def html_with_meta(path: Path, metrics: dict[str, Any], metrics_sha: str, enrichment: dict[str, Any]) -> bytes:
+def html_with_meta(path: Path, metrics: dict[str, Any], metrics_sha: str,
+                   insights_sha: str, enrichment: dict[str, Any]) -> bytes:
     text = path.read_text(encoding="utf-8")
     modes = enrichment.get("report_modes") or {}
     if path.name not in modes:
         raise DemoBuildError(f"enrichment.report_modes 缺少 {path.name}")
     meta = {
+        "schema_version": "1.0",
+        "generator": {"name": "south-china-report", "version": "3.2.0"},
         "requested_period": metrics["meta"]["period_lock"]["label"],
         "source": {
             "path": enrichment["source_contract"]["html_path"],
             "sha256": metrics["meta"]["source_sha256"],
         },
         "report_mode": modes[path.name],
+        "data_cutoff": {
+            "data_as_of": metrics["meta"]["period_lock"]["data_as_of"],
+            "comparison_as_of": metrics["meta"]["period_lock"]["comparison_as_of"],
+            "completeness": metrics["meta"]["period_lock"]["completeness"],
+            "like_for_like": metrics["meta"]["period_lock"]["like_for_like"],
+        },
         "key_metrics": {
             "period.total_cur_wan": metrics["period"]["total_cur_wan"],
             "period.qty_cur": metrics["period"]["qty_cur"],
             "period.total_yoy": metrics["period"]["total_yoy"],
         },
         "metrics_sha256": metrics_sha,
+        "insights_sha256": insights_sha,
     }
     replacement = r"\1" + json.dumps(meta, ensure_ascii=False, separators=(",", ":")) + r"\3"
     updated, count = META_RE.subn(replacement, text, count=1)
@@ -314,14 +324,18 @@ def generate(temp_dir: Path, *, include_offline: bool) -> dict[str, bytes]:
         "longitudinal_trend": enrichment["longitudinal_trend"],
     }
     metrics_path.write_text(dump_json(metrics), encoding="utf-8")
-    run([sys.executable, "-B", str(ROOT / "scripts/stat-insights.py"), str(metrics_path), "--out", str(insights_path)])
+    demo_policy = ["--hhi-medium", ".10", "--hhi-high", ".18",
+                   "--top5-medium", "30", "--top5-high", "45"]
+    run([sys.executable, "-B", str(ROOT / "scripts/stat-insights.py"), str(metrics_path),
+         "--out", str(insights_path), *demo_policy])
     insights = load_json(insights_path)
     metrics["report_evidence"] = build_report_evidence(metrics, insights, enrichment)
     metrics["report_actions"] = enrichment["report_actions"]
     metrics_payload = dump_json(metrics).encode("utf-8")
     metrics_path.write_bytes(metrics_payload)
     # 用最终 metrics 再跑一次，确保 insights 与仓内交付文件是直接输入/输出关系。
-    run([sys.executable, "-B", str(ROOT / "scripts/stat-insights.py"), str(metrics_path), "--out", str(insights_path)])
+    run([sys.executable, "-B", str(ROOT / "scripts/stat-insights.py"), str(metrics_path),
+         "--out", str(insights_path), *demo_policy])
 
     artifacts: dict[str, bytes] = {
         "metrics.json": metrics_payload,
@@ -330,8 +344,9 @@ def generate(temp_dir: Path, *, include_offline: bool) -> dict[str, bytes]:
         "insights.md": normalized_insights_md(temp_dir / "insights.md"),
     }
     metrics_sha = sha256_bytes(metrics_payload)
+    insights_sha = sha256_bytes(artifacts["insights.json"])
     for filename in ONLINE_HTML_FILES:
-        artifacts[filename] = html_with_meta(DEMO / filename, metrics, metrics_sha, enrichment)
+        artifacts[filename] = html_with_meta(DEMO / filename, metrics, metrics_sha, insights_sha, enrichment)
     if include_offline:
         for source_name, offline_name in OFFLINE_HTML_BY_SOURCE.items():
             source_path = temp_dir / source_name

@@ -1,6 +1,6 @@
 # south-china-report
 
-> 通用型数据分析报告叙事设计系统（Codex Skill）· 当前版本 V2.12.0
+> 通用型数据分析报告叙事设计系统（Codex Skill）· 当前版本 V3.2.0
 >
 > 报告不是仪表盘。仪表盘是给人"扫"的，报告是给人"读"的。
 
@@ -11,18 +11,21 @@
 市面上的数据分析工具都在卷"算得深"，真正的断层在**最后一公里**：结论有了，但它还不是一个决策者三分钟能拍板的东西。本系统把这一公里做到工程级——
 
 ```
-数据源 → prep-source.py（DuckDB 清洗聚合）→ metrics.json（唯一数字来源）
-      → stat-insights.py（统计洞察层）→ insights.json（问题清单）
-      → 叙事合同（现象→归因→对策）→ 自包含 HTML → 四道质量 Gate
+数据源 → prep-source.py（measures/比较/Schema/结果快照 Gate）→ metrics.json
+      → stat-insights.py（方向感知 + 方法适用性 + metrics SHA）→ insights.json
+      → Evidence ID 叙事合同 → 双 SHA 强绑定自包含 HTML → 四道质量 Gate
 ```
 
 ## 核心特性
 
-- **数据可信链**：报告里每个数字从 `metrics.json` 抄、禁止手敲；静态 DOM 与浏览器渲染后的 DOM/ECharts 分别机器对账，V2 合同覆盖标量、坐标、递归树和任意嵌套 custom `series.data`；脏数据标记 `BLOCKED` 时只出修数建议、不出结论
-- **统计洞察层（V2.10）**：Mann-Kendall 趋势显著性检验（p<0.05 才允许写"趋势性下滑"）、稳健 Z 异常月检测、维度断崖/引擎/结构位移/增速贡献分解、HHI 集中度、量价象限、按影响金额排序的问题清单——零新依赖，纯 Python 标准库
+- **通用度量语义层**：`measures[]` 原生支持金额、数量、人数、时长、得分、比率、库存和缺陷率，分离维度轴/时间轴聚合，声明百分比存储尺度、比率分子分母和权重覆盖；没有金额也能正常出报告
+- **通用分析合同**：同比、日历环比、等长滚动窗、上一完整期、上一期同阶段、自定义基线和无时间快照按不同语义路由；不适用的方法机器可读跳过
+- **统一参考合同**：目标、Benchmark、参考区间和组间比较统一进入 `references[]`，绑定度量、单位、方向、容差、粒度与聚合；旧目标字段只作兼容投影
+- **数据可信链**：必需 Schema、业务粒度、主键、单位与结果快照进入 Gate；跨运行漂移锁同时核对语义合同、schema、行数和结果 hash；报告以双 SHA 与 Evidence ID 追溯真源
+- **方向感知统计层**：Mann-Kendall、稳健 Z、结构变化、PVM、TopN、Pareto 与 HHI 先判断适用性；HHI 无业务政策只作描述，低优指标按下降为有利解释
 - **叙事强制合同**：Governing Thought + 章节 PAC 闭环（现象→归因→对策）+ So-What 四连问；没讲完故事的章节进不了正文
 - **视觉纪律**：三角色字体 / 语义色三层架构 / 克制动效 / IBCS 选图语法（饼图默认禁用）/ 紧凑销售报告风默认、叙事标准风显式可选
-- **四组质量 Gate**：结构校验（P0 硬阻断）→ 静态数字一致性 → 离线内联严格复检 → 离线版运行时数字合同 + 四视口 DOM/AX/Tab/对比度检查与截图目检
+- **四组质量 Gate**：结构/Evidence 校验（P0 硬阻断）→ 静态数字+双哈希真源一致性 → 离线内联严格复检 → 全部 ECharts 实例运行时合同 + 四视口 DOM/AX/Tab/对比度检查与截图目检
 - **可发布工程链**：GitHub Actions 跑全量回归；发布清单、版本一致性、只读安装差异、原子替换和可恢复备份均有脚本约束
 - **统计诚实纪律**：小样本只报方向不判显著；无目标数据不编造达成率；不做预测外推
 
@@ -37,16 +40,17 @@ npx playwright install chromium
 # 1. 数据画像 + 聚合校验（DuckDB 统吃多种数据源）
 python3 scripts/prep-source.py profile 你的数据.xlsx --out-map map.draft.json
 # 默认不打印原始字段样例；只有确认终端环境安全时才显式加 --show-samples
-# 先确认 map.caliber.period；有目标列时再确认 target_measure/target_aggregation/target_grain/target_frequency
+# 先确认 roles.measures[]、analysis_scope 与 schema；完整合同见 references/semantic-data-contract.md
 # 推荐让 map.source 成为唯一源配置，避免重复传路径；CLI 路径仅用于显式覆盖
 python3 scripts/prep-source.py build --map map.json --out metrics.json
+# 需要锁定上次已确认结果时：追加 --baseline-metrics prior.metrics.json，或写 map.drift_lock
 
 # 2. 统计洞察（趋势显著性 / 异常月 / 断崖引擎 / 问题清单）
 python3 scripts/stat-insights.py metrics.json --out insights.json
 
 # 3. 按 SKILL.md 工作流填充模板生成报告，交付前跑四组 Gate
 node scripts/validate-report.mjs report.html
-node scripts/verify-numbers.mjs report.html metrics.json
+node scripts/verify-numbers.mjs report.html metrics.json --insights insights.json
 node scripts/make-offline.mjs report.html
 node scripts/validate-report.mjs report.offline.html --strict-offline
 node scripts/verify-runtime.mjs report.offline.html metrics.json
@@ -81,7 +85,7 @@ npm run test:demo-repro  # 数据逐字节比对 + 离线来源指纹/严检/数
 | `scripts/` | 数据管线、统计洞察、demo 构建、静态/运行时/截图 Gate、发布安装与 eval 回归脚本 |
 | `evals/` | 机器断言回归用例 |
 | `USAGE-GUIDE.md` | 使用指南与提示词手册 |
-| `CHANGELOG.md` | V1.0 → V2.12.0 完整迭代记录（含缺陷复现与回归证据） |
+| `CHANGELOG.md` | V1.0 → V3.2.0 完整迭代记录（含缺陷复现与回归证据） |
 
 ## 质量证据
 

@@ -1,0 +1,19 @@
+record_id,facility,on_hand_units
+I01,North Hub 01,120
+I02,North Hub 02,0
+I03,North Hub 03,-5
+I04,North Hub 04,45
+I05,Central Hub 05,210
+I06,Central Hub 06,18
+I07,Central Hub 07,76
+I08,Central Hub 08,33
+I09,East Hub 09,5000000
+I10,East Hub 10,9
+I11,East Hub 11,12
+I12,East Hub 12,6
+I13,West Hub 13,88
+I14,West Hub 14,41
+I15,West Hub 15,37
+I16,South Hub 16,24
+I17,South Hub 17,19
+I18,South Hub 18,3

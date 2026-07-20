@@ -4,6 +4,35 @@
 
 ---
 
+## V3.2.0 — 2026-07-19 — P2 口径消歧、参考统一与跨运行漂移锁
+
+- **日历比较语义拆分**：`mom/qoq/wow` 现在严格表示上一月/季/ISO 周，且会校验期间粒度；`previous_equal_window` 保留紧邻等长滚动窗，`previous_calendar_period/previous_complete_period` 表示完整上一日历期，`same_stage_previous_period` 支持部分期对上一日历期同阶段。旧 `period_over_period` 继续兼容但不再承载含混的“环比”语义。
+- **按轴可加性与比率合同**：度量新增 `dimension_aggregation/time_aggregation`，库存、余额等可按“同日跨维求和、跨日取期末/最后非空”聚合；新增 `ratio + numerator_field/denominator_field`，百分比强制声明 `storage_scale=fraction|percent`，加权平均输出权重覆盖率并按阈值阻断/跳过。
+- **统一参考合同**：新增顶层 `references[]`，统一目标、Benchmark、参考区间、容差和组间比较，绑定度量、单位、方向规则、字段聚合、业务粒度与频率；输出以 `metrics.references[]` 为真源。旧目标/比较入口统一适配，`metrics.target` 只保留兼容投影。
+- **跨运行漂移锁**：新增 `drift_lock` 与 `--baseline-metrics`，同时比对语义合同 hash、结果 schema hash、行数变化和结果快照 hash；支持 WARN/BLOCK 行数阈值、`expected_result_change` 预期声明，以及经审阅的 schema/语义迁移开关。构建输出机器可读 `drift_report`，不会自动覆盖基线。
+- **回归覆盖**：新增 P2 专项测试，覆盖月/季/ISO 周日历边界、等长窗、部分期同阶段、期末库存、可复算缺陷率、fraction 百分比、权重覆盖不足、标量/区间/组间/legacy 参考，以及预期/非预期结果变化、行数与语义漂移。六类泛化夹具同步补齐百分比存储尺度，既有 P0/离线/运行时/渲染压力/安装门禁继续全量执行。
+
+## V3.1.0 — 2026-07-19 — P1 跨业务语义层与泛化回归
+
+- **通用度量语义层**：新增 `roles.measures[]`，显式声明语义类型、聚合、单位、方向、可加性、权重、主指标和必需性；支持金额、数量、人数、时长、得分、比率、库存和缺陷率。`amount/qty` 继续兼容，但没有金额不再 BLOCKED。
+- **通用分析范围与比较合同**：`analysis_scope` 支持 period/snapshot，以及同比、环比/等长上一期、上一完整期、自定义基线、目标、Benchmark、组间比较和无比较。无时间快照保留结构、分布、排名、异常与组间差异，只机器跳过趋势/PVM。
+- **适用性与方向语义**：PVM、MK、TopN、Pareto、HHI 统一输出 `method_applicability` 和跳过原因；HHI/Top5 无显式业务政策只输出描述性集中度。新增方向感知斜率图 helper，真实两期标签、动态轴域和 `higher/lower/neutral` 语义色不再硬编码。
+- **Schema、粒度与 SQL 快照**：新增必需/可选字段、业务粒度、主键、类型、单位和聚合合同；必需 Schema/单位漂移 BLOCKED，可选字段只关闭依赖模块。SQL 输出查询哈希、结果行数、结果 schema hash 与结果快照 hash，能识别同 SQL 文本下的数据变化。
+- **跨业务与渲染压力门禁**：新增财务、人员、库存、质量、服务工单、评分调查六类无敏感数据夹具；覆盖禁用默认销售术语、长标签/高基数、极端值、负数、百分比、低优指标、紧凑布局、动态轴域与四视口截图。既有 P0、严格离线、运行时数字与安装门禁继续纳入全量 `npm test`。
+- **兼容边界**：旧销售演示仍使用 `amount/qty` 兼容输出；演示中 HHI/Top5 的风险分级改为构建脚本显式传入演示政策阈值，避免把默认启发式伪装成通用业务政策。
+
+## V3.0.0 — 2026-07-19 — 工业化报告 Skill 主版本基线
+
+- **主版本升级**：将产品版本从 V2.12.0 提升为 V3.0.0，正式把累计完成的数据可信链、默认紧凑风、结构化运行时数字合同、四视口无障碍 Gate、CI 与可恢复安装体系定义为新一代稳定基线。
+- **版本呈现统一**：Skill 主标题、首屏版本、README、使用指南、依赖声明、触发维护契约、演示报告和包元数据统一为 V3.0.0，避免主标题仍写“V2”造成版本倒退观感。
+- **协议边界不混淆**：产品版本升级为 V3，不改变 `#south-china-report-runtime-contract` 的协议版本；运行时合同继续使用向后兼容的 schema `version: 2`，避免无必要的协议破坏。
+- **兼容性**：技能稳定 ID 仍为 `south-china-report`，调用方式和 V2.12.0 已验证的数据/报告行为保持兼容；本次是主版本定位与版本真源统一，不虚构额外功能增量。
+- **P0 · 期间完整性**：`prep-source.py` 新增必填 `data_as_of/comparison_as_of`，未完整期自动锁定上年同一日历截止日，基期覆盖不足即 BLOCKED；可用 `expected_observations` 声明两期应有行数/不重日期数，默认完整率下限 90%。
+- **P0 · 金额空值与重复量级**：锁定可比范围内金额空值、完全重复行及重复绝对金额占比都进入质量元数据，任一默认超过 5% 即 BLOCKED；不自动去重，避免猜测业务键。
+- **P0 · 全 ECharts 实例反查**：`verify-runtime.mjs` 与 `snapshot.mjs` 不再依赖 `.chart-container`/`chart-*` 命名，而是遍历 DOM 并用 `echarts.getInstanceByDom()` 发现全部实例；静态验证器对任意 `echarts.init()` 强制要求唯一运行时合同。
+- **P0 · 产物双哈希链**：`stat-insights.py` 将实际输入 `metrics.json` 的 SHA-256 写入 `insights.meta.metrics_sha256`；报告 meta 强制 schema/generator/data_cutoff/`metrics_sha256`/`insights_sha256`，`verify-numbers` 与 `run-evals` 对实际文件字节逐链校验。
+- **P0 · Evidence ID**：成品必须提供唯一 `#south-china-report-evidence-contract`，Hero/Chapter/Pull Quote/Insight/Closing 等核心结论必须绑定实存的 `metrics|insights` 路径。无证据原因只允许作 `hypothesis`，必须写明原因、验证需求并在 DOM 显式标注。
+
 ## V2.12.0 — 2026-07-19 — P2 工程化、运行时真值与无障碍闭环
 
 - **运行时数字真值 Gate**：新增 `verify-runtime.mjs`，在阻断网络的 Chromium 中执行严格离线报告，复核最终可见 DOM。运行时合同升级为向后兼容 V2：标量保留等长 `metrics` 简写；坐标对、递归树和任意 custom 嵌套结构通过 RFC 6901 JSON Pointer 将每个数值/null/完整格式化数值字符串叶子逐一映射到 `metrics.json`。遗漏、重复、越界、原型链键、非有限值和无理由豁免均 fail-closed；支持精确多指针共享豁免理由，不支持通配符或子树吞并。

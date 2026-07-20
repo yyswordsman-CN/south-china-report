@@ -323,7 +323,18 @@
     <!-- 报告可审计契约：生成成品时必须用实际期间、源文件指纹与关键指标整体替换。 -->
     <script type="application/json" id="south-china-report-meta">
     {
+      "schema_version": "1.0",
+      "generator": {
+        "name": "south-china-report",
+        "version": "3.2.0"
+      },
       "requested_period": "[REQUESTED_PERIOD]",
+      "data_cutoff": {
+        "data_as_of": "[DATA_AS_OF]",
+        "comparison_as_of": "[COMPARISON_AS_OF]",
+        "completeness": "[complete|partial_same_cutoff]",
+        "like_for_like": true
+      },
       "source": {
         "path": "[SOURCE_PATH]",
         "sha256": "[SOURCE_SHA256]"
@@ -332,7 +343,23 @@
       "key_metrics": {
         "[METRIC_PATH]": null
       },
-      "metrics_sha256": "[METRICS_SHA256]"
+      "metrics_sha256": "[METRICS_SHA256]",
+      "insights_sha256": "[INSIGHTS_SHA256]"
+    }
+    </script>
+    <script type="application/json" id="south-china-report-evidence-contract">
+    {
+      "version": 1,
+      "no_narrative_claims_reason": "审计包只展示口径、质量与真源明细，不承载经营叙事结论",
+      "claims": [
+        {
+          "id": "E-AUDIT-SOURCE",
+          "kind": "fact",
+          "sources": [
+            { "file": "metrics", "path": "meta.source.sha256" }
+          ]
+        }
+      ]
     }
     </script>
     <main class="audit-container" id="main-content">

@@ -1,0 +1,13 @@
+{
+  "source": {"path": "finance.csv"},
+  "roles": {
+    "time": "date",
+    "measures": [
+      {"id": "revenue", "field": "revenue", "label": "Revenue", "semantic_type": "amount", "aggregation": "sum", "unit": "CNY", "direction": "higher_is_better", "additivity": "additive", "primary": true, "required": true},
+      {"id": "cost", "field": "cost", "label": "Cost", "semantic_type": "amount", "aggregation": "sum", "unit": "CNY", "direction": "lower_is_better", "additivity": "additive", "primary": false, "required": true}
+    ],
+    "dimensions": ["portfolio"]
+  },
+  "analysis_scope": {"mode": "period", "period": "2025-02", "data_as_of": "2025-02-28", "comparison_as_of": "2024-02-28", "comparisons": [{"id": "yoy", "type": "year_over_year"}]},
+  "schema": {"business_grain": "date x portfolio", "primary_key": ["date", "portfolio"], "fields": {"date": {"required": true, "type": "date"}, "revenue": {"required": true, "type": "number", "unit": "CNY", "aggregation": "sum"}, "cost": {"required": true, "type": "number", "unit": "CNY", "aggregation": "sum"}}}
+}

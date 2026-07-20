@@ -14,6 +14,8 @@
   },
   "caliber": {
     "period": "2025-12",
+    "data_as_of": "2025-12-31",
+    "comparison_as_of": "2024-12-31",
     "negative_amount_policy": "allow_net",
     "note": "eval fixture; 2025-12 单月锁定"
   }

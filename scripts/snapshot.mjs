@@ -68,7 +68,9 @@ const PREP = () => new Promise((resolve) => {
   };
 
   const hasAnimatedValues = Boolean(document.querySelector('[data-to]'));
-  const hasCharts = Boolean(document.querySelector('.chart-container, .tile-chart, [data-chart]'));
+  const hasCharts = Boolean(document.querySelector('.chart-container, .tile-chart, [data-chart], [id^="chart-"]')) ||
+    (typeof window.echarts?.getInstanceByDom === 'function' &&
+      Array.from(document.querySelectorAll('*')).some((element) => Boolean(window.echarts.getInstanceByDom(element))));
   setFinalValues();
   window.dispatchEvent(new Event('resize'));
   // 旧报告可能已启动 1200–2000ms 的 requestAnimationFrame CountUp。
@@ -416,8 +418,12 @@ async function inspectPage(page, viewport) {
       seen.add(snapId);
     });
 
-    const chartElements = Array.from(document.querySelectorAll('.chart-container, .tile-chart, [data-chart], [id^="chart-"]'))
-      .filter((element, index, all) => all.indexOf(element) === index)
+    const allElements = Array.from(document.querySelectorAll('*'));
+    const instanceElements = typeof window.echarts?.getInstanceByDom === 'function'
+      ? allElements.filter((element) => Boolean(window.echarts.getInstanceByDom(element)))
+      : [];
+    const declaredElements = Array.from(document.querySelectorAll('.chart-container, .tile-chart, [data-chart], [id^="chart-"]'));
+    const chartElements = [...new Set([...instanceElements, ...declaredElements])]
       // 兼容旧报告只用 chart-* id 的容器，同时排除 chart-*-title / description 等标签。
       .filter((element) => element.matches('.chart-container, .tile-chart, [data-chart]')
         || Boolean(element.querySelector('canvas, svg'))
@@ -433,6 +439,7 @@ async function inspectPage(page, viewport) {
         const instance = window.echarts.getInstanceByDom(element);
         const hasSurface = Boolean(element.querySelector('canvas, svg'));
         if (!instance || !hasSurface) issues.push(`图表未完成渲染: #${element.id || '(无 id)'}`);
+        if (instance && !element.id) issues.push('ECharts 图表容器缺少稳定 id，无法绑定运行时合同');
         if (!accessibleName(element)) issues.push(`无障碍: 图表缺少 aria-label/aria-labelledby: ${describeElement(element)}`);
       });
     }

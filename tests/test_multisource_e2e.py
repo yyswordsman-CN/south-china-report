@@ -75,9 +75,17 @@ class MultiSourceGoldenE2ETests(unittest.TestCase):
         self.assertEqual(mapping["roles"]["dimensions"], ["zone", "channel"])
         mapping["caliber"] = {
             "period": "2025H1",
+            "data_as_of": "2025-06-30",
+            "comparison_as_of": "2024-06-30",
             "target_measure": "amount",
             "target_aggregation": "sum",
         }
+        mapping["analysis_scope"] = {
+            "mode": "period", "period": "2025H1", "data_as_of": "2025-06-30",
+            "comparison_as_of": "2024-06-30",
+            "comparisons": [{"id": "yoy", "type": "year_over_year"}],
+        }
+        mapping["schema"]["business_grain"] = "one row per date, zone, channel, product, customer"
         mapping["thresholds"] = {"customer_top5_high": 101}
         map_path.write_text(json.dumps(mapping, ensure_ascii=False, indent=2), encoding="utf-8")
 

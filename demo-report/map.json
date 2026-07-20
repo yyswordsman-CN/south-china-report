@@ -11,6 +11,8 @@
  },
  "caliber": {
   "period": "2026H1",
+  "data_as_of": "2026-06-30",
+  "comparison_as_of": "2025-06-30",
   "granularity": "month",
   "note": "当期 2026-01~06，对比 2025 同期"
  }

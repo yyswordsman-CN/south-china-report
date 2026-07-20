@@ -42,7 +42,16 @@ class DataPipelineTests(unittest.TestCase):
         return path
 
     def mapping(self, source, period="2025Q4", **caliber):
-        config = {"period": period, "target_measure": "amount", **caliber}
+        try:
+            lock = PREP.parse_period_spec(period)
+            data_as_of = str(lock["end"].date())
+            comparison_as_of = str(lock["base_end"].date())
+        except (TypeError, ValueError):
+            data_as_of = "2025-12-31"
+            comparison_as_of = "2024-12-31"
+        config = {"period": period, "data_as_of": data_as_of,
+                  "comparison_as_of": comparison_as_of,
+                  "target_measure": "amount", **caliber}
         return {
             "source": {"path": str(source)},
             "roles": {"time": "date", "amount": "amount", "qty": "qty",
@@ -214,12 +223,110 @@ class DataPipelineTests(unittest.TestCase):
         self.assertEqual(metrics["target"]["plan"], 600)
         self.assertEqual(metrics["target"]["achievement_rate"], 100.0)
 
-    def test_exact_duplicate_warns_without_id_role(self):
+    def test_material_exact_duplicate_blocks_without_id_role(self):
         row = ("2025-12-01", "n", "o", "A", "c1", 100, 1, "")
         source = self.write_csv([row, row])
         mapping = self.mapping(source, period="2025-12"); mapping["roles"]["target"] = None
+        metrics = self.run_build(mapping, expect_exit=2)
+        self.assertTrue(any("完全重复行在锁定可比范围" in text for text in metrics["data_status"]["errors"]))
+        self.assertEqual(metrics["meta"]["quality"]["duplicates"]["row_pct"], 50.0)
+
+    def test_low_materiality_exact_duplicate_only_warns(self):
+        rows = [(f"2025-12-{day:02d}", "n", "o", f"P{day}", f"c{day}", 1000, 1, "")
+                for day in range(1, 22)]
+        tiny = ("2025-12-22", "n", "o", "tiny", "tiny", 1, 1, "")
+        source = self.write_csv(rows + [tiny, tiny])
+        mapping = self.mapping(source, period="2025-12"); mapping["roles"]["target"] = None
         metrics = self.run_build(mapping)
-        self.assertTrue(any("完全重复行 1 行" in text for text in metrics["data_status"]["warnings"]))
+        self.assertEqual(metrics["data_status"]["status"], "WARN")
+        self.assertLess(metrics["meta"]["quality"]["duplicates"]["row_pct"], 5)
+        self.assertLess(metrics["meta"]["quality"]["duplicates"]["amount_pct"], 5)
+
+    def test_amount_blank_materiality_blocks(self):
+        rows = [(f"2025-12-{day:02d}", "n", "o", "A", f"c{day}", "", 1, "")
+                for day in range(1, 10)]
+        rows.append(("2025-12-10", "n", "o", "A", "c10", 100, 1, ""))
+        source = self.write_csv(rows)
+        mapping = self.mapping(source, period="2025-12"); mapping["roles"]["target"] = None
+        metrics = self.run_build(mapping, expect_exit=2)
+        self.assertEqual(metrics["meta"]["quality"]["amount"]["blank_pct"], 90.0)
+        self.assertTrue(any("主指标[amount]在分析范围" in text for text in metrics["data_status"]["errors"]))
+
+    def test_period_specific_amount_blanks_cannot_be_diluted_by_other_period(self):
+        rows = [("2025-12-01", "n", "o", "A", f"current-{index}", "" if index < 9 else 100, 1, "")
+                for index in range(10)]
+        rows.extend(("2024-12-01", "n", "o", "A", f"base-{index}", 100, 1, "")
+                    for index in range(200))
+        source = self.write_csv(rows)
+        mapping = self.mapping(source, period="2025-12"); mapping["roles"]["target"] = None
+        metrics = self.run_build(mapping, expect_exit=2)
+        amount_quality = metrics["meta"]["quality"]["amount"]
+        self.assertLess(amount_quality["blank_pct"], 5)
+        self.assertEqual(amount_quality["periods"]["current"]["blank_pct"], 90.0)
+        self.assertTrue(any("单期越线" in text for text in metrics["data_status"]["errors"]))
+
+    def test_period_specific_duplicates_cannot_be_diluted_by_other_period(self):
+        duplicate = ("2025-12-01", "n", "o", "A", "current", 100, 1, "")
+        rows = [duplicate, duplicate]
+        rows.extend(("2024-12-01", "n", "o", "A", f"base-{index}", 100, 1, "")
+                    for index in range(200))
+        source = self.write_csv(rows)
+        mapping = self.mapping(source, period="2025-12"); mapping["roles"]["target"] = None
+        metrics = self.run_build(mapping, expect_exit=2)
+        duplicate_quality = metrics["meta"]["quality"]["duplicates"]
+        self.assertLess(duplicate_quality["row_pct"], 5)
+        self.assertEqual(duplicate_quality["periods"]["current"]["row_pct"], 50.0)
+        self.assertTrue(any("单期越线" in text for text in metrics["data_status"]["errors"]))
+
+    def test_partial_period_uses_same_cutoff_instead_of_full_base(self):
+        source = self.write_csv([
+            ("2024-12-01", "n", "o", "A", "c1", 1000, 1, ""),
+            ("2024-12-31", "n", "o", "A", "c2", 1000, 1, ""),
+            ("2025-12-01", "n", "o", "A", "c1", 1000, 1, ""),
+        ])
+        mapping = self.mapping(source, period="2025-12", data_as_of="2025-12-15",
+                               comparison_as_of="2024-12-15")
+        mapping["roles"]["target"] = None
+        metrics = self.run_build(mapping)
+        self.assertEqual(metrics["period"]["total_base"], 1000)
+        self.assertEqual(metrics["period"]["total_yoy"], 0.0)
+        self.assertEqual(metrics["meta"]["period_lock"]["end"], "2025-12-15")
+        self.assertEqual(metrics["meta"]["period_lock"]["base_end"], "2024-12-15")
+        self.assertEqual(metrics["meta"]["period_lock"]["completeness"], "partial_same_cutoff")
+
+    def test_missing_or_short_comparison_cutoff_blocks(self):
+        source = self.write_csv([
+            ("2024-12-01", "n", "o", "A", "c1", 100, 1, ""),
+            ("2025-12-01", "n", "o", "A", "c1", 100, 1, ""),
+        ])
+        missing = self.mapping(source, period="2025-12")
+        missing["roles"]["target"] = None
+        missing["caliber"].pop("data_as_of")
+        blocked = self.run_build(missing, expect_exit=2)
+        self.assertTrue(any("data_as_of" in text for text in blocked["data_status"]["errors"]))
+
+        short = self.mapping(source, period="2025-12", data_as_of="2025-12-15",
+                             comparison_as_of="2024-12-01")
+        short["roles"]["target"] = None
+        blocked = self.run_build(short, expect_exit=2)
+        self.assertTrue(any("未覆盖基线截止日" in text for text in blocked["data_status"]["errors"]))
+
+        malformed = self.mapping(source, period="2025-12", data_as_of="2025/12/15",
+                                 comparison_as_of="2024-12-15")
+        malformed["roles"]["target"] = None
+        blocked = self.run_build(malformed, expect_exit=2)
+        self.assertTrue(any("严格使用 YYYY-MM-DD" in text for text in blocked["data_status"]["errors"]))
+
+    def test_expected_observation_completeness_blocks(self):
+        source = self.write_csv([
+            ("2024-12-01", "n", "o", "A", "c1", 100, 1, ""),
+            ("2025-12-01", "n", "o", "A", "c1", 100, 1, ""),
+        ])
+        mapping = self.mapping(source, period="2025-12",
+                               expected_observations={"mode": "distinct_dates", "current": 10, "base": 10})
+        mapping["roles"]["target"] = None
+        metrics = self.run_build(mapping, expect_exit=2)
+        self.assertEqual(metrics["meta"]["quality"]["observations"]["current"]["completeness_pct"], 10.0)
 
     def test_bad_time_over_threshold_blocks(self):
         source = self.write_csv([
@@ -238,16 +345,16 @@ class DataPipelineTests(unittest.TestCase):
         self.assertTrue(metrics["meta"]["period_lock"]["inferred"])
         self.assertTrue(any("未明确填写" in text for text in metrics["data_status"]["errors"]))
 
-    def test_missing_time_and_period_blocks_instead_of_aggregating_all_rows(self):
+    def test_missing_time_defaults_to_snapshot_and_skips_trend(self):
         source = self.write_csv([("2025-12-01", "n", "o", "A", "c1", 100, 1, "")])
         mapping = self.mapping(source, period=None)
         mapping["roles"]["time"] = None
         mapping["roles"]["target"] = None
-        metrics = self.run_build(mapping, expect_exit=2)
+        metrics = self.run_build(mapping)
         self.assertNotIn("period_lock", metrics["meta"])
-        self.assertIsNone(metrics["total"])
-        self.assertEqual(metrics["dimensions"], {})
-        self.assertTrue(any("无法确认统计期间" in text for text in metrics["data_status"]["errors"]))
+        self.assertEqual(metrics["total"], 100)
+        self.assertEqual(metrics["analysis_scope"]["mode"], "snapshot")
+        self.assertEqual(metrics["method_applicability"]["mk_trend"]["status"], "SKIPPED")
 
     def test_timezone_dates_block_without_business_timezone_and_pass_when_configured(self):
         source = self.write_csv([
@@ -273,7 +380,7 @@ class DataPipelineTests(unittest.TestCase):
         mapping = self.mapping(source, period="2025-12"); mapping["roles"]["target"] = None
         metrics = self.run_build(mapping)
         self.assertTrue(all(row["share"] is None for row in metrics["dimensions"]["zone"]))
-        self.assertTrue(any("负数净额分项" in text for text in metrics["data_status"]["warnings"]))
+        self.assertTrue(any("负数主指标分项" in text for text in metrics["data_status"]["warnings"]))
 
     def test_profile_refuses_overwrite_without_force(self):
         source = self.write_csv([("2025-12-01", "n", "o", "A", "c1", 100, 1, "")])
@@ -288,7 +395,7 @@ class DataPipelineTests(unittest.TestCase):
         self.assertIn("已存在", second.stderr + second.stdout)
         self.assertEqual(forced.returncode, 0, forced.stderr)
 
-    def test_profile_does_not_promote_volume_to_amount(self):
+    def test_profile_promotes_volume_to_primary_measure_without_amount(self):
         source = self.work / "volume-only.csv"
         source.write_text("日期,区域,销量\n2025-12-01,南区,10\n", encoding="utf-8")
         out_map = self.work / "volume-map.json"
@@ -299,7 +406,9 @@ class DataPipelineTests(unittest.TestCase):
         draft = json.loads(out_map.read_text(encoding="utf-8"))
         self.assertIsNone(draft["roles"]["amount"])
         self.assertEqual(draft["roles"]["qty"], "销量")
-        self.assertIn("[BLOCKED] 未识别到金额", result.stdout)
+        self.assertEqual(draft["roles"]["measures"][0]["field"], "销量")
+        self.assertTrue(draft["roles"]["measures"][0]["primary"])
+        self.assertNotIn("[BLOCKED] 未识别到金额", result.stdout)
 
     def test_profile_hides_samples_and_sql_text_by_default(self):
         source = self.work / "sensitive.csv"
@@ -343,6 +452,7 @@ class DataPipelineTests(unittest.TestCase):
                       "customer": None, "product": None, "target": None, "id": None},
             "caliber": {"period": "2025-12"},
         }
+        mapping["caliber"].update({"data_as_of": "2025-12-31", "comparison_as_of": "2024-12-31"})
         map_path = self.work / "sheet-map.json"; out = self.work / "sheet-metrics.json"
         map_path.write_text(json.dumps(mapping), encoding="utf-8")
         args = argparse.Namespace(data=str(source), sheet=None, sqlite=None, table=None, sql=None,
@@ -434,6 +544,8 @@ class DataPipelineTests(unittest.TestCase):
                                  str(metrics_path), "--out", str(out)], text=True, capture_output=True)
         self.assertEqual(result.returncode, 0, result.stderr)
         insights = json.loads(out.read_text(encoding="utf-8"))
+        self.assertEqual(insights["schema_version"], "1.0")
+        self.assertEqual(insights["meta"]["metrics_sha256"], hashlib.sha256(metrics_path.read_bytes()).hexdigest())
         self.assertEqual(insights["pvm_quadrant"]["status"], "BLOCKED")
         self.assertFalse(any(item["type"] == "量价双杀" for item in insights["problem_list"]))
 

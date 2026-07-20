@@ -852,7 +852,18 @@
     <!-- 报告可审计契约：生成成品时必须用实际期间、源文件指纹、模式与关键指标整体替换。 -->
     <script type="application/json" id="south-china-report-meta">
     {
+      "schema_version": "1.0",
+      "generator": {
+        "name": "south-china-report",
+        "version": "3.2.0"
+      },
       "requested_period": "[REQUESTED_PERIOD]",
+      "data_cutoff": {
+        "data_as_of": "[DATA_AS_OF]",
+        "comparison_as_of": "[COMPARISON_AS_OF]",
+        "completeness": "[complete|partial_same_cutoff]",
+        "like_for_like": true
+      },
       "source": {
         "path": "[SOURCE_PATH]",
         "sha256": "[SOURCE_SHA256]"
@@ -861,7 +872,29 @@
       "key_metrics": {
         "[METRIC_PATH]": null
       },
-      "metrics_sha256": "[METRICS_SHA256]"
+      "metrics_sha256": "[METRICS_SHA256]",
+      "insights_sha256": "[INSIGHTS_SHA256]"
+    }
+    </script>
+    <!-- 结论证据契约：每个叙事节点通过 data-evidence-id 绑定可机读真源。 -->
+    <script type="application/json" id="south-china-report-evidence-contract">
+    {
+      "version": 1,
+      "claims": [
+        {
+          "id": "E-TEMPLATE",
+          "kind": "fact",
+          "sources": [
+            { "file": "metrics", "path": "period.total_cur_wan" }
+          ]
+        },
+        {
+          "id": "H-TEMPLATE-ACTIONS",
+          "kind": "hypothesis",
+          "reason": "行动方案是待验证的管理假设",
+          "validation_needed": "用责任人、截止日与验证指标复核"
+        }
+      ]
     }
     </script>
 
@@ -904,7 +937,7 @@
             <i class="ri-bar-chart-box-line"></i>
             [机构] · [报告主体] · [期间]
         </div>
-        <h1 class="hero-title">逆势突围，结构领跑</h1>
+        <h1 class="hero-title" data-evidence-id="E-TEMPLATE">逆势突围，结构领跑</h1>
         <p class="hero-subtitle">
             在行业需求整体承压的 2 月，[报告主体]实现签收逆势增长——
             更关键的是，结构机渗透率首次突破 35% 红线。
@@ -950,8 +983,8 @@
     <section data-snap="chapter-01">
     <section class="chapter reveal">
         <div class="chapter-number">CHAPTER 01</div>
-        <h2 class="chapter-title">增长在继续，但引擎在换挡</h2>
-        <p class="chapter-lead">
+        <h2 class="chapter-title" data-evidence-id="E-TEMPLATE">增长在继续，但引擎在换挡</h2>
+        <p class="chapter-lead" data-evidence-id="E-TEMPLATE">
             本月签收量延续了 Q1 的增长势头，但增速从去年的 22% 放缓至 12.3%。
             这不是警报——而是从"规模拉动"切换到"结构升级"的信号。
         </p>
@@ -985,7 +1018,7 @@
     </div>
 
     <!-- Pull Quote -->
-    <div class="pull-quote reveal">
+    <div class="pull-quote reveal" data-evidence-id="E-TEMPLATE">
         <blockquote>
             增速从 22% 降至 12%，不是市场在变冷，<br>
             是去年的基数在变高——真正的故事在结构里。
@@ -1013,8 +1046,8 @@
     <section data-snap="chapter-02">
     <section class="chapter reveal">
         <div class="chapter-number">CHAPTER 02</div>
-        <h2 class="chapter-title">P 系列渗透率突破 35%，<br>结构升级进入加速通道</h2>
-        <p class="chapter-lead">
+        <h2 class="chapter-title" data-evidence-id="E-TEMPLATE">P 系列渗透率突破 35%，<br>结构升级进入加速通道</h2>
+        <p class="chapter-lead" data-evidence-id="E-TEMPLATE">
             这是一个标志性时刻。P 系列渗透率从半年前的 26.9% 攀升至 35.2%，
             突破了集团设定的 35% 目标红线。三个推力和一个阻力共同塑造了这一结果。
         </p>
@@ -1023,22 +1056,22 @@
     <!-- Insight Cards -->
     <div class="chapter reveal">
         <div class="insight-grid">
-            <div class="insight-card">
+            <div class="insight-card" data-evidence-id="E-TEMPLATE">
                 <div class="insight-card-icon growth"><i class="ri-arrow-up-circle-line"></i></div>
                 <h3>KA 渠道：P 系列落地率翻倍</h3>
                 <p>KA 渠道的 P 系列落地率从去年的 18% 提升到 31%，国美、苏宁专柜的高端展位覆盖率达到 78%。</p>
             </div>
-            <div class="insight-card">
+            <div class="insight-card" data-evidence-id="E-TEMPLATE">
                 <div class="insight-card-icon growth"><i class="ri-money-cny-circle-line"></i></div>
                 <h3>激励政策：87% 导购覆盖</h3>
                 <p>结构机专项激励已覆盖 87% 的终端导购，每台额外返利 50 元带来了显著的推荐动力。</p>
             </div>
-            <div class="insight-card">
+            <div class="insight-card" data-evidence-id="E-TEMPLATE">
                 <div class="insight-card-icon opportunity"><i class="ri-global-line"></i></div>
                 <h3>O2O 自然流量向高端倾斜</h3>
                 <p>线上搜索数据显示，"变频一级能效"搜索量同比增长 43%，消费者主动升级意愿增强。</p>
             </div>
-            <div class="insight-card">
+            <div class="insight-card" data-evidence-id="E-TEMPLATE">
                 <div class="insight-card-icon risk"><i class="ri-alert-line"></i></div>
                 <h3>传统渠道仍在惯性走 C </h3>
                 <p>传统渠道 P 系列占比仅 22%，导购对高端产品话术掌握不足，需要专项培训介入。</p>
@@ -1151,7 +1184,7 @@
          ============================================================ -->
     <section class="closing" data-snap="closing">
         <div class="closing-inner reveal">
-            <h2 class="closing-title">三件事，下周必须做</h2>
+            <h2 class="closing-title" data-evidence-id="H-TEMPLATE-ACTIONS" data-claim-kind="hypothesis">三件事，下周必须做</h2>
             <ul class="action-list">
                 <li class="action-item">
                     <div class="action-number">1</div>

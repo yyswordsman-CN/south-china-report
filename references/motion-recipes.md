@@ -182,7 +182,7 @@ function initEditorialReveal(editorialEl) {
 
 ### Recipe 4: `comparison`
 
-**适用**: Before/After 对比块、去年/今年对比
+**适用**: Before/After 对比块、任意两个明确可比期间
 **行为**: 左列从左滑入 → 右列从右滑入
 **触发**: `data-animate="comparison"`
 

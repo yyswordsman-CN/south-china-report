@@ -354,7 +354,18 @@
     <!-- 报告可审计契约：生成成品时必须用实际期间、源文件指纹与关键指标整体替换。 -->
     <script type="application/json" id="south-china-report-meta">
     {
+      "schema_version": "1.0",
+      "generator": {
+        "name": "south-china-report",
+        "version": "3.2.0"
+      },
       "requested_period": "[REQUESTED_PERIOD]",
+      "data_cutoff": {
+        "data_as_of": "[DATA_AS_OF]",
+        "comparison_as_of": "[COMPARISON_AS_OF]",
+        "completeness": "[complete|partial_same_cutoff]",
+        "like_for_like": true
+      },
       "source": {
         "path": "[SOURCE_PATH]",
         "sha256": "[SOURCE_SHA256]"
@@ -363,7 +374,22 @@
       "key_metrics": {
         "[METRIC_PATH]": null
       },
-      "metrics_sha256": "[METRICS_SHA256]"
+      "metrics_sha256": "[METRICS_SHA256]",
+      "insights_sha256": "[INSIGHTS_SHA256]"
+    }
+    </script>
+    <script type="application/json" id="south-china-report-evidence-contract">
+    {
+      "version": 1,
+      "claims": [
+        {
+          "id": "E-BRIEF-GOVERNING",
+          "kind": "fact",
+          "sources": [
+            { "file": "metrics", "path": "period.total_cur_wan" }
+          ]
+        }
+      ]
     }
     </script>
     <main class="brief" id="main-content">
@@ -371,7 +397,7 @@
         <div class="brief-header reveal" data-snap="brief-header">
             <div class="brief-title-group">
                 <div class="brief-badge">EXECUTIVE BRIEF</div>
-                <h1 class="brief-title">逆势突围，结构领跑</h1>
+                <h1 class="brief-title" data-evidence-id="E-BRIEF-GOVERNING">逆势突围，结构领跑</h1>
                 <div class="brief-subtitle">[报告主体] [期间]经营决策简报</div>
             </div>
             <div class="brief-meta">

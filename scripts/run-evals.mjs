@@ -12,7 +12,7 @@
  * }
  * </script>
  *
- * 用法: node scripts/run-evals.mjs <report.html> --eval <id> [--metrics metrics.json]
+ * 用法: node scripts/run-evals.mjs <report.html> --eval <id> [--metrics metrics.json] [--insights insights.json]
  */
 import { readFileSync } from 'fs';
 import { execFileSync } from 'child_process';
@@ -30,9 +30,11 @@ const args = process.argv.slice(2);
 let report = null;
 let evalId = null;
 let metricsPath = null;
+let insightsPath = null;
 for (let i = 0; i < args.length; i++) {
   if (args[i] === '--eval') evalId = Number.parseInt(args[++i], 10);
   else if (args[i] === '--metrics') metricsPath = args[++i];
+  else if (args[i] === '--insights') insightsPath = args[++i];
   else if (args[i].startsWith('--')) {
     console.error('未知参数: ' + args[i]);
     process.exit(2);
@@ -43,7 +45,7 @@ for (let i = 0; i < args.length; i++) {
   }
 }
 if (!report || evalId == null || Number.isNaN(evalId)) {
-  console.error('用法: node scripts/run-evals.mjs <report.html> --eval <id> [--metrics metrics.json]');
+  console.error('用法: node scripts/run-evals.mjs <report.html> --eval <id> [--metrics metrics.json] [--insights insights.json]');
   process.exit(2);
 }
 
@@ -51,6 +53,7 @@ let suite;
 let html;
 let metrics = null;
 let metricsSha256 = null;
+let insightsSha256 = null;
 try {
   suite = JSON.parse(readFileSync(EVALS, 'utf8'));
   html = readFileSync(report, 'utf8');
@@ -58,6 +61,11 @@ try {
     const raw = readFileSync(metricsPath);
     metricsSha256 = createHash('sha256').update(raw).digest('hex');
     metrics = JSON.parse(raw.toString('utf8'));
+  }
+  if (insightsPath) {
+    const raw = readFileSync(insightsPath);
+    insightsSha256 = createHash('sha256').update(raw).digest('hex');
+    JSON.parse(raw.toString('utf8'));
   }
 } catch (error) {
   console.error('无法读取 eval、报告或 metrics: ' + error.message);
@@ -265,8 +273,11 @@ function runContractCheck(check) {
       }
     }
   }
-  if (metrics && meta.metrics_sha256 && meta.metrics_sha256 !== metricsSha256) {
-    failures.push('metrics_sha256 与 --metrics 文件不一致');
+  if (metrics && meta.metrics_sha256 !== metricsSha256) {
+    failures.push('metrics_sha256 缺失或与 --metrics 文件不一致');
+  }
+  if (insightsPath && meta.insights_sha256 !== insightsSha256) {
+    failures.push('insights_sha256 缺失或与 --insights 文件不一致');
   }
   return failures.length
     ? { ok: false, got: failures.join('；') }
@@ -325,7 +336,8 @@ function runCheck(check) {
     case 'data_metric_or_verify':
       if (metricsPath) {
         try {
-          execFileSync('node', [VERIFY, report, metricsPath], { stdio: 'pipe' });
+          execFileSync('node', [VERIFY, report, metricsPath,
+            ...(insightsPath ? ['--insights', insightsPath] : [])], { stdio: 'pipe' });
           return { ok: true, got: 'verify-numbers 严格模式 exit 0' };
         } catch (error) {
           return { ok: false, got: 'verify-numbers exit ' + (error.status ?? '?') + '（错配或覆盖不足）' };

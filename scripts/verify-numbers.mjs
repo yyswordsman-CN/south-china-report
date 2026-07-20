@@ -13,30 +13,56 @@
  * - --binding-only 保留旧流程：只校验已有 data-metric，覆盖不足仅告警；
  * - --allow-unbound 仅适用于明确没有 metrics 的产物，跳过数字 Gate。
  */
+import { createHash } from 'crypto';
 import { readFileSync } from 'fs';
 
 const argv = process.argv.slice(2);
-const allowUnbound = argv.includes('--allow-unbound');
-const bindingOnly = argv.includes('--binding-only');
-const knownFlags = new Set(['--allow-unbound', '--binding-only']);
-const unknownFlags = argv.filter(a => a.startsWith('--') && !knownFlags.has(a));
-if (unknownFlags.length) {
-  console.error('未知参数: ' + unknownFlags.join(', '));
+let allowUnbound = false;
+let bindingOnly = false;
+let insightsPath = null;
+const positional = [];
+for (let index = 0; index < argv.length; index += 1) {
+  const value = argv[index];
+  if (value === '--allow-unbound') allowUnbound = true;
+  else if (value === '--binding-only') bindingOnly = true;
+  else if (value === '--insights') {
+    insightsPath = argv[++index];
+    if (!insightsPath || insightsPath.startsWith('--')) {
+      console.error('--insights 需要 insights.json 路径');
+      process.exit(2);
+    }
+  } else if (value.startsWith('--')) {
+    console.error('未知参数: ' + value);
+    process.exit(2);
+  } else positional.push(value);
+}
+const [htmlPath, metricsPath] = positional;
+if (!htmlPath || !metricsPath) {
+  console.error('用法: node verify-numbers.mjs <report.html> <metrics.json> [--insights insights.json] [--allow-unbound] [--binding-only]');
   process.exit(2);
 }
-const [htmlPath, metricsPath] = argv.filter(a => !a.startsWith('--'));
-if (!htmlPath || !metricsPath) {
-  console.error('用法: node verify-numbers.mjs <report.html> <metrics.json> [--allow-unbound] [--binding-only]');
+if (positional.length > 2) {
+  console.error('多余位置参数: ' + positional.slice(2).join(', '));
   process.exit(2);
 }
 
 let html;
 let metrics;
+let insights = null;
+let metricsSha256;
+let insightsSha256 = null;
 try {
   html = readFileSync(htmlPath, 'utf-8');
-  metrics = JSON.parse(readFileSync(metricsPath, 'utf-8'));
+  const metricsPayload = readFileSync(metricsPath);
+  metricsSha256 = createHash('sha256').update(metricsPayload).digest('hex');
+  metrics = JSON.parse(metricsPayload.toString('utf-8'));
+  if (insightsPath) {
+    const insightsPayload = readFileSync(insightsPath);
+    insightsSha256 = createHash('sha256').update(insightsPayload).digest('hex');
+    insights = JSON.parse(insightsPayload.toString('utf-8'));
+  }
 } catch (error) {
-  console.error('无法读取 HTML 或 metrics.json: ' + error.message);
+  console.error('无法读取 HTML、metrics.json 或 insights.json: ' + error.message);
   process.exit(2);
 }
 
@@ -56,6 +82,25 @@ function decodeEntities(value) {
     .replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCodePoint(parseInt(n, 16)))
     .replace(/&#([0-9]+);/g, (_, n) => String.fromCodePoint(parseInt(n, 10)))
     .replace(/&([a-z]+);/gi, (all, name) => named[name.toLowerCase()] ?? all);
+}
+
+function extractJsonScript(id) {
+  const scripts = html.match(/<script\b[^>]*>[\s\S]*?<\/script>/gi) || [];
+  const matches = scripts.filter((script) => {
+    const open = script.match(/^<script\b([^>]*)>/i);
+    return open && parseAttributes(open[1]).get('id') === id;
+  });
+  if (matches.length === 0) return { present: false, value: null, error: null };
+  if (matches.length !== 1) return { present: true, value: null, error: `#${id} 出现 ${matches.length} 次` };
+  try {
+    return {
+      present: true,
+      value: JSON.parse(matches[0].replace(/^<script\b[^>]*>/i, '').replace(/<\/script>\s*$/i, '').trim()),
+      error: null,
+    };
+  } catch (error) {
+    return { present: true, value: null, error: `#${id} JSON 无法解析: ${error.message}` };
+  }
 }
 
 function lookup(obj, path) {
@@ -233,6 +278,50 @@ while ((token = tokenRe.exec(html)) !== null) {
 }
 while (stack.length) finalizeNode(stack.pop());
 
+const provenanceIssues = [];
+const reportMeta = extractJsonScript('south-china-report-meta');
+if (reportMeta.error) provenanceIssues.push(reportMeta.error);
+if (reportMeta.value) {
+  if (reportMeta.value.metrics_sha256 !== metricsSha256) {
+    provenanceIssues.push(`报告 metrics_sha256 与 ${metricsPath} 不一致`);
+  }
+  if (typeof reportMeta.value.insights_sha256 !== 'string') {
+    provenanceIssues.push('报告缺少 insights_sha256');
+  } else if (!insightsPath) {
+    provenanceIssues.push('报告声明了 insights_sha256；必须用 --insights 传入对应 insights.json 完成强绑定');
+  } else if (reportMeta.value.insights_sha256 !== insightsSha256) {
+    provenanceIssues.push(`报告 insights_sha256 与 ${insightsPath} 不一致`);
+  }
+  if (insights && insights?.meta?.metrics_sha256 !== metricsSha256) {
+    provenanceIssues.push('insights.meta.metrics_sha256 与当前 metrics.json 不一致，洞察已漂移');
+  }
+  if (insights && insights.schema_version !== '1.0') {
+    provenanceIssues.push('insights.schema_version 必须为 1.0');
+  }
+}
+
+const evidenceContract = extractJsonScript('south-china-report-evidence-contract');
+if (evidenceContract.error) provenanceIssues.push(evidenceContract.error);
+if (evidenceContract.value) {
+  const seen = new Set();
+  for (const claim of evidenceContract.value.claims || []) {
+    if (!claim?.id || seen.has(claim.id)) continue;
+    seen.add(claim.id);
+    if (claim.kind === 'hypothesis') continue;
+    for (const source of claim.sources || []) {
+      const root = source.file === 'metrics' ? metrics : (source.file === 'insights' ? insights : null);
+      if (source.file === 'insights' && !insights) {
+        provenanceIssues.push(`${claim.id}: Evidence 引用了 insights，但未传 --insights`);
+        continue;
+      }
+      const value = root ? lookup(root, source.path) : undefined;
+      if (value === undefined || value === null) {
+        provenanceIssues.push(`${claim.id}: Evidence 路径不存在或为空 ${source.file}.${source.path}`);
+      }
+    }
+  }
+}
+
 const mismatches = [];
 for (const binding of bindings) {
   if (!binding.path) {
@@ -261,6 +350,13 @@ for (const binding of bindings) {
     mismatches.push(binding.path + ': 显示 ' + display.value + display.unit + ' ≠ 期望 ' + expected +
       '（容差 ±' + tolerance.toFixed(display.decimals + 1) + '）');
   }
+}
+
+if (provenanceIssues.length) {
+  console.error('✗ 产物哈希/Evidence 强绑定失败: ' + provenanceIssues.length + ' 项');
+  provenanceIssues.slice(0, 30).forEach(item => console.error('   - ' + item));
+  if (provenanceIssues.length > 30) console.error('   - 其余 ' + (provenanceIssues.length - 30) + ' 项已省略');
+  process.exit(1);
 }
 
 if (exemptionIssues.length) {

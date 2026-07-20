@@ -1,6 +1,6 @@
 interface:
-  display_name: "Narrative Business Report"
+  display_name: "Data Analysis & Insight Report"
   short_description: "将经营数据转化为结论驱动、可审计且可离线交付的叙事型 HTML 报告。"
-  default_prompt: "Use $south-china-report to generate a compact-density, self-contained narrative business report; derive all numbers from metrics.json, declare the V2 runtime ECharts contract (JSON-Pointer leaf bindings for coordinate, tree, or custom data), and pass strict offline, runtime truth, four-viewport accessibility, and visual screenshot gates. Use standard narrative density only when explicitly requested."
+  default_prompt: "Use $south-china-report to generate a compact-density, self-contained narrative business report. Define generic measures with dimension-axis and time-axis aggregation, unit and storage scale, direction, additivity, ratio inputs or weight coverage, and exactly one primary metric. Distinguish calendar comparisons, equal rolling windows, complete prior periods, and same-stage comparisons; put targets, benchmarks, ranges, and group references in references[] with explicit measure and unit. Block required schema, grain, primary-key, unit, semantic, schema, row-count, or unexpected result drift, but degrade optional modules with machine-readable skip reasons. Derive all numbers from metrics.json, bind metrics and insights by SHA-256 plus Evidence IDs, declare the ECharts V2 runtime contract, then pass strict offline, runtime truth, four-viewport accessibility, render-pressure, and screenshot gates. Unsupported causes must be labeled as hypotheses."
 policy:
   allow_implicit_invocation: true

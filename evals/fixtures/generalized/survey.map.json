@@ -1,0 +1,6 @@
+{
+  "source": {"path": "survey.csv"},
+  "roles": {"time": "date", "measures": [{"id": "nps", "field": "nps_score", "label": "NPS", "semantic_type": "score", "aggregation": "mean", "unit": "point", "direction": "higher_is_better", "additivity": "non_additive", "primary": true, "required": true}, {"id": "response_rate", "field": "response_rate", "label": "Response rate", "semantic_type": "percentage", "aggregation": "mean", "storage_scale": "percent", "unit": "percent", "direction": "higher_is_better", "additivity": "non_additive", "primary": false, "required": true}], "dimensions": ["segment"]},
+  "analysis_scope": {"mode": "period", "period": "2025-05", "data_as_of": "2025-05-31", "comparison_as_of": "2025-01-31", "comparisons": [{"id": "custom_january", "type": "custom", "period": "2025-01"}, {"id": "benchmark", "type": "benchmark", "measure": "nps", "value": 30}]},
+  "schema": {"business_grain": "segment survey wave", "primary_key": ["date", "segment"], "fields": {"date": {"required": true, "type": "date"}, "nps_score": {"required": true, "type": "number", "unit": "point", "aggregation": "mean"}, "response_rate": {"required": true, "type": "number", "unit": "percent", "aggregation": "mean"}}}
+}

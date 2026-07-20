@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * validate-report.mjs — 报告 HTML 静态校验脚本 (V2)
+ * validate-report.mjs — 报告 HTML 静态校验脚本 (V3)
  *
  * 用法: node scripts/validate-report.mjs <report.html> [--strict-offline] [--template-mode]
  *
@@ -291,7 +291,7 @@ function checkTokenCompleteness(html) {
       results.push({
         level: 'P1',
         rule: 'Token 完整性',
-        msg: `仅发现 ${varCount} 个 CSS 变量 (V2 标准 ≥ 40 个)`
+        msg: `仅发现 ${varCount} 个 CSS 变量 (V3 标准 ≥ 40 个)`
       });
     } else {
       results.push({
@@ -697,12 +697,36 @@ function checkReportMetaContract(html, templateMode = false) {
     requireString('requested_period', meta.requested_period);
     requireString('report_mode', meta.report_mode);
     requireString('source.path', meta.source?.path);
+    if (meta.schema_version !== '1.0') issues.push('schema_version 必须为 "1.0"');
+    if (meta.generator?.name !== 'south-china-report' ||
+      typeof meta.generator?.version !== 'string' || !/^\d+\.\d+\.\d+$/.test(meta.generator.version)) {
+      issues.push('generator 必须包含 name="south-china-report" 与语义化 version');
+    }
     if (typeof meta.source?.sha256 !== 'string' || !/^[a-f0-9]{64}$/i.test(meta.source.sha256)) {
       issues.push('source.sha256 必须是实际源文件的 64 位 SHA-256');
     }
-    if (Object.prototype.hasOwnProperty.call(meta, 'metrics_sha256') &&
-      (typeof meta.metrics_sha256 !== 'string' || !/^[a-f0-9]{64}$/i.test(meta.metrics_sha256))) {
-      issues.push('metrics_sha256 存在时必须是 metrics.json 的 64 位 SHA-256');
+    if (typeof meta.metrics_sha256 !== 'string' || !/^[a-f0-9]{64}$/i.test(meta.metrics_sha256)) {
+      issues.push('metrics_sha256 必须是 metrics.json 的 64 位 SHA-256');
+    }
+    if (typeof meta.insights_sha256 !== 'string' || !/^[a-f0-9]{64}$/i.test(meta.insights_sha256)) {
+      issues.push('insights_sha256 必须是 insights.json 的 64 位 SHA-256');
+    }
+    const cutoff = meta.data_cutoff;
+    const validDate = (value) => {
+      if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+      const [year, month, day] = value.split('-').map(Number);
+      const parsed = new Date(Date.UTC(year, month - 1, day));
+      return parsed.getUTCFullYear() === year && parsed.getUTCMonth() === month - 1 && parsed.getUTCDate() === day;
+    };
+    if (!cutoff || typeof cutoff !== 'object' || Array.isArray(cutoff)) {
+      issues.push('data_cutoff 必须是对象');
+    } else {
+      if (!validDate(cutoff.data_as_of)) issues.push('data_cutoff.data_as_of 必须是有效 YYYY-MM-DD');
+      if (!validDate(cutoff.comparison_as_of)) issues.push('data_cutoff.comparison_as_of 必须是有效 YYYY-MM-DD');
+      if (!['complete', 'partial_same_cutoff'].includes(cutoff.completeness)) {
+        issues.push('data_cutoff.completeness 必须为 complete|partial_same_cutoff');
+      }
+      if (cutoff.like_for_like !== true) issues.push('data_cutoff.like_for_like 必须为 true');
     }
 
     const keyMetrics = meta.key_metrics;
@@ -736,6 +760,155 @@ function checkReportMetaContract(html, templateMode = false) {
     rule: '报告元数据契约',
     msg: issues.slice(0, 8).join('；') + (issues.length > 8 ? `；其余 ${issues.length - 8} 项已省略` : '') +
       (templateMode ? ' — 已按 --template-mode 放行，实例化成品前必须补齐' : ' — 成品不可交付'),
+  }];
+}
+
+// 只要页面代码初始化 ECharts，成品就必须携带可解析的运行时合同。
+// 运行时 Gate 会再从真实 ECharts 实例反查全部容器，静态层不依赖命名约定。
+function checkRuntimeContractPresence(html, templateMode = false) {
+  const hasEchartsInit = /\becharts\s*\.\s*init\s*\(/i.test(html);
+  const scripts = html.match(/<script\b[^>]*>[\s\S]*?<\/script>/gi) || [];
+  const matches = scripts.filter((script) => {
+    const open = script.match(/^<script\b([^>]*)>/i);
+    return open && parseAttributes(open[1]).get('id') === 'south-china-report-runtime-contract';
+  });
+  const issues = [];
+  if (hasEchartsInit && matches.length !== 1) {
+    issues.push(matches.length === 0
+      ? '页面调用 echarts.init，但缺少唯一 #south-china-report-runtime-contract'
+      : `#south-china-report-runtime-contract 出现 ${matches.length} 次`);
+  }
+  if (matches.length === 1) {
+    const open = matches[0].match(/^<script\b([^>]*)>/i);
+    const attrs = parseAttributes(open?.[1] || '');
+    if ((attrs.get('type') || '').toLowerCase() !== 'application/json') {
+      issues.push('#south-china-report-runtime-contract 必须声明 type="application/json"');
+    }
+    try {
+      const contract = JSON.parse(matches[0].replace(/^<script\b[^>]*>/i, '').replace(/<\/script>\s*$/i, '').trim());
+      if (![1, 2].includes(contract?.version) || !Array.isArray(contract?.charts) || contract.charts.length === 0) {
+        issues.push('运行时合同必须为 version=1|2 且 charts 为非空数组');
+      }
+    } catch (error) {
+      issues.push('运行时合同 JSON 无法解析: ' + error.message);
+    }
+  }
+  if (issues.length === 0) {
+    return [{ level: 'PASS', rule: 'ECharts 运行时合同', msg: hasEchartsInit ? '检测到 echarts.init 且合同结构有效' : '页面未初始化 ECharts' }];
+  }
+  return [{
+    level: templateMode ? 'P2' : 'P0',
+    rule: 'ECharts 运行时合同',
+    msg: issues.join('；') + (templateMode ? ' — 模板实例化时必须补齐' : ' — 成品不可交付'),
+  }];
+}
+
+function checkEvidenceContract(html, templateMode = false) {
+  const scripts = html.match(/<script\b[^>]*>[\s\S]*?<\/script>/gi) || [];
+  const matches = scripts.filter((script) => {
+    const open = script.match(/^<script\b([^>]*)>/i);
+    return open && parseAttributes(open[1]).get('id') === 'south-china-report-evidence-contract';
+  });
+  const issues = [];
+  let contract = null;
+  if (matches.length !== 1) {
+    issues.push(matches.length === 0
+      ? '缺少唯一 #south-china-report-evidence-contract'
+      : `#south-china-report-evidence-contract 出现 ${matches.length} 次`);
+  } else {
+    const open = matches[0].match(/^<script\b([^>]*)>/i);
+    const attrs = parseAttributes(open?.[1] || '');
+    if ((attrs.get('type') || '').toLowerCase() !== 'application/json') {
+      issues.push('#south-china-report-evidence-contract 必须声明 type="application/json"');
+    }
+    try {
+      contract = JSON.parse(matches[0].replace(/^<script\b[^>]*>/i, '').replace(/<\/script>\s*$/i, '').trim());
+    } catch (error) {
+      issues.push('Evidence 合同 JSON 无法解析: ' + error.message);
+    }
+  }
+
+  const claimById = new Map();
+  const kinds = new Set(['fact', 'attribution', 'action', 'hypothesis']);
+  if (contract) {
+    if (contract.version !== 1 || !Array.isArray(contract.claims) || contract.claims.length === 0) {
+      issues.push('Evidence 合同必须为 version=1 且 claims 为非空数组');
+    } else {
+      for (const claim of contract.claims) {
+        if (!claim || typeof claim !== 'object' || Array.isArray(claim)) {
+          issues.push('Evidence claim 必须是对象');
+          continue;
+        }
+        if (typeof claim.id !== 'string' || !/^[A-Za-z][A-Za-z0-9_-]{1,63}$/.test(claim.id)) {
+          issues.push('Evidence claim.id 不安全或为空: ' + JSON.stringify(claim.id));
+          continue;
+        }
+        if (claimById.has(claim.id)) issues.push('Evidence claim.id 重复: ' + claim.id);
+        claimById.set(claim.id, claim);
+        if (!kinds.has(claim.kind)) issues.push(`${claim.id}: kind 必须为 fact|attribution|action|hypothesis`);
+        if (claim.kind === 'hypothesis') {
+          if (typeof claim.reason !== 'string' || claim.reason.trim().length < 4) {
+            issues.push(`${claim.id}: hypothesis 必须写明 reason`);
+          }
+          if (typeof claim.validation_needed !== 'string' || claim.validation_needed.trim().length < 4) {
+            issues.push(`${claim.id}: hypothesis 必须写明 validation_needed`);
+          }
+        } else if (!Array.isArray(claim.sources) || claim.sources.length === 0) {
+          issues.push(`${claim.id}: ${claim.kind || '非假设'} claim 必须绑定至少一个 sources 路径`);
+        }
+        for (const source of claim.sources || []) {
+          if (!source || !['metrics', 'insights'].includes(source.file) ||
+            typeof source.path !== 'string' || !/^[^\s.]+(?:\.[^\s.]+)*$/.test(source.path) ||
+            source.path.split('.').some((part) => ['__proto__', 'prototype', 'constructor'].includes(part))) {
+            issues.push(`${claim.id}: sources 仅允许安全的 metrics|insights 点分路径`);
+          }
+        }
+      }
+    }
+  }
+
+  const coreClasses = new Set([
+    'hero-title', 'brief-title', 'chapter-title', 'chapter-lead', 'pull-quote',
+    'insight-card', 'closing-title', 'action-card',
+  ]);
+  const openTags = stripNonRendered(html).match(/<[a-z][\w:-]*\b[^>]*>/gi) || [];
+  let coreCount = 0;
+  for (const tag of openTags) {
+    if (/^<script\b/i.test(tag)) continue;
+    const open = tag.match(/^<([a-z][\w:-]*)\b([\s\S]*?)>$/i);
+    if (!open) continue;
+    const attrs = parseAttributes(open[2]);
+    const classes = new Set((attrs.get('class') || '').split(/\s+/).filter(Boolean));
+    const isCore = [...coreClasses].some((name) => classes.has(name)) || attrs.has('data-claim-kind');
+    if (!isCore) continue;
+    coreCount += 1;
+    const ids = (attrs.get('data-evidence-id') || '').trim().split(/\s+/).filter(Boolean);
+    if (ids.length === 0) {
+      issues.push(`${open[1]}${classes.size ? '.' + [...classes].join('.') : ''} 核心结论缺少 data-evidence-id`);
+      continue;
+    }
+    const referenced = ids.map((id) => claimById.get(id)).filter(Boolean);
+    ids.filter((id) => !claimById.has(id)).forEach((id) => issues.push(`data-evidence-id 引用不存在: ${id}`));
+    const declaredKind = attrs.get('data-claim-kind');
+    if (declaredKind && (!kinds.has(declaredKind) || !referenced.some((claim) => claim.kind === declaredKind))) {
+      issues.push(`data-claim-kind=${JSON.stringify(declaredKind)} 与 Evidence claim.kind 不一致`);
+    }
+    if (referenced.some((claim) => claim.kind === 'hypothesis') && declaredKind !== 'hypothesis') {
+      issues.push(`data-evidence-id=${JSON.stringify(ids.join(' '))} 引用假设时必须显式声明 data-claim-kind="hypothesis"`);
+    }
+  }
+  if (coreCount === 0 && contract && !contract.no_narrative_claims_reason) {
+    issues.push('未识别到核心结论元素；非叙事报告必须写 no_narrative_claims_reason');
+  }
+
+  if (issues.length === 0) {
+    return [{ level: 'PASS', rule: 'Evidence ID 证据合同', msg: `${coreCount} 个核心结论块均已绑定可机读 Evidence ID` }];
+  }
+  return [{
+    level: templateMode ? 'P2' : 'P0',
+    rule: 'Evidence ID 证据合同',
+    msg: issues.slice(0, 10).join('；') + (issues.length > 10 ? `；其余 ${issues.length - 10} 项已省略` : '') +
+      (templateMode ? ' — 模板实例化时必须补齐' : ' — 成品不可交付'),
   }];
 }
 
@@ -964,7 +1137,7 @@ function main() {
   }
 
   console.log('\n' + colorize('═══════════════════════════════════════', 'bold'));
-  console.log(colorize('  报告质量校验 (V2)', 'bold'));
+  console.log(colorize('  报告质量校验 (V3)', 'bold'));
   console.log(colorize(`  文件: ${positional[0]}${strictOffline ? '  [--strict-offline]' : ''}${templateMode ? '  [--template-mode]' : '  [成品模式]'}`, 'gray'));
   console.log(colorize('═══════════════════════════════════════\n', 'bold'));
 
@@ -974,6 +1147,8 @@ function main() {
     ...checkEmoji(html),
     ...checkDeliveryPlaceholders(html, templateMode),
     ...checkReportMetaContract(html, templateMode),
+    ...checkRuntimeContractPresence(html, templateMode),
+    ...checkEvidenceContract(html, templateMode),
     ...checkTabularNums(html),
     ...checkChartContainers(html),
     ...checkTokenCompleteness(html),

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>增长失速，结构护价 · 2026 上半年经营复盘 · 紧凑销售报告风（模拟数据演示）</title>
-    <script type="application/json" id="south-china-report-meta">{"requested_period":"2026H1","source":{"path":"demo-report/demo_sales.csv","sha256":"6fed1164095b2bdf221b47f704422eae83e7019b1bbbd506888ecfe012e27720"},"report_mode":"demo-compact-2026-h1","key_metrics":{"period.total_cur_wan":6372.0,"period.qty_cur":20792,"period.total_yoy":-12.6},"metrics_sha256":"818dc7691080ab36a8e8bf833d5f909968c350f74cc0c495014c4d073966bec2"}</script>
+    <script type="application/json" id="south-china-report-meta">{"schema_version":"1.0","generator":{"name":"south-china-report","version":"3.2.0"},"requested_period":"2026H1","source":{"path":"demo-report/demo_sales.csv","sha256":"6fed1164095b2bdf221b47f704422eae83e7019b1bbbd506888ecfe012e27720"},"report_mode":"demo-compact-2026-h1","data_cutoff":{"data_as_of":"2026-06-30","comparison_as_of":"2025-06-30","completeness":"complete","like_for_like":true},"key_metrics":{"period.total_cur_wan":6372.0,"period.qty_cur":20792,"period.total_yoy":-12.6},"metrics_sha256":"72f31c53991eae0532a0b7add3b65279612499a998f829b1672d4366c024569d","insights_sha256":"ea2f9f3ce8c1e25c1069840d0249aa81d36e1b986a6c4f3343105c8db3dc3233"}</script>
     <script type="application/json" id="south-china-report-runtime-contract">
     {
       "version": 2,
@@ -74,6 +74,59 @@
             { "index": 1, "metrics": ["report_evidence.base_share_pct.旗舰系列", "report_evidence.dimensions.品类.旗舰系列.share"] },
             { "index": 2, "metrics": ["report_evidence.base_share_pct.入门系列", "report_evidence.dimensions.品类.入门系列.share"] }
           ]
+        }
+      ]
+    }
+    </script>
+    <script type="application/json" id="south-china-report-evidence-contract">
+    {
+      "version": 1,
+      "claims": [
+        {
+          "id": "E-GOVERNING",
+          "kind": "fact",
+          "sources": [
+            { "file": "metrics", "path": "period.total_yoy" },
+            { "file": "metrics", "path": "period.price_yoy" }
+          ]
+        },
+        {
+          "id": "E-TREND",
+          "kind": "fact",
+          "sources": [
+            { "file": "insights", "path": "trend_test.mann_kendall.z" },
+            { "file": "metrics", "path": "report_evidence.trend.trailing_negative_months" }
+          ]
+        },
+        {
+          "id": "E-PVM",
+          "kind": "attribution",
+          "sources": [
+            { "file": "metrics", "path": "period.pvm.vol_wan" },
+            { "file": "metrics", "path": "period.pvm.price_mix_wan" }
+          ]
+        },
+        {
+          "id": "E-ZONE",
+          "kind": "attribution",
+          "sources": [
+            { "file": "metrics", "path": "report_evidence.contribution_pp.南区" },
+            { "file": "metrics", "path": "report_evidence.contribution_pp.东区" }
+          ]
+        },
+        {
+          "id": "E-STRUCTURE",
+          "kind": "fact",
+          "sources": [
+            { "file": "metrics", "path": "concentration.top5_share" },
+            { "file": "metrics", "path": "report_evidence.share_shift_pp.旗舰系列" }
+          ]
+        },
+        {
+          "id": "H-ACTIONS",
+          "kind": "hypothesis",
+          "reason": "行动目标是管理假设，不是历史数据事实",
+          "validation_needed": "按责任人、截止日和验证指标在经营会上复核"
         }
       ]
     }
@@ -928,7 +981,7 @@
             <i class="ri-bar-chart-box-line"></i>
             模拟数据演示 · 全域智能家居业务 · <span data-number-exempt="报告期间元数据">2026</span> 上半年复盘
         </div>
-        <h1 class="hero-title">增长失速，结构护价</h1>
+        <h1 class="hero-title" data-evidence-id="E-GOVERNING">增长失速，结构护价</h1>
         <p class="hero-subtitle">
             收入同比 <span data-metric="period.total_yoy">-12.6%</span>，增速经 MK 检验确认趋势性下行；旗舰系列把均价撑起 <span data-metric="period.price_yoy">7.2%</span>——失速是主线，护价是底牌。
         </p>
@@ -991,8 +1044,8 @@
     <section data-snap="chapter-01">
     <section class="chapter reveal">
         <div class="chapter-number">CHAPTER <span data-number-exempt="章节序号">01</span></div>
-        <h2 class="chapter-title">增速 <span data-metric="report_evidence.trend.comparable_months">18</span> 个月连续下行，已是趋势而非波动</h2>
-        <p class="chapter-lead">
+        <h2 class="chapter-title" data-evidence-id="E-TREND">增速 <span data-metric="report_evidence.trend.comparable_months">18</span> 个月连续下行，已是趋势而非波动</h2>
+        <p class="chapter-lead" data-evidence-id="E-TREND">
             上半年签收 <span data-metric="period.total_cur_wan">6,372.0</span> 万元，同比 <span data-metric="period.total_yoy">-12.6%</span>。把 <span data-metric="report_evidence.trend.comparable_months">18</span> 个可比月的同比增速连成一条线，
             Mann-Kendall 检验给出 z=<span data-metric="report_evidence.trend.mann_kendall_z">-5.45</span>（p&lt;<span data-metric="report_evidence.trend.p_threshold">0.05</span>，显著）——下行不是运气差，是趋势本身。
             截至 <span data-metric="report_evidence.period.end_month">6</span> 月已连续 <span data-metric="report_evidence.trend.trailing_negative_months">5</span> 个月负增长，其中 <span data-metric="report_evidence.trend.anomaly_month">2</span> 月被稳健 Z 检验判为异常月（<span data-metric="report_evidence.trend.anomaly_yoy">-45%</span>）——异常月的具体归因需结合提货节奏、促销错期等业务事件核实，本演示不虚构原因。
@@ -1000,7 +1053,7 @@
     </section>
 
     <!-- Pull Quote -->
-    <div class="pull-quote reveal">
+    <div class="pull-quote reveal" data-evidence-id="E-TREND">
         <blockquote>
             每一次月度"回暖"都比上一次更弱——<br>
             这不是波动的形状，是趋势的形状。
@@ -1028,8 +1081,8 @@
     <section data-snap="chapter-02">
     <section class="chapter reveal">
         <div class="chapter-number">CHAPTER <span data-number-exempt="章节序号">02</span></div>
-        <h2 class="chapter-title">量跌 <span data-metric="report_evidence.magnitude.qty_yoy">18.5%</span> 造成缺口，结构护价只回补三成</h2>
-        <p class="chapter-lead">
+        <h2 class="chapter-title" data-evidence-id="E-PVM">量跌 <span data-metric="report_evidence.magnitude.qty_yoy">18.5%</span> 造成缺口，结构护价只回补三成</h2>
+        <p class="chapter-lead" data-evidence-id="E-PVM">
             收入同比减少 <span data-metric="report_evidence.income_gap_wan">920.5</span> 万元。拆开看：量效应 <span data-metric="period.pvm.vol_wan">-1,349.9</span> 万，价+结构效应 <span data-metric="period.pvm.price_mix_wan">+429.4</span> 万——
             旗舰系列占比提升 <span data-metric="report_evidence.share_shift_pp.旗舰系列">8pp</span> 把均价撑起 <span data-metric="period.price_yoy">7.2%</span>，但只回补了量缺口的三成。缺口在量，不在价。
         </p>
@@ -1078,8 +1131,8 @@
     <section data-snap="chapter-03">
     <section class="chapter reveal">
         <div class="chapter-number">CHAPTER <span data-number-exempt="章节序号">03</span></div>
-        <h2 class="chapter-title">南区一家拖累总增速 <span data-metric="report_evidence.magnitude.south_contribution_pp">9.3pp</span>，东区补位仅 <span data-metric="report_evidence.contribution_pp.东区">2.5pp</span></h2>
-        <p class="chapter-lead">
+        <h2 class="chapter-title" data-evidence-id="E-ZONE">南区一家拖累总增速 <span data-metric="report_evidence.magnitude.south_contribution_pp">9.3pp</span>，东区补位仅 <span data-metric="report_evidence.contribution_pp.东区">2.5pp</span></h2>
+        <p class="chapter-lead" data-evidence-id="E-ZONE">
             五个战区四个在跌，但跌得不一样。南区同比 <span data-metric="report_evidence.dimensions.战区.南区.yoy">-37.1%</span>（份额 <span data-metric="report_evidence.dimensions.战区.南区.share">18%</span>），
             半年少了 <span data-metric="report_evidence.decline_wan.南区">676.2</span> 万，一家就拖走总增速 <span data-metric="report_evidence.magnitude.south_contribution_pp">9.3</span> 个点；东区 <span data-metric="report_evidence.dimensions.战区.东区.yoy">+16.5%</span> 是唯一引擎，
             但 <span data-metric="report_evidence.contribution_pp.东区">2.5</span> 个点的拉动填不上南区的坑。总增速 <span data-metric="period.total_yoy">-12.6%</span> 的账，逐区可以对平。
@@ -1106,8 +1159,8 @@
     <section data-snap="chapter-04">
     <section class="chapter reveal">
         <div class="chapter-number">CHAPTER <span data-number-exempt="章节序号">04</span></div>
-        <h2 class="chapter-title">入门失血、旗舰护价，收入押在 <span data-metric="report_evidence.top_n">5</span> 个客户身上</h2>
-        <p class="chapter-lead">
+        <h2 class="chapter-title" data-evidence-id="E-STRUCTURE">入门失血、旗舰护价，收入押在 <span data-metric="report_evidence.top_n">5</span> 个客户身上</h2>
+        <p class="chapter-lead" data-evidence-id="E-STRUCTURE">
             结构在快速换挡：品类上旗舰 <span data-metric="report_evidence.share_shift_pp.旗舰系列">+8pp</span>、入门 <span data-metric="report_evidence.share_shift_pp.入门系列">-8pp</span>；渠道上电商 <span data-metric="report_evidence.share_shift_pp.电商">+6pp</span>、传统 <span data-metric="report_evidence.share_shift_pp.传统">-5pp</span>。
             换挡护住了均价，却暴露另一重脆弱——<span data-metric="concentration.customers">40</span> 个客户里 Top<span data-metric="report_evidence.top_n">5</span> 占了 <span data-metric="concentration.top5_share">48%</span> 的收入，
             前 <span data-metric="concentration.pareto_n80">19</span> 户就贡献 <span data-metric="report_actions.pareto_share">80%</span>。集中度已越过 <span data-metric="report_evidence.concentration_threshold">45%</span> 风险线。
@@ -1117,22 +1170,22 @@
     <!-- Insight Cards -->
     <div class="chapter reveal">
         <div class="insight-grid">
-            <div class="insight-card">
+            <div class="insight-card" data-evidence-id="E-STRUCTURE">
                 <div class="insight-card-icon growth"><i class="ri-arrow-up-circle-line"></i></div>
                 <h3>旗舰系列 <span data-metric="report_evidence.dimensions.品类.旗舰系列.yoy">+19.2%</span>：唯一的双料引擎</h3>
                 <p>占比从 <span data-metric="report_evidence.base_share_pct.旗舰系列">22%</span> 升到 <span data-metric="report_evidence.dimensions.品类.旗舰系列.share">30%</span>，同时贡献收入与均价，是 <span data-metric="period.total_yoy">-12.6%</span> 大盘里唯一的品类正贡献。护价的底牌要保住。</p>
             </div>
-            <div class="insight-card">
+            <div class="insight-card" data-evidence-id="E-STRUCTURE">
                 <div class="insight-card-icon risk"><i class="ri-alert-line"></i></div>
                 <h3>入门系列 <span data-metric="report_evidence.dimensions.品类.入门系列.yoy">-35.9%</span>：最大失血点</h3>
                 <p>拖累总增速 <span data-metric="report_evidence.magnitude.entry_contribution_pp">10.8pp</span>，失血与传统渠道收缩高度重叠。不设"保量款"承接，量缺口会继续扩大。</p>
             </div>
-            <div class="insight-card">
+            <div class="insight-card" data-evidence-id="E-STRUCTURE">
                 <div class="insight-card-icon opportunity"><i class="ri-store-2-line"></i></div>
                 <h3>电商份额 <span data-metric="report_evidence.share_shift_pp.电商">+6pp</span>：量的下一个承接口</h3>
                 <p>电商是三渠道中唯一正增长（<span data-metric="report_evidence.dimensions.渠道.电商.yoy">+3.8%</span>），份额升至 <span data-metric="report_evidence.dimensions.渠道.电商.share">38%</span> 已逼近 KA——入门盘的量应向这里迁移。</p>
             </div>
-            <div class="insight-card">
+            <div class="insight-card" data-evidence-id="E-STRUCTURE">
                 <div class="insight-card-icon risk"><i class="ri-team-line"></i></div>
                 <h3>Top<span data-metric="report_evidence.top_n">5</span> 客户 = <span data-metric="concentration.top5_share">48%</span> 收入：结构性脆弱</h3>
                 <p>任何一个大户的波动都会被放大成大盘波动——南区断崖已经演示过一次。腰部客户扩容是唯一解法。</p>
@@ -1299,7 +1352,7 @@
          ============================================================ -->
     <section class="closing" data-snap="closing">
         <div class="closing-inner reveal">
-            <h2 class="closing-title">三件事，<span data-metric="report_actions.review_month">8</span> 月经营会前必须闭环</h2>
+            <h2 class="closing-title" data-evidence-id="H-ACTIONS" data-claim-kind="hypothesis">三件事，<span data-metric="report_actions.review_month">8</span> 月经营会前必须闭环</h2>
             <ul class="action-list">
                 <li class="action-item">
                     <div class="action-number"><span data-number-exempt="行动序号">1</span></div>
@@ -1327,7 +1380,7 @@
                 </li>
             </ul>
             <div class="closing-footer">
-                <span>模拟数据演示 · south-china-report V<span data-number-exempt="Skill 版本号">2.12</span> 全链路（prep-source → stat-insights → 四组 Gate）</span>
+                <span>模拟数据演示 · south-china-report V<span data-number-exempt="Skill 版本号">3.0</span> 全链路（prep-source → stat-insights → 四组 Gate）</span>
                 <span>数据截止：<span data-number-exempt="数据截止元数据">2026-06-30</span> · 口径：<span data-number-exempt="报告期间元数据">2026-01~06</span> vs <span data-number-exempt="报告期间元数据">2025</span> 同期 · 可复算：metrics.json / insights.json</span>
             </div>
         </div>

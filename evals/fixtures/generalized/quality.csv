@@ -1,0 +1,7 @@
+date,process_stage,defect_rate,inspected_units
+2025-03-03,Precision Assembly and Final Verification,2.4,1000
+2025-03-10,Precision Assembly and Final Verification,2.0,1200
+2025-03-17,Surface Treatment and Environmental Endurance,3.2,800
+2025-04-03,Precision Assembly and Final Verification,1.8,1100
+2025-04-10,Precision Assembly and Final Verification,1.5,1300
+2025-04-17,Surface Treatment and Environmental Endurance,2.6,900

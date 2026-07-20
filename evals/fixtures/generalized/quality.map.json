@@ -1,0 +1,6 @@
+{
+  "source": {"path": "quality.csv"},
+  "roles": {"time": "date", "measures": [{"id": "defect_rate", "field": "defect_rate", "label": "Defect rate", "semantic_type": "defect_rate", "aggregation": "weighted_mean", "weight_field": "inspected_units", "storage_scale": "percent", "unit": "percent", "direction": "lower_is_better", "additivity": "non_additive", "primary": true, "required": true}, {"id": "inspected", "field": "inspected_units", "label": "Inspected units", "semantic_type": "quantity", "aggregation": "sum", "unit": "unit", "direction": "neutral", "additivity": "additive", "primary": false, "required": true}], "dimensions": ["process_stage"]},
+  "analysis_scope": {"mode": "period", "period": "2025-04", "data_as_of": "2025-04-30", "comparison_as_of": "2025-03-31", "comparisons": [{"id": "mom", "type": "mom"}]},
+  "schema": {"business_grain": "inspection batch", "primary_key": ["date", "process_stage"], "fields": {"date": {"required": true, "type": "date"}, "defect_rate": {"required": true, "type": "number", "unit": "percent", "aggregation": "weighted_mean"}, "inspected_units": {"required": true, "type": "number", "unit": "unit", "aggregation": "sum"}}}
+}

@@ -365,44 +365,20 @@ function createLollipopChart(domId, items) {
 
 ## 6. Slope Chart (斜率图)
 
-> **场景**: 对比两个时间点的排名变化。当斜率向下 = 排名下降，向上 = 排名上升。
+> **场景**: 对比两个明确期间的排名或数值变化。颜色表达“有利/不利”，不表达“数值涨/跌”；成本、缺陷率、处理时长等 `lower_is_better` 指标下降必须使用有利色。
+>
+> **适用条件**: 正好两个可比期间；`periodLabels`、`direction`、`unit` 必须来自 `metrics.analysis_scope` 与 `semantic_layer.measures[]`。缺任一项则 `SKIPPED`，不得回退成“去年/今年”或默认“上涨=绿”。轴域由数据动态计算，柱/条形才强制零基线，斜率图默认保留变化辨识度。
 
 ```javascript
-function createSlopeChart(domId, items) {
-    // items: [{ name: '深圳', before: 85, after: 92 }, ...]
-    var chart = echarts.init(document.getElementById(domId), 'corporate-blue');
-    var series = items.map(function(item, i) {
-        var color = item.after >= item.before ? '#10B981' : '#EF4444';
-        return {
-            type: 'line', name: item.name,
-            data: [item.before, item.after],
-            symbol: 'circle', symbolSize: 8,
-            lineStyle: { width: 2, color: color },
-            itemStyle: { color: color },
-            label: {
-                show: true, fontSize: 11, fontWeight: 600,
-                formatter: function(p) {
-                    return p.dataIndex === 1 ? item.name + ' ' + p.value : p.value + '';
-                },
-                position: function(p) {
-                    return p[0] === 0 ? 'left' : 'right';
-                }
-            },
-            emphasis: { lineStyle: { width: 3 } }
-        };
-    });
+import { buildSlopeOption } from '../scripts/chart-semantics.mjs';
 
-    chart.setOption({
-        tooltip: { trigger: 'item' },
-        grid: { top: 20, left: 80, right: 80, bottom: 20 },
-        xAxis: { type: 'category', data: ['去年', '今年'],
-            axisLine: { lineStyle: { color: '#E2E8F0' } },
-            axisLabel: { fontSize: 13, fontWeight: 600, color: '#334155' },
-            axisTick: { show: false }
-        },
-        yAxis: { type: 'value', show: false },
-        series: series
-    });
+function createSlopeChart(domId, items, options) {
+    // items: [{ name: '某分组', before: 48, after: 36 }, ...]
+    // options: { periodLabels: ['基线期标签','当前期标签'], direction: 'lower_is_better', unit: 'minute' }
+    var chart = echarts.init(document.getElementById(domId), 'corporate-blue');
+    chart.setOption(buildSlopeOption(items, options));
     return chart;
 }
 ```
+
+`chart-semantics.mjs` 同时提供 `dynamicValueDomain()`、`categoryLayout()` 与 `ellipsizeLabel()`；长标签/高基数先改横向布局并限制可见 TopN，再把全标签放 tooltip/表格，不得靠缩小字号或固定轴域硬塞。

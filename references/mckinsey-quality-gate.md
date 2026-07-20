@@ -130,7 +130,7 @@
 | # | 检查项 | 通过标准 | 档案 |
 |:---|:---|:---|:---:|
 | 7.1 | **validate-report.mjs** | `node scripts/validate-report.mjs report.html` P0 全部 PASS | all |
-| 7.2 | **静态数字真值** | `verify-numbers.mjs report.html metrics.json` 可见数字覆盖率与真值 100% | all |
+| 7.2 | **静态数字与产物真源** | `verify-numbers.mjs report.html metrics.json --insights insights.json` 可见数字覆盖率/真值 100%，双哈希与 Evidence 路径全部匹配 | all |
 | 7.3 | **严格离线复检** | `make-offline.mjs` 后以 `validate-report.mjs --strict-offline` 复检，无外部/相对资源 | all |
 | 7.4 | **运行时数字真值** | `verify-runtime.mjs report.offline.html metrics.json` 最终 DOM 与 ECharts 标量/坐标/树/custom 数值叶子逐点一致 | all |
 | 7.5 | **四视口截图与无障碍** | `snapshot.mjs` 的布局、网络、DOM、AX Tree、Tab、焦点与 WCAG AA 全通过，并逐图目检 | all |

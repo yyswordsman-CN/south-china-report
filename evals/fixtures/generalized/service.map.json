@@ -1,0 +1,6 @@
+{
+  "source": {"path": "service.csv"},
+  "roles": {"time": "date", "measures": [{"id": "resolution_time", "field": "resolution_minutes", "label": "Resolution time", "semantic_type": "duration", "aggregation": "weighted_mean", "weight_field": "tickets", "unit": "minute", "direction": "lower_is_better", "additivity": "non_additive", "primary": true, "required": true}, {"id": "tickets", "field": "tickets", "label": "Tickets", "semantic_type": "count", "aggregation": "sum", "unit": "ticket", "direction": "neutral", "additivity": "additive", "primary": false, "required": true}], "dimensions": ["queue"]},
+  "analysis_scope": {"mode": "period", "period": "2025-04", "data_as_of": "2025-04-30", "comparison_as_of": "2025-03-31", "comparisons": [{"id": "previous_complete", "type": "previous_complete_period"}, {"id": "sla", "type": "target", "measure": "resolution_time", "value": 45}]},
+  "schema": {"business_grain": "queue weekly aggregate", "primary_key": ["date", "queue"], "fields": {"date": {"required": true, "type": "date"}, "tickets": {"required": true, "type": "number", "unit": "ticket", "aggregation": "sum"}, "resolution_minutes": {"required": true, "type": "number", "unit": "minute", "aggregation": "weighted_mean"}}}
+}

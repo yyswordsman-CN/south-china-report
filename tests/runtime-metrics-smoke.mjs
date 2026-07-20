@@ -108,6 +108,23 @@ function structuredHtml(contract = structuredContract, data = structuredData) {
     </script></body></html>`;
 }
 
+function arbitraryNamedHtml({ value = 42, includeContract = true } = {}) {
+  const contract = includeContract
+    ? '<script type="application/json" id="south-china-report-runtime-contract">' + JSON.stringify({
+      version: 1,
+      charts: [{ id: 'salesGraph', series: [{ index: 0, metrics: ['sales'] }] }],
+    }) + '</script>'
+    : '';
+  return `<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">${contract}
+    <style>#salesGraph{width:320px;height:180px}</style></head><body><main><h1>任意命名图表</h1>
+    <div id="salesGraph" role="img" aria-label="销售图"><canvas></canvas></div></main>
+    <script>
+      const target=document.getElementById('salesGraph');
+      const instance={getOption(){return {series:[{data:[${value}]}]};}};
+      window.echarts={getInstanceByDom(element){return element===target?instance:null;}};
+    </script></body></html>`;
+}
+
 function clone(value) {
   return JSON.parse(JSON.stringify(value));
 }
@@ -140,6 +157,18 @@ try {
   const scalarEscape = run('scalar-extra-numeric', { extraNumeric: true });
   assert.equal(scalarEscape.status, 1, scalarEscape.stderr || scalarEscape.stdout);
   assert.match(`${scalarEscape.stdout}\n${scalarEscape.stderr}`, /嵌套数值请使用 V2 bindings/);
+
+  const arbitraryNamed = runContent('arbitrary-named-valid', arbitraryNamedHtml());
+  assert.equal(arbitraryNamed.status, 0, arbitraryNamed.stderr || arbitraryNamed.stdout);
+  assert.match(arbitraryNamed.stdout, /ECharts 运行时: 1 张图/);
+
+  const arbitraryWrong = runContent('arbitrary-named-wrong', arbitraryNamedHtml({ value: 999 }));
+  assert.equal(arbitraryWrong.status, 1, arbitraryWrong.stderr || arbitraryWrong.stdout);
+  assert.match(`${arbitraryWrong.stdout}\n${arbitraryWrong.stderr}`, /图表=999 ≠ metrics=42/);
+
+  const arbitraryMissingContract = runContent('arbitrary-named-no-contract', arbitraryNamedHtml({ includeContract: false }));
+  assert.equal(arbitraryMissingContract.status, 1, arbitraryMissingContract.stderr || arbitraryMissingContract.stdout);
+  assert.match(`${arbitraryMissingContract.stdout}\n${arbitraryMissingContract.stderr}`, /缺少有效 #south-china-report-runtime-contract/);
 
   const structured = runContent('structured-valid', structuredHtml());
   assert.equal(structured.status, 0, structured.stderr || structured.stdout);

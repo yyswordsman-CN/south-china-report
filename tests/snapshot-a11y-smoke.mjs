@@ -26,7 +26,11 @@ try {
       <table><thead><tr><th scope="col">指标</th></tr></thead><tbody><tr><td>签收量</td></tr></tbody></table>
       <div id="chart-sales" class="chart-container" role="img" aria-label="月度签收趋势"><canvas></canvas></div>
     </main>
-    <script>window.echarts={getInstanceByDom:function(){return {};}};</script>
+    <script>
+      const validChart = document.getElementById('chart-sales');
+      const validChartInstance = {};
+      window.echarts={getInstanceByDom:function(element){return element === validChart ? validChartInstance : null;}};
+    </script>
     </body></html>`);
 
   const valid = spawnSync(process.execPath, [script, validInput, validOutput], { encoding: 'utf8' });
@@ -48,7 +52,11 @@ try {
       <button type="button"></button>
       <table><tbody><tr><td>无表头</td></tr></tbody></table>
       <div id="chart-sales" class="chart-container"><canvas></canvas></div>
-      <script>window.echarts={getInstanceByDom:function(){return {};}};</script>
+      <script>
+        const invalidChart = document.getElementById('chart-sales');
+        const invalidChartInstance = {};
+        window.echarts={getInstanceByDom:function(element){return element === invalidChart ? invalidChartInstance : null;}};
+      </script>
     </body></html>`);
 
   const invalid = spawnSync(process.execPath, [script, invalidInput, invalidOutput], { encoding: 'utf8' });

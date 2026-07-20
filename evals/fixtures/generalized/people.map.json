@@ -1,0 +1,6 @@
+{
+  "source": {"path": "people.csv"},
+  "roles": {"time": null, "measures": [{"id": "headcount", "field": "headcount", "label": "Headcount", "semantic_type": "people", "aggregation": "sum", "unit": "person", "direction": "neutral", "additivity": "additive", "primary": true, "required": true}, {"id": "training_score", "field": "training_score", "label": "Training score", "semantic_type": "score", "aggregation": "mean", "unit": "point", "direction": "higher_is_better", "additivity": "non_additive", "primary": false, "required": true, "benchmark": 85}], "dimensions": ["department"], "id": "employee_id"},
+  "analysis_scope": {"mode": "snapshot", "comparisons": [{"id": "department_gap", "type": "group", "measure": "training_score", "dimension": "department"}]},
+  "schema": {"business_grain": "one row per employee", "primary_key": ["employee_id"], "fields": {"employee_id": {"required": true, "type": "string"}, "headcount": {"required": true, "type": "number", "unit": "person", "aggregation": "sum"}, "training_score": {"required": true, "type": "number", "unit": "point", "aggregation": "mean"}, "optional_note": {"required": false, "type": "string"}}}
+}
