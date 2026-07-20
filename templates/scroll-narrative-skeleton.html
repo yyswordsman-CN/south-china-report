@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-density="compact">
+<html lang="zh-CN" data-density="compact" data-scr-root-anchor="REPORT_ROOT">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[报告主体] · 月度经营分析</title>
+    <title><!-- SCR:REPORT_TITLE --></title>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
@@ -378,6 +378,22 @@
         }
         .kpi-strip-change.up { color: var(--semantic-growth); }
         .kpi-strip-change.down { color: var(--semantic-risk); }
+        [data-metric][data-semantic-state="favorable"] { color: var(--semantic-growth); }
+        [data-metric][data-semantic-state="unfavorable"] { color: var(--semantic-risk); }
+        .hero-number[data-semantic-state="favorable"],
+        .hero-number[data-semantic-state="unfavorable"] {
+            background: none;
+            -webkit-background-clip: initial;
+            background-clip: initial;
+        }
+        .hero-number[data-semantic-state="favorable"] {
+            color: var(--semantic-growth-dark);
+            -webkit-text-fill-color: var(--semantic-growth-dark);
+        }
+        .hero-number[data-semantic-state="unfavorable"] {
+            color: var(--semantic-risk-dark);
+            -webkit-text-fill-color: var(--semantic-risk-dark);
+        }
 
         /* ========== COMPONENT: Chapter ========== */
         .chapter {
@@ -849,6 +865,7 @@
 </head>
 <body>
 
+    <!-- SCR:REPORT_CONTRACTS -->
     <!-- 报告可审计契约：生成成品时必须用实际期间、源文件指纹、模式与关键指标整体替换。 -->
     <script type="application/json" id="south-china-report-meta">
     {
@@ -897,6 +914,7 @@
       ]
     }
     </script>
+    <!-- SCR:END_CONTRACTS -->
 
     <!-- CSS Variable Helper for ECharts -->
     <script>
@@ -928,6 +946,7 @@
     <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
 
     <main id="main-content">
+    <!-- SCR:REPORT_CONTENT -->
 
     <!-- ============================================================
          HERO — 一句话定调整份报告
@@ -1217,11 +1236,13 @@
             </div>
         </div>
     </section>
+    <!-- SCR:END_CONTENT -->
     </main>
 
     <!-- ============================================================
          SCRIPTS
          ============================================================ -->
+    <!-- SCR:REPORT_SCRIPTS -->
     <script>
         // === Scroll Progress ===
         window.addEventListener('scroll', function() {
@@ -1352,5 +1373,6 @@
             });
         });
     </script>
+    <!-- SCR:END_SCRIPTS -->
 </body>
 </html>

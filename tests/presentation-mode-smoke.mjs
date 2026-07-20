@@ -23,7 +23,8 @@ const echartsStub = `window.echarts={
   graphic:{LinearGradient:function(){return {}}}
 };`;
 
-const browser = await chromium.launch();
+const executablePath = process.env.SCR_CHROMIUM_EXECUTABLE?.trim();
+const browser = await chromium.launch(executablePath ? { executablePath } : {});
 const summaries = [];
 try {
   for (const testCase of cases) {

@@ -4,6 +4,18 @@
 
 ---
 
+## Unreleased — V3.3 Phase R0/R3 — 通用确定性渲染器、完整 Gate 与跨业务泛化
+
+- **Schema 先行规格**：新增 `schemas/report-spec.schema.json` 与合同文档，用统一 `report`、`narrative`、受控 `components`、`actions`、`output` 结构表达报告；Demo 金样和财务、人员、库存、质量、服务、调查六类泛化规格进入 Schema 回归。
+- **确定性核心渲染器**：新增 `scripts/render-report.mjs` 与模块化渲染内核，校验 `metrics.json` / `insights.json` 的双 SHA、数据状态、安全路径、唯一 ID、单位/方向/比较标签和数字绑定，再从带确定性锚点的 scroll-narrative 模板生成 Evidence、运行时合同与 HTML。默认拒绝覆盖，使用临时文件原子发布，相同输入逐字节复现。
+- **Fail-closed 回归**：新增合同、负向与端到端测试，覆盖未知组件、路径缺失/原型链键、重复 ID、Evidence 缺失、非法 hypothesis、脚本注入、错误单位/方向/比较标签、裸业务数字、原子覆盖和既有 Gate 兼容。
+- **R2 一条命令交付链**：新增 `scripts/build-report.mjs`，在隔离 staging 中顺序编排 Renderer、在线 validator、静态数字、离线内联、严格离线 validator、运行时真值和四视口截图；每步保存结构化状态、原因码、日志和产物指纹，七段全过后才原子发布目录。失败保留诊断但不触碰既有成功目录；`--skip-snapshot` 明确返回 `3 / UNVERIFIED`。
+- **运行时发现与修复**：完整链首次识别出图表标题/说明使用 `chart-*` ID 会被运行时 Gate 误认为额外图表容器；现改用独立标签前缀，生成报告的三张真实图表及全部运行时叶子完成对账。
+- **R3 跨业务泛化**：财务、人员、库存、质量、服务工单、评分调查六类夹具现在从 CSV 重建 metrics/insights 后执行完整七段 Gate；可见文本禁止回流战区/渠道/产品/客户/销售默认词，snapshot 使用显式 null 日期并跳过时间模块，所有跳过项保留 `reason_code`。
+- **方向与压力边界**：DOM 指标和条形/斜率图从 metrics 的 `direction/favorable` 同源生成语义状态与颜色；水平条形图恢复零基线，极端值与其余对象使用独立零基线并明示不可跨区比较，高基数按类别数扩展高度并在移动端收紧长标签。百分比、负数、零值、极端值和 HHI 无政策描述性边界进入机器回归。
+- **本机浏览器隔离**：运行时与截图 Gate 可选读取 `SCR_CHROMIUM_EXECUTABLE`，在并行任务会清理共享无头 Chromium 时指向受控浏览器；未设置时继续使用 Playwright 默认 Chromium，不改变 CI 行为。
+- **当前边界**：本条是尚未发布的 R0-R3 源码阶段；Demo 真源迁移属于 R4。产品版本和已安装副本继续保持 V3.2.0，本次不执行安装同步、提交或推送。
+
 ## V3.2.0 — 2026-07-19 — P2 口径消歧、参考统一与跨运行漂移锁
 
 - **日历比较语义拆分**：`mom/qoq/wow` 现在严格表示上一月/季/ISO 周，且会校验期间粒度；`previous_equal_window` 保留紧邻等长滚动窗，`previous_calendar_period/previous_complete_period` 表示完整上一日历期，`same_stage_previous_period` 支持部分期对上一日历期同阶段。旧 `period_over_period` 继续兼容但不再承载含混的“环比”语义。

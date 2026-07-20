@@ -353,7 +353,8 @@ try {
 
 let browser;
 try {
-  browser = await chromium.launch();
+  const executablePath = process.env.SCR_CHROMIUM_EXECUTABLE?.trim();
+  browser = await chromium.launch(executablePath ? { executablePath } : {});
 } catch (error) {
   console.error('[UNVERIFIED] Chromium 启动失败:', error.message);
   process.exit(3);

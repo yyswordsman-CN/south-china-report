@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0",
+  "report": { "id": "people-snapshot", "type": "strategic_narrative", "audience": "L2", "density": "compact", "language": "zh-CN", "title": "能力表现总体稳健，部门差异需要治理", "subtitle": "人员能力快照", "organization": "示例人才组织", "subject": "人员发展" },
+  "narrative": {
+    "governing_thought": { "text": "总体能力水平稳定，但部门间差异仍然明显", "claim_kind": "fact", "evidence": ["metrics.measure_results.training_score.current", "metrics.measure_dimensions.training_score.department.2.current"] },
+    "chapters": [
+      { "id": "department-gap", "title": "部门能力形成分层，短板对象需要优先支持", "lead": "平均水平不能替代分组判断，支持资源应落在实际短板。", "claim_kind": "fact", "evidence": ["metrics.measure_dimensions.training_score.department.0.current", "metrics.measure_dimensions.training_score.department.2.current"] }
+    ]
+  },
+  "components": [
+    { "id": "hero-people", "type": "hero", "primary_metric": { "path": "measure_results.headcount.current", "label": "人员规模", "format": "integer", "assert_unit": "person", "assert_direction": "neutral" } },
+    { "id": "kpi-people", "type": "kpi_strip", "metrics": [
+      { "path": "measure_results.headcount.current", "label": "人员规模", "format": "integer", "assert_unit": "person" },
+      { "path": "measure_results.training_score.current", "label": "平均能力得分", "format": "decimal", "precision": 1, "assert_unit": "point" },
+      { "path": "measure_dimensions.training_score.department.0.current", "label": "领先部门得分", "format": "decimal", "precision": 1 }
+    ] },
+    { "id": "intro-people", "type": "chapter_intro", "chapter_id": "department-gap" },
+    { "id": "trend-people", "type": "trend_chart", "chapter_id": "department-gap", "title": "能力得分趋势仅在时间序列可用时展示", "subtitle": "快照输入应机器跳过并记录原因", "series": [{ "name": "平均能力得分", "data_path": "measure_results.training_score.time_series", "assert_unit": "point", "assert_direction": "higher_is_better" }], "optional": true },
+    { "id": "bar-people", "type": "bar_chart", "chapter_id": "department-gap", "title": "部门能力差异需要定向支持", "subtitle": "按真实部门名称与得分排序", "data_path": "measure_dimensions.training_score.department", "value_field": "current", "sort": "desc", "assert_unit": "point", "assert_direction": "higher_is_better" },
+    { "id": "closing-people", "type": "closing_actions", "title": "优先补齐短板并复核支持效果" }
+  ],
+  "actions": [
+    { "id": "people-support", "object": "人才发展团队", "action": "为短板部门制定定向支持计划", "deadline": "下一轮评估前", "validation_metric": "部门能力差异持续收窄", "priority": "strategic", "claim_kind": "action", "evidence": ["metrics.measure_dimensions.training_score.department.2.current"] }
+  ],
+  "output": { "offline": true, "run_gates": true }
+}

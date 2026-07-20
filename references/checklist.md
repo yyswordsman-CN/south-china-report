@@ -44,6 +44,12 @@
 ## 自动化验证命令
 
 ```bash
+# 有 report-spec.json 时推荐一条命令；只有 status=OK 且 delivery_ready=true 才是完整自动验收
+node scripts/build-report.mjs \
+  --metrics <metrics.json> --insights <insights.json> \
+  --spec <report-spec.json> --out-dir <report-build-dir>
+
+# 人工 HTML 兼容流程或单步诊断
 # 完整交付链；运行时与截图只对严格离线版运行
 node scripts/validate-report.mjs <report.html>
 node scripts/verify-numbers.mjs <report.html> <metrics.json> --insights <insights.json>
@@ -52,7 +58,7 @@ node scripts/validate-report.mjs <report.offline.html> --strict-offline
 node scripts/verify-runtime.mjs <report.offline.html> <metrics.json>
 node scripts/snapshot.mjs <report.offline.html> <shots-dir>
 
-# 任一 Gate 非 0 均不得冒充通过；Playwright 缺失会以 3 明确标记未验证
+# 任一 Gate 非 0 均不得冒充通过；--skip-snapshot 或 Playwright 缺失会以 3 明确标记未验证
 ```
 
 ## 快速修复索引

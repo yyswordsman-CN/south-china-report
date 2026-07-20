@@ -15,6 +15,8 @@
     "verify-runtime": "node scripts/verify-runtime.mjs",
     "make-offline": "node scripts/make-offline.mjs",
     "install-skill": "node scripts/install-skill.mjs",
+    "render": "node scripts/render-report.mjs",
+    "build:report": "node scripts/build-report.mjs",
     "release:check": "node scripts/release-check.mjs",
     "build:demo": "python3 -B scripts/build-demo.py",
     "test:data": "python3 -B -m unittest discover -s tests -p 'test_*.py'",
@@ -35,8 +37,15 @@
     "test:chart-semantics": "node tests/chart-semantics-smoke.mjs",
     "test:render-pressure": "node tests/render-pressure-smoke.mjs",
     "test:install": "node tests/install-skill-smoke.mjs",
-    "test": "npm run test:data && npm run test:chart-semantics && npm run test:render-pressure && npm run test:validators && npm run test:demo-repro && npm run test:demos && npm run test:templates && npm run test:templates-a11y && npm run test:demo-snapshots && npm run test:offline && npm run test:presentation && npm run test:snapshot-negative && npm run test:snapshot-a11y && npm run test:snapshot-advanced-a11y && npm run test:snapshot-atomic && npm run test:snapshot-network && npm run test:runtime && npm run test:install",
+    "test:renderer-core": "node tests/renderer-contract-smoke.mjs && node tests/renderer-negative-smoke.mjs && node tests/renderer-e2e-smoke.mjs",
+    "test:renderer-generalized": "node tests/renderer-generalized-e2e.mjs",
+    "test:renderer": "npm run test:renderer-core && npm run test:renderer-generalized",
+    "test:build-report": "node tests/build-report-negative-smoke.mjs && node tests/build-report-smoke.mjs",
+    "test": "npm run test:data && npm run test:renderer && npm run test:build-report && npm run test:chart-semantics && npm run test:render-pressure && npm run test:validators && npm run test:demo-repro && npm run test:demos && npm run test:templates && npm run test:templates-a11y && npm run test:demo-snapshots && npm run test:offline && npm run test:presentation && npm run test:snapshot-negative && npm run test:snapshot-a11y && npm run test:snapshot-advanced-a11y && npm run test:snapshot-atomic && npm run test:snapshot-network && npm run test:runtime && npm run test:install",
     "setup:screenshots": "npx playwright install chromium"
+  },
+  "dependencies": {
+    "ajv": "8.20.0"
   },
   "optionalDependencies": {
     "playwright": "1.61.1"

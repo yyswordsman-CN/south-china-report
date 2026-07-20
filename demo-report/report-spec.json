@@ -1,0 +1,272 @@
+{
+  "schema_version": "1.0",
+  "report": {
+    "id": "demo-h1-2026",
+    "type": "strategic_narrative",
+    "audience": "L2",
+    "density": "compact",
+    "language": "zh-CN",
+    "title": "收入承压，结构分化需要优先处置",
+    "subtitle": "半年度经营分析",
+    "organization": "示例业务组织",
+    "subject": "综合经营"
+  },
+  "narrative": {
+    "governing_thought": {
+      "text": "收入与数量同步回落，结构亮点尚未抵消核心缺口",
+      "claim_kind": "fact",
+      "evidence": [
+        "metrics.measure_results.amount.change_pct",
+        "metrics.measure_results.qty.change_pct"
+      ]
+    },
+    "chapters": [
+      {
+        "id": "total-pressure",
+        "title": "总量回落，数量降幅进一步扩大",
+        "lead": "收入和数量同时走弱，恢复优先级应先落在主要缺口而非平均用力。",
+        "claim_kind": "fact",
+        "evidence": [
+          "metrics.measure_results.amount.change_pct",
+          "metrics.measure_results.qty.change_pct"
+        ]
+      },
+      {
+        "id": "regional-gap",
+        "title": "区域分化加剧，南区成为主要缺口",
+        "lead": "主要区域的表现方向明显分化，资源配置需要转向缺口治理与有效经验复制。",
+        "claim_kind": "attribution",
+        "evidence": [
+          "metrics.measure_dimensions.amount.战区.3.contribution_pp",
+          "insights.dimension_scan.战区.unfavorable.0.change_pct"
+        ]
+      },
+      {
+        "id": "portfolio-shift",
+        "title": "结构升级已有进展，入门系列仍是拖累",
+        "lead": "高价值结构改善提供了缓冲，但基础结构的下滑仍主导整体差额。",
+        "claim_kind": "attribution",
+        "evidence": [
+          "metrics.measure_dimensions.amount.品类.1.change_pct",
+          "metrics.measure_dimensions.amount.品类.2.contribution_pp"
+        ]
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "hero-main",
+      "type": "hero",
+      "primary_metric": {
+        "path": "measure_results.amount.current",
+        "label": "本期收入",
+        "format": "decimal",
+        "precision": 1,
+        "assert_unit": "currency",
+        "assert_direction": "higher_is_better"
+      }
+    },
+    {
+      "id": "kpi-main",
+      "type": "kpi_strip",
+      "metrics": [
+        {
+          "path": "measure_results.amount.current",
+          "label": "本期收入",
+          "format": "decimal",
+          "precision": 1,
+          "assert_unit": "currency",
+          "assert_direction": "higher_is_better"
+        },
+        {
+          "path": "measure_results.amount.change_pct",
+          "label": "收入变化",
+          "format": "signed_percent",
+          "precision": 1,
+          "assert_direction": "higher_is_better"
+        },
+        {
+          "path": "measure_results.qty.current",
+          "label": "本期数量",
+          "format": "integer",
+          "assert_unit": "count",
+          "assert_direction": "higher_is_better"
+        },
+        {
+          "path": "measure_results.qty.change_pct",
+          "label": "数量变化",
+          "format": "signed_percent",
+          "precision": 1,
+          "assert_direction": "higher_is_better"
+        }
+      ]
+    },
+    {
+      "id": "intro-total",
+      "type": "chapter_intro",
+      "chapter_id": "total-pressure"
+    },
+    {
+      "id": "trend-total",
+      "type": "trend_chart",
+      "chapter_id": "total-pressure",
+      "title": "收入趋势持续走弱，恢复动能仍待确认",
+      "subtitle": "按数据语义层的完整月序列展示",
+      "series": [
+        {
+          "name": "收入",
+          "data_path": "measure_results.amount.time_series",
+          "assert_unit": "currency",
+          "assert_direction": "higher_is_better"
+        }
+      ]
+    },
+    {
+      "id": "intro-region",
+      "type": "chapter_intro",
+      "chapter_id": "regional-gap"
+    },
+    {
+      "id": "region-insight",
+      "type": "insight_callout",
+      "chapter_id": "regional-gap",
+      "title": "东区形成正向缓冲，南区缺口仍占主导",
+      "text": "区域表现已分成清晰的正负两端，治理动作应按影响量级排序。",
+      "tone": "risk",
+      "claim_kind": "attribution",
+      "evidence": [
+        "metrics.measure_dimensions.amount.战区.1.contribution_pp",
+        "metrics.measure_dimensions.amount.战区.3.contribution_pp"
+      ]
+    },
+    {
+      "id": "region-bars",
+      "type": "bar_chart",
+      "chapter_id": "regional-gap",
+      "title": "区域变化方向分化，缺口集中在少数对象",
+      "subtitle": "分类比较使用真实变化率并保持动态轴域",
+      "data_path": "measure_dimensions.amount.战区",
+      "value_field": "change_pct",
+      "limit": 8,
+      "sort": "asc",
+      "assert_unit": "currency",
+      "assert_direction": "higher_is_better"
+    },
+    {
+      "id": "region-ranking",
+      "type": "rank_table",
+      "chapter_id": "regional-gap",
+      "title": "区域贡献与结构差异需要同时查看",
+      "subtitle": "排序保留当前值、变化与贡献证据",
+      "data_path": "measure_dimensions.amount.战区",
+      "columns": [
+        { "label": "当前值", "field": "current", "format": "decimal", "precision": 1 },
+        { "label": "变化率", "field": "change_pct", "format": "signed_percent", "precision": 1 },
+        { "label": "贡献", "field": "contribution_pp", "format": "percentage_point", "precision": 1 }
+      ],
+      "limit": 8,
+      "sort": "desc"
+    },
+    {
+      "id": "intro-portfolio",
+      "type": "chapter_intro",
+      "chapter_id": "portfolio-shift"
+    },
+    {
+      "id": "portfolio-slope",
+      "type": "slope_chart",
+      "chapter_id": "portfolio-shift",
+      "title": "品类两期变化揭示结构升级与基础承压并存",
+      "subtitle": "两期标签直接读取真实比较期间",
+      "data_path": "measure_dimensions.amount.品类",
+      "limit": 6,
+      "sort": "desc",
+      "assert_unit": "currency",
+      "assert_direction": "higher_is_better",
+      "assert_comparison_labels": {
+        "baseline": "2025H1",
+        "current": "2026H1"
+      }
+    },
+    {
+      "id": "portfolio-comparison",
+      "type": "comparison_table",
+      "chapter_id": "portfolio-shift",
+      "title": "品类变化由高端改善与基础回落共同构成",
+      "subtitle": "当前、基线和变化率来自同一维度合同",
+      "data_path": "measure_dimensions.amount.品类",
+      "columns": [
+        { "label": "当前值", "field": "current", "format": "decimal", "precision": 1 },
+        { "label": "基线值", "field": "baseline", "format": "decimal", "precision": 1 },
+        { "label": "变化率", "field": "change_pct", "format": "signed_percent", "precision": 1 }
+      ],
+      "limit": 8,
+      "sort": "desc"
+    },
+    {
+      "id": "channel-detail",
+      "type": "data_detail",
+      "title": "渠道复算明细",
+      "subtitle": "完整保留当前、基线、份额与变化口径",
+      "data_path": "measure_dimensions.amount.渠道",
+      "columns": [
+        { "label": "当前值", "field": "current", "format": "decimal", "precision": 1 },
+        { "label": "基线值", "field": "baseline", "format": "decimal", "precision": 1 },
+        { "label": "份额", "field": "share", "format": "percent", "precision": 1 },
+        { "label": "变化率", "field": "change_pct", "format": "signed_percent", "precision": 1 }
+      ],
+      "limit": 20,
+      "sort": "desc"
+    },
+    {
+      "id": "closing-main",
+      "type": "closing_actions",
+      "title": "优先治理主要缺口，再复制有效结构动作"
+    }
+  ],
+  "actions": [
+    {
+      "id": "recover-region",
+      "object": "南区经营团队",
+      "action": "拆解主要缺口并建立周度恢复清单",
+      "deadline": "下个复盘周期前",
+      "validation_metric": "区域收入变化回到可控区间",
+      "priority": "urgent",
+      "claim_kind": "action",
+      "evidence": [
+        "metrics.measure_dimensions.amount.战区.3.change_pct",
+        "metrics.measure_dimensions.amount.战区.3.contribution_pp"
+      ]
+    },
+    {
+      "id": "stabilize-entry",
+      "object": "品类运营团队",
+      "action": "核查入门系列下滑来源并恢复基础盘",
+      "deadline": "下个经营周期内",
+      "validation_metric": "入门系列负向贡献持续收窄",
+      "priority": "urgent",
+      "claim_kind": "action",
+      "evidence": [
+        "metrics.measure_dimensions.amount.品类.2.change_pct",
+        "metrics.measure_dimensions.amount.品类.2.contribution_pp"
+      ]
+    },
+    {
+      "id": "copy-upgrade",
+      "object": "结构升级项目组",
+      "action": "提炼高价值结构改善动作并验证复制效果",
+      "deadline": "下一轮复盘前",
+      "validation_metric": "高价值结构贡献保持正向",
+      "priority": "strategic",
+      "claim_kind": "action",
+      "evidence": [
+        "metrics.measure_dimensions.amount.品类.1.change_pct",
+        "metrics.measure_dimensions.amount.品类.1.contribution_pp"
+      ]
+    }
+  ],
+  "output": {
+    "offline": true,
+    "run_gates": true
+  }
+}

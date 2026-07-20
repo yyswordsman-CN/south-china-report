@@ -11,6 +11,20 @@ npm run release:check
 
 CI 在 Python 3.11 / Node 22 上执行同一条链，并用临时目录验证一次 `--apply` 与 `--check`。`release:check` 会核对 SemVer、锁文件、主文档版本、Skill frontmatter、发布清单与关键文件。
 
+默认由 Playwright 使用项目已安装的 Chromium。如本机需与其他无头浏览器任务隔离，可显式设置 `SCR_CHROMIUM_EXECUTABLE=/absolute/path/to/chromium` 指定可执行文件；未设置时不改变本地或 CI 默认行为。
+
+## 报告构建与 Skill 发布不要混淆
+
+`scripts/build-report.mjs` 发布的是单次报告产物目录，不会安装 Skill、修改真实安装副本或操作 Git：
+
+```bash
+node scripts/build-report.mjs \
+  --metrics metrics.json --insights insights.json \
+  --spec report-spec.json --out-dir report-build
+```
+
+只有返回 `status=OK` 且 `delivery_ready=true`，才表示七段自动 Gate 全部通过并已原子发布本地报告目录。`UNVERIFIED`、诊断目录、local build 和安装目录同步是不同状态；自动截图通过后仍须人工逐张目检。
+
 ## 发布清单
 
 `release-profile.json` 是唯一发布范围真源。它包含 Skill 指令、模板、引用、脚本、测试、eval 和演示真源；排除截图、缓存、依赖目录与编译产物。禁止手工复制一个未经清单验证的目录并称为正式安装。

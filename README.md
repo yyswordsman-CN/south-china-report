@@ -13,7 +13,8 @@
 ```
 数据源 → prep-source.py（measures/比较/Schema/结果快照 Gate）→ metrics.json
       → stat-insights.py（方向感知 + 方法适用性 + metrics SHA）→ insights.json
-      → Evidence ID 叙事合同 → 双 SHA 强绑定自包含 HTML → 四道质量 Gate
+      → report-spec.json（受控组件 + Evidence 声明）→ render-report.mjs
+      → 双 SHA 强绑定自包含 HTML → 四道质量 Gate
 ```
 
 ## 核心特性
@@ -24,6 +25,9 @@
 - **数据可信链**：必需 Schema、业务粒度、主键、单位与结果快照进入 Gate；跨运行漂移锁同时核对语义合同、schema、行数和结果 hash；报告以双 SHA 与 Evidence ID 追溯真源
 - **方向感知统计层**：Mann-Kendall、稳健 Z、结构变化、PVM、TopN、Pareto 与 HHI 先判断适用性；HHI 无业务政策只作描述，低优指标按下降为有利解释
 - **叙事强制合同**：Governing Thought + 章节 PAC 闭环（现象→归因→对策）+ So-What 四连问；没讲完故事的章节进不了正文
+- **确定性报告编译器（V3.3 Phase R0/R1）**：Schema 先行的 `report-spec.json` 通过受控组件生成 Evidence、运行时数字合同和 HTML；同一组输入逐字节复现，路径越界、未知组件、裸业务数字或覆盖已有文件均 fail-closed
+- **一条命令交付链（V3.3 Phase R2）**：`build-report.mjs` 在隔离 staging 中依次完成在线渲染、静态 Gate、离线内联、严格复检、运行时真值和四视口截图；全通过后才原子发布输出目录，失败只保留诊断目录
+- **跨业务泛化回归（V3.3 Phase R3）**：财务、人员、库存、质量、服务工单、评分调查从真实夹具重建并跑完整七段 Gate；快照不伪造日期或趋势，低优指标、百分比、负数、零值、极端值、长标签与高基数均进入自动回归
 - **视觉纪律**：三角色字体 / 语义色三层架构 / 克制动效 / IBCS 选图语法（饼图默认禁用）/ 紧凑销售报告风默认、叙事标准风显式可选
 - **四组质量 Gate**：结构/Evidence 校验（P0 硬阻断）→ 静态数字+双哈希真源一致性 → 离线内联严格复检 → 全部 ECharts 实例运行时合同 + 四视口 DOM/AX/Tab/对比度检查与截图目检
 - **可发布工程链**：GitHub Actions 跑全量回归；发布清单、版本一致性、只读安装差异、原子替换和可恢复备份均有脚本约束
@@ -48,7 +52,15 @@ python3 scripts/prep-source.py build --map map.json --out metrics.json
 # 2. 统计洞察（趋势显著性 / 异常月 / 断崖引擎 / 问题清单）
 python3 scripts/stat-insights.py metrics.json --out insights.json
 
-# 3. 按 SKILL.md 工作流填充模板生成报告，交付前跑四组 Gate
+# 3. 有 report-spec.json 时一条命令生成在线版、离线版、截图、日志和机器摘要
+node scripts/build-report.mjs \
+  --metrics metrics.json --insights insights.json \
+  --spec report-spec.json --out-dir report-build
+
+# 开发期如显式跳过截图，命令返回 3 / UNVERIFIED，产物不得标为成品：
+# node scripts/build-report.mjs ... --out-dir report-build --skip-snapshot
+
+# 4. 人工 HTML 兼容流程仍可逐段运行以下 Gate
 node scripts/validate-report.mjs report.html
 node scripts/verify-numbers.mjs report.html metrics.json --insights insights.json
 node scripts/make-offline.mjs report.html
@@ -80,6 +92,7 @@ npm run test:demo-repro  # 数据逐字节比对 + 离线来源指纹/严检/数
 | 目录 | 内容 |
 |---|---|
 | `SKILL.md` | 主文件：设计哲学 + 工作流 + 质量体系 |
+| `schemas/` | `report-spec.json` 的 Draft-07 Schema；是确定性渲染器的输入合同 |
 | `templates/` | 三套模板：scroll-narrative（叙事）/ bento-brief（一屏简报）/ audit-pack（审计包） |
 | `references/` | 选图引擎、组件库、Token、叙事合同、52 项 Quality Gate、运行时合同与发布流程 |
 | `scripts/` | 数据管线、统计洞察、demo 构建、静态/运行时/截图 Gate、发布安装与 eval 回归脚本 |

@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "report": { "id": "inventory-snapshot", "type": "strategic_narrative", "audience": "L2", "density": "compact", "language": "zh-CN", "title": "库存高度集中，极端网点主导整体结构", "subtitle": "库存结构快照", "organization": "示例供应组织", "subject": "库存运营" },
+  "narrative": {
+    "governing_thought": { "text": "库存分布被单一极端网点主导，平均值不具代表性", "claim_kind": "fact", "evidence": ["metrics.measure_results.on_hand.current", "metrics.measure_dimensions.on_hand.facility.0.current"] },
+    "chapters": [
+      { "id": "facility-shape", "title": "网点库存呈长尾结构，异常对象需要单独核查", "lead": "结构判断应同时关注极端高值、零值与负值，避免汇总掩盖异常。", "claim_kind": "fact", "evidence": ["metrics.measure_dimensions.on_hand.facility.0.current", "metrics.measure_dimensions.on_hand.facility.17.current"] }
+    ]
+  },
+  "components": [
+    { "id": "hero-inventory", "type": "hero", "primary_metric": { "path": "measure_results.on_hand.current", "label": "库存总量", "format": "integer", "assert_unit": "unit", "assert_direction": "neutral" } },
+    { "id": "kpi-inventory", "type": "kpi_strip", "metrics": [
+      { "path": "measure_results.on_hand.current", "label": "库存总量", "format": "integer", "assert_unit": "unit" },
+      { "path": "measure_dimensions.on_hand.facility.0.current", "label": "最高网点库存", "format": "integer" },
+      { "path": "measure_dimensions.on_hand.facility.17.current", "label": "最低网点库存", "format": "signed_number", "precision": 0 }
+    ] },
+    { "id": "intro-inventory", "type": "chapter_intro", "chapter_id": "facility-shape" },
+    { "id": "bar-inventory", "type": "bar_chart", "chapter_id": "facility-shape", "title": "网点库存跨度极大，长尾与负值并存", "subtitle": "动态轴域保留负数和极端值", "data_path": "measure_dimensions.on_hand.facility", "value_field": "current", "limit": 30, "sort": "desc", "assert_unit": "unit", "assert_direction": "neutral" },
+    { "id": "closing-inventory", "type": "closing_actions", "title": "先核查极端对象，再治理长尾异常" }
+  ],
+  "actions": [
+    { "id": "inventory-audit", "object": "库存运营团队", "action": "核查极端高值与负值网点的业务来源", "deadline": "下个盘点周期前", "validation_metric": "异常库存完成复核并形成处置记录", "priority": "urgent", "claim_kind": "action", "evidence": ["metrics.measure_dimensions.on_hand.facility.0.current", "metrics.measure_dimensions.on_hand.facility.17.current"] }
+  ],
+  "output": { "offline": true, "run_gates": true }
+}

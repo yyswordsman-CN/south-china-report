@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "report": { "id": "survey-period", "type": "strategic_narrative", "audience": "L2", "density": "compact", "language": "zh-CN", "title": "体验得分改善，新参与者仍是主要短板", "subtitle": "体验调查分析", "organization": "示例体验组织", "subject": "参与者反馈" },
+  "narrative": {
+    "governing_thought": { "text": "总体体验得分改善，但新参与者的绝对水平仍显著偏低", "claim_kind": "fact", "evidence": ["metrics.measure_results.nps.change_abs", "metrics.measure_dimensions.nps.segment.2.current"] },
+    "chapters": [
+      { "id": "segment-gap", "title": "各分组均有改善，新参与者仍需优先治理", "lead": "改善幅度不能替代绝对水平判断，资源应继续向短板分组倾斜。", "claim_kind": "fact", "evidence": ["metrics.measure_dimensions.nps.segment.0.current", "metrics.measure_dimensions.nps.segment.2.current"] }
+    ]
+  },
+  "components": [
+    { "id": "hero-survey", "type": "hero", "primary_metric": { "path": "measure_results.nps.current", "label": "体验得分", "format": "decimal", "precision": 1, "assert_unit": "point", "assert_direction": "higher_is_better" } },
+    { "id": "kpi-survey", "type": "kpi_strip", "metrics": [
+      { "path": "measure_results.nps.current", "label": "体验得分", "format": "decimal", "precision": 1, "assert_unit": "point" },
+      { "path": "measure_results.nps.change_abs", "label": "得分变化", "format": "signed_number", "precision": 1 },
+      { "path": "measure_results.response_rate.current", "label": "响应率", "format": "percent", "precision": 1, "assert_unit": "percent" }
+    ] },
+    { "id": "intro-survey", "type": "chapter_intro", "chapter_id": "segment-gap" },
+    { "id": "slope-survey", "type": "slope_chart", "chapter_id": "segment-gap", "title": "各分组体验得分改善但层级仍然明显", "subtitle": "两期比较使用数据合同中的真实标签", "data_path": "measure_dimensions.nps.segment", "sort": "desc", "assert_unit": "point", "assert_direction": "higher_is_better", "assert_comparison_labels": { "baseline": "2025-01", "current": "2025-05" } },
+    { "id": "closing-survey", "type": "closing_actions", "title": "巩固整体改善并优先修复新参与者体验" }
+  ],
+  "actions": [
+    { "id": "survey-newcomer", "object": "体验改进团队", "action": "复核新参与者的关键反馈断点", "deadline": "下一轮调查前", "validation_metric": "新参与者体验得分持续提升", "priority": "strategic", "claim_kind": "action", "evidence": ["metrics.measure_dimensions.nps.segment.2.current", "metrics.measure_dimensions.nps.segment.2.delta"] }
+  ],
+  "output": { "offline": true, "run_gates": true }
+}

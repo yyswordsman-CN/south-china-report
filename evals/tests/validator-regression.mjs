@@ -100,6 +100,32 @@ try {
   assert(result.status === 1 && result.stdout.includes('报告元数据契约'),
     '成品模式阻断缺失报告 meta', result.stdout + result.stderr);
 
+  const snapshotMeta = write('snapshot-meta.html', report('', '', '', {
+    ...defaultMeta,
+    requested_period: 'snapshot',
+    report_mode: 'snapshot',
+    data_cutoff: {
+      data_as_of: null, comparison_as_of: null,
+      completeness: 'snapshot', like_for_like: false,
+    },
+  }));
+  result = run(VALIDATOR, [snapshotMeta]);
+  assert(result.status === 0,
+    'snapshot meta 用显式 null 表达无业务日期并通过校验', result.stdout + result.stderr);
+
+  const fakeSnapshotDate = write('snapshot-fake-date.html', report('', '', '', {
+    ...defaultMeta,
+    requested_period: 'snapshot',
+    report_mode: 'snapshot',
+    data_cutoff: {
+      data_as_of: '2025-12-31', comparison_as_of: null,
+      completeness: 'snapshot', like_for_like: false,
+    },
+  }));
+  result = run(VALIDATOR, [fakeSnapshotDate]);
+  assert(result.status === 1 && result.stdout.includes('禁止伪造业务日期'),
+    'snapshot meta 阻断伪造业务日期', result.stdout + result.stderr);
+
   const duplicateMetaScript = '<script type="application/json" id="south-china-report-meta">' +
     JSON.stringify(defaultMeta) + '</script>';
   const duplicateMeta = write('duplicate-meta.html', report(duplicateMetaScript));

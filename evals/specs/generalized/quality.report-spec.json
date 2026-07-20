@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "report": { "id": "quality-period", "type": "strategic_narrative", "audience": "L2", "density": "compact", "language": "zh-CN", "title": "缺陷率改善，工序差异仍需持续跟踪", "subtitle": "质量过程分析", "organization": "示例质量组织", "subject": "过程质量" },
+  "narrative": {
+    "governing_thought": { "text": "总体缺陷率回落，但不同工序的改善幅度并不一致", "claim_kind": "fact", "evidence": ["metrics.measure_results.defect_rate.change_pct", "metrics.measure_dimensions.defect_rate.process_stage.0.current"] },
+    "chapters": [
+      { "id": "process-gap", "title": "工序均有改善，高风险环节仍保持最高缺陷率", "lead": "改善方向一致不代表风险消失，后续资源仍应按绝对水平配置。", "claim_kind": "fact", "evidence": ["metrics.measure_dimensions.defect_rate.process_stage.0.current", "metrics.measure_dimensions.defect_rate.process_stage.1.current"] }
+    ]
+  },
+  "components": [
+    { "id": "hero-quality", "type": "hero", "primary_metric": { "path": "measure_results.defect_rate.current", "label": "本期缺陷率", "format": "percent", "precision": 1, "assert_unit": "percent", "assert_direction": "lower_is_better" } },
+    { "id": "kpi-quality", "type": "kpi_strip", "metrics": [
+      { "path": "measure_results.defect_rate.current", "label": "本期缺陷率", "format": "percent", "precision": 1 },
+      { "path": "measure_results.defect_rate.baseline", "label": "基线缺陷率", "format": "percent", "precision": 1 },
+      { "path": "measure_results.inspected.current", "label": "检验数量", "format": "integer", "assert_unit": "unit" }
+    ] },
+    { "id": "intro-quality", "type": "chapter_intro", "chapter_id": "process-gap" },
+    { "id": "slope-quality", "type": "slope_chart", "chapter_id": "process-gap", "title": "各工序缺陷率均回落但绝对水平仍分化", "subtitle": "两期变化按低优指标方向解读", "data_path": "measure_dimensions.defect_rate.process_stage", "sort": "desc", "assert_unit": "percent", "assert_direction": "lower_is_better", "assert_comparison_labels": { "baseline": "2025-03", "current": "2025-04" } },
+    { "id": "closing-quality", "type": "closing_actions", "title": "保持改善节奏并优先治理高风险工序" }
+  ],
+  "actions": [
+    { "id": "quality-focus", "object": "质量改进团队", "action": "对高缺陷工序开展专项原因复核", "deadline": "下一轮质量复盘前", "validation_metric": "高风险工序缺陷率继续回落", "priority": "urgent", "claim_kind": "action", "evidence": ["metrics.measure_dimensions.defect_rate.process_stage.0.current", "metrics.measure_dimensions.defect_rate.process_stage.0.change_pct"] }
+  ],
+  "output": { "offline": true, "run_gates": true }
+}

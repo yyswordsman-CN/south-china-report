@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "report": { "id": "service-period", "type": "strategic_narrative", "audience": "L2", "density": "compact", "language": "zh-CN", "title": "处理时长异常上升，单一队列主导风险", "subtitle": "服务效率分析", "organization": "示例服务组织", "subject": "工单运营" },
+  "narrative": {
+    "governing_thought": { "text": "整体处理时长被单一异常队列显著拉高，常规队列仍在改善", "claim_kind": "fact", "evidence": ["metrics.measure_results.resolution_time.current", "metrics.measure_dimensions.resolution_time.queue.0.current"] },
+    "chapters": [
+      { "id": "queue-outlier", "title": "异常队列放大整体时长，常规队列保持改善", "lead": "整体平均值不能代表全部队列，处置应先隔离异常来源。", "claim_kind": "fact", "evidence": ["metrics.measure_dimensions.resolution_time.queue.0.current", "metrics.measure_dimensions.resolution_time.queue.1.change_pct"] }
+    ]
+  },
+  "components": [
+    { "id": "hero-service", "type": "hero", "primary_metric": { "path": "measure_results.resolution_time.current", "label": "平均处理时长", "format": "decimal", "precision": 1, "assert_unit": "minute", "assert_direction": "lower_is_better" } },
+    { "id": "kpi-service", "type": "kpi_strip", "metrics": [
+      { "path": "measure_results.resolution_time.current", "label": "本期处理时长", "format": "decimal", "precision": 1, "assert_unit": "minute" },
+      { "path": "measure_results.resolution_time.baseline", "label": "基线处理时长", "format": "decimal", "precision": 1 },
+      { "path": "measure_results.tickets.current", "label": "工单数量", "format": "integer", "assert_unit": "ticket" }
+    ] },
+    { "id": "intro-service", "type": "chapter_intro", "chapter_id": "queue-outlier" },
+    { "id": "bar-service", "type": "bar_chart", "chapter_id": "queue-outlier", "title": "队列处理时长差异被极端值放大", "subtitle": "分类比较保留长标签与极端范围", "data_path": "measure_dimensions.resolution_time.queue", "value_field": "current", "sort": "desc", "assert_unit": "minute", "assert_direction": "lower_is_better" },
+    { "id": "closing-service", "type": "closing_actions", "title": "隔离异常来源并恢复服务节奏" }
+  ],
+  "actions": [
+    { "id": "service-diagnose", "object": "服务运营团队", "action": "专项核查异常队列的处理链路", "deadline": "下个服务复盘前", "validation_metric": "异常队列时长回到可控区间", "priority": "urgent", "claim_kind": "action", "evidence": ["metrics.measure_dimensions.resolution_time.queue.0.current", "metrics.measure_dimensions.resolution_time.queue.0.change_pct"] }
+  ],
+  "output": { "offline": true, "run_gates": true }
+}

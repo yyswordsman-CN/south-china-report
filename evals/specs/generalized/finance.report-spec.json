@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "report": { "id": "finance-period", "type": "strategic_narrative", "audience": "L2", "density": "compact", "language": "zh-CN", "title": "收入温和改善，成本同步回落", "subtitle": "财务组合分析", "organization": "示例财务组织", "subject": "组合经营" },
+  "narrative": {
+    "governing_thought": { "text": "收入改善与成本回落同时发生，组合效率整体向好", "claim_kind": "fact", "evidence": ["metrics.measure_results.revenue.change_pct", "metrics.measure_results.cost.change_pct"] },
+    "chapters": [
+      { "id": "portfolio", "title": "组合表现分化，改善来自少数板块", "lead": "整体结果向好，但分板块表现仍需按贡献和效率分别管理。", "claim_kind": "fact", "evidence": ["metrics.measure_dimensions.revenue.portfolio.0.change_pct", "metrics.measure_dimensions.cost.portfolio.0.change_pct"] }
+    ]
+  },
+  "components": [
+    { "id": "hero-finance", "type": "hero", "primary_metric": { "path": "measure_results.revenue.current", "label": "本期收入", "format": "integer", "assert_unit": "CNY", "assert_direction": "higher_is_better" } },
+    { "id": "kpi-finance", "type": "kpi_strip", "metrics": [
+      { "path": "measure_results.revenue.current", "label": "本期收入", "format": "integer", "assert_unit": "CNY" },
+      { "path": "measure_results.revenue.change_pct", "label": "收入变化", "format": "signed_percent", "precision": 1 },
+      { "path": "measure_results.cost.current", "label": "本期成本", "format": "integer", "assert_unit": "CNY", "assert_direction": "lower_is_better" }
+    ] },
+    { "id": "intro-finance", "type": "chapter_intro", "chapter_id": "portfolio" },
+    { "id": "bar-finance", "type": "bar_chart", "chapter_id": "portfolio", "title": "板块收入贡献呈现清晰层级", "subtitle": "分类轴保持长标签可读并使用动态范围", "data_path": "measure_dimensions.revenue.portfolio", "value_field": "current", "sort": "desc", "assert_unit": "CNY", "assert_direction": "higher_is_better" },
+    { "id": "closing-finance", "type": "closing_actions", "title": "延续效率改善并修复弱势板块" }
+  ],
+  "actions": [
+    { "id": "finance-review", "object": "组合负责人", "action": "复核弱势板块的收入与成本联动", "deadline": "下个复盘周期前", "validation_metric": "板块效率差异持续收窄", "priority": "strategic", "claim_kind": "action", "evidence": ["metrics.measure_dimensions.revenue.portfolio.1.change_pct", "metrics.measure_dimensions.cost.portfolio.1.change_pct"] }
+  ],
+  "output": { "offline": true, "run_gates": true }
+}

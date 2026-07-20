@@ -669,9 +669,13 @@ function checkReportMetaContract(html, templateMode = false) {
   }
 
   if (meta) {
+    const snapshotMode = meta.report_mode === 'snapshot';
+    const allowedNullPaths = snapshotMode
+      ? new Set(['meta.data_cutoff.data_as_of', 'meta.data_cutoff.comparison_as_of'])
+      : new Set();
     const scanMeta = (value, path = 'meta') => {
       if (value === null) {
-        issues.push(path + ' 不得为 null');
+        if (!allowedNullPaths.has(path)) issues.push(path + ' 不得为 null');
         return;
       }
       if (typeof value === 'string') {
@@ -720,6 +724,11 @@ function checkReportMetaContract(html, templateMode = false) {
     };
     if (!cutoff || typeof cutoff !== 'object' || Array.isArray(cutoff)) {
       issues.push('data_cutoff 必须是对象');
+    } else if (snapshotMode) {
+      if (cutoff.data_as_of !== null) issues.push('snapshot 的 data_cutoff.data_as_of 必须为 null，禁止伪造业务日期');
+      if (cutoff.comparison_as_of !== null) issues.push('snapshot 的 data_cutoff.comparison_as_of 必须为 null');
+      if (cutoff.completeness !== 'snapshot') issues.push('snapshot 的 data_cutoff.completeness 必须为 snapshot');
+      if (cutoff.like_for_like !== false) issues.push('snapshot 的 data_cutoff.like_for_like 必须为 false');
     } else {
       if (!validDate(cutoff.data_as_of)) issues.push('data_cutoff.data_as_of 必须是有效 YYYY-MM-DD');
       if (!validDate(cutoff.comparison_as_of)) issues.push('data_cutoff.comparison_as_of 必须是有效 YYYY-MM-DD');

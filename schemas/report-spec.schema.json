@@ -1,0 +1,411 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.local/south-china-report/report-spec.schema.json",
+  "title": "south-china-report report-spec",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "report", "narrative", "components", "actions", "output"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "report": { "$ref": "#/definitions/report" },
+    "narrative": { "$ref": "#/definitions/narrative" },
+    "components": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 40,
+      "items": { "$ref": "#/definitions/component" }
+    },
+    "actions": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "items": { "$ref": "#/definitions/action" }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["offline", "run_gates"],
+      "properties": {
+        "offline": { "type": "boolean" },
+        "run_gates": { "type": "boolean" }
+      }
+    }
+  },
+  "definitions": {
+    "safeId": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 64,
+      "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+    },
+    "safeText": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500,
+      "pattern": "^[^<>]*$"
+    },
+    "path": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 300,
+      "pattern": "^[^\\s.]+(?:\\.[^\\s.]+)*$"
+    },
+    "evidencePath": {
+      "type": "string",
+      "minLength": 9,
+      "maxLength": 320,
+      "pattern": "^(metrics|insights)\\.[^\\s.]+(?:\\.[^\\s.]+)*$"
+    },
+    "claimFields": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claim_kind"],
+      "properties": {
+        "claim_kind": { "enum": ["fact", "attribution", "action", "hypothesis"] },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 12,
+          "uniqueItems": true,
+          "items": { "$ref": "#/definitions/evidencePath" }
+        },
+        "reason": { "$ref": "#/definitions/safeText" },
+        "validation_needed": { "$ref": "#/definitions/safeText" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "claim_kind": { "const": "hypothesis" } } },
+          "then": { "required": ["reason", "validation_needed"] },
+          "else": { "required": ["evidence"] }
+        }
+      ]
+    },
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text", "claim_kind"],
+      "properties": {
+        "text": { "$ref": "#/definitions/safeText" },
+        "claim_kind": { "enum": ["fact", "attribution", "action", "hypothesis"] },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 12,
+          "uniqueItems": true,
+          "items": { "$ref": "#/definitions/evidencePath" }
+        },
+        "reason": { "$ref": "#/definitions/safeText" },
+        "validation_needed": { "$ref": "#/definitions/safeText" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "claim_kind": { "const": "hypothesis" } } },
+          "then": { "required": ["reason", "validation_needed"] },
+          "else": { "required": ["evidence"] }
+        }
+      ]
+    },
+    "report": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "audience", "density", "language", "title", "subtitle", "organization", "subject"],
+      "properties": {
+        "id": { "$ref": "#/definitions/safeId" },
+        "type": { "const": "strategic_narrative" },
+        "audience": { "enum": ["L1", "L2", "L3"] },
+        "density": { "enum": ["compact", "standard"] },
+        "language": { "const": "zh-CN" },
+        "title": { "$ref": "#/definitions/safeText" },
+        "subtitle": { "$ref": "#/definitions/safeText" },
+        "organization": { "$ref": "#/definitions/safeText" },
+        "subject": { "$ref": "#/definitions/safeText" }
+      }
+    },
+    "chapter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "lead", "claim_kind"],
+      "properties": {
+        "id": { "$ref": "#/definitions/safeId" },
+        "title": { "$ref": "#/definitions/safeText" },
+        "lead": { "$ref": "#/definitions/safeText" },
+        "claim_kind": { "enum": ["fact", "attribution", "action", "hypothesis"] },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 12,
+          "uniqueItems": true,
+          "items": { "$ref": "#/definitions/evidencePath" }
+        },
+        "reason": { "$ref": "#/definitions/safeText" },
+        "validation_needed": { "$ref": "#/definitions/safeText" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "claim_kind": { "const": "hypothesis" } } },
+          "then": { "required": ["reason", "validation_needed"] },
+          "else": { "required": ["evidence"] }
+        }
+      ]
+    },
+    "narrative": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["governing_thought", "chapters"],
+      "properties": {
+        "governing_thought": { "$ref": "#/definitions/claim" },
+        "chapters": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 4,
+          "items": { "$ref": "#/definitions/chapter" }
+        }
+      }
+    },
+    "metricRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path"],
+      "properties": {
+        "path": { "$ref": "#/definitions/path" },
+        "label": { "$ref": "#/definitions/safeText" },
+        "format": { "enum": ["auto", "integer", "decimal", "percent", "percentage_point", "signed_number", "signed_percent"] },
+        "precision": { "type": "integer", "minimum": 0, "maximum": 4 },
+        "assert_unit": { "type": "string", "minLength": 1, "maxLength": 40, "pattern": "^[A-Za-z0-9_/%.-]+$" },
+        "assert_direction": { "enum": ["higher_is_better", "lower_is_better", "neutral"] }
+      }
+    },
+    "tableColumn": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "field"],
+      "properties": {
+        "label": { "$ref": "#/definitions/safeText" },
+        "field": { "enum": ["value", "current", "baseline", "change_abs", "change_pct", "share", "delta", "contribution_pp"] },
+        "format": { "enum": ["auto", "integer", "decimal", "percent", "percentage_point", "signed_number", "signed_percent"] },
+        "precision": { "type": "integer", "minimum": 0, "maximum": 4 }
+      }
+    },
+    "componentBase": {
+      "type": "object",
+      "required": ["id", "type"],
+      "properties": {
+        "id": { "$ref": "#/definitions/safeId" },
+        "type": { "type": "string" },
+        "optional": { "type": "boolean" }
+      }
+    },
+    "heroComponent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "primary_metric"],
+      "properties": {
+        "id": { "$ref": "#/definitions/safeId" },
+        "type": { "const": "hero" },
+        "primary_metric": { "$ref": "#/definitions/metricRef" },
+        "optional": { "type": "boolean" }
+      }
+    },
+    "kpiComponent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "metrics"],
+      "properties": {
+        "id": { "$ref": "#/definitions/safeId" },
+        "type": { "const": "kpi_strip" },
+        "metrics": { "type": "array", "minItems": 3, "maxItems": 8, "items": { "$ref": "#/definitions/metricRef" } },
+        "optional": { "type": "boolean" }
+      }
+    },
+    "chapterIntroComponent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "chapter_id"],
+      "properties": {
+        "id": { "$ref": "#/definitions/safeId" },
+        "type": { "const": "chapter_intro" },
+        "chapter_id": { "$ref": "#/definitions/safeId" },
+        "optional": { "type": "boolean" }
+      }
+    },
+    "insightComponent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "chapter_id", "title", "text", "claim_kind", "tone"],
+      "properties": {
+        "id": { "$ref": "#/definitions/safeId" },
+        "type": { "const": "insight_callout" },
+        "chapter_id": { "$ref": "#/definitions/safeId" },
+        "title": { "$ref": "#/definitions/safeText" },
+        "text": { "$ref": "#/definitions/safeText" },
+        "tone": { "enum": ["growth", "risk", "opportunity", "neutral"] },
+        "claim_kind": { "enum": ["fact", "attribution", "action", "hypothesis"] },
+        "evidence": { "type": "array", "minItems": 1, "maxItems": 12, "uniqueItems": true, "items": { "$ref": "#/definitions/evidencePath" } },
+        "reason": { "$ref": "#/definitions/safeText" },
+        "validation_needed": { "$ref": "#/definitions/safeText" },
+        "optional": { "type": "boolean" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "claim_kind": { "const": "hypothesis" } } },
+          "then": { "required": ["reason", "validation_needed"] },
+          "else": { "required": ["evidence"] }
+        }
+      ]
+    },
+    "tableComponent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "chapter_id", "title", "subtitle", "data_path", "columns"],
+      "properties": {
+        "id": { "$ref": "#/definitions/safeId" },
+        "type": { "enum": ["rank_table", "comparison_table"] },
+        "chapter_id": { "$ref": "#/definitions/safeId" },
+        "title": { "$ref": "#/definitions/safeText" },
+        "subtitle": { "$ref": "#/definitions/safeText" },
+        "data_path": { "$ref": "#/definitions/path" },
+        "columns": { "type": "array", "minItems": 1, "maxItems": 8, "items": { "$ref": "#/definitions/tableColumn" } },
+        "limit": { "type": "integer", "minimum": 1, "maximum": 50 },
+        "sort": { "enum": ["asc", "desc", "none"] },
+        "optional": { "type": "boolean" }
+      }
+    },
+    "trendSeries": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "data_path"],
+      "properties": {
+        "name": { "$ref": "#/definitions/safeText" },
+        "data_path": { "$ref": "#/definitions/path" },
+        "assert_unit": { "type": "string", "minLength": 1, "maxLength": 40, "pattern": "^[A-Za-z0-9_/%.-]+$" },
+        "assert_direction": { "enum": ["higher_is_better", "lower_is_better", "neutral"] }
+      }
+    },
+    "trendComponent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "chapter_id", "title", "subtitle", "series"],
+      "properties": {
+        "id": { "$ref": "#/definitions/safeId" },
+        "type": { "const": "trend_chart" },
+        "chapter_id": { "$ref": "#/definitions/safeId" },
+        "title": { "$ref": "#/definitions/safeText" },
+        "subtitle": { "$ref": "#/definitions/safeText" },
+        "series": { "type": "array", "minItems": 1, "maxItems": 6, "items": { "$ref": "#/definitions/trendSeries" } },
+        "optional": { "type": "boolean" }
+      }
+    },
+    "barComponent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "chapter_id", "title", "subtitle", "data_path", "value_field"],
+      "properties": {
+        "id": { "$ref": "#/definitions/safeId" },
+        "type": { "const": "bar_chart" },
+        "chapter_id": { "$ref": "#/definitions/safeId" },
+        "title": { "$ref": "#/definitions/safeText" },
+        "subtitle": { "$ref": "#/definitions/safeText" },
+        "data_path": { "$ref": "#/definitions/path" },
+        "value_field": { "enum": ["value", "current", "baseline", "change_abs", "change_pct", "share", "delta", "contribution_pp"] },
+        "limit": { "type": "integer", "minimum": 1, "maximum": 30 },
+        "sort": { "enum": ["asc", "desc", "none"] },
+        "assert_unit": { "type": "string", "minLength": 1, "maxLength": 40, "pattern": "^[A-Za-z0-9_/%.-]+$" },
+        "assert_direction": { "enum": ["higher_is_better", "lower_is_better", "neutral"] },
+        "optional": { "type": "boolean" }
+      }
+    },
+    "comparisonLabels": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["baseline", "current"],
+      "properties": {
+        "baseline": { "$ref": "#/definitions/safeText" },
+        "current": { "$ref": "#/definitions/safeText" }
+      }
+    },
+    "slopeComponent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "chapter_id", "title", "subtitle", "data_path"],
+      "properties": {
+        "id": { "$ref": "#/definitions/safeId" },
+        "type": { "const": "slope_chart" },
+        "chapter_id": { "$ref": "#/definitions/safeId" },
+        "title": { "$ref": "#/definitions/safeText" },
+        "subtitle": { "$ref": "#/definitions/safeText" },
+        "data_path": { "$ref": "#/definitions/path" },
+        "limit": { "type": "integer", "minimum": 1, "maximum": 12 },
+        "sort": { "enum": ["asc", "desc", "none"] },
+        "assert_unit": { "type": "string", "minLength": 1, "maxLength": 40, "pattern": "^[A-Za-z0-9_/%.-]+$" },
+        "assert_direction": { "enum": ["higher_is_better", "lower_is_better", "neutral"] },
+        "assert_comparison_labels": { "$ref": "#/definitions/comparisonLabels" },
+        "optional": { "type": "boolean" }
+      }
+    },
+    "detailComponent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "title", "subtitle", "data_path", "columns"],
+      "properties": {
+        "id": { "$ref": "#/definitions/safeId" },
+        "type": { "const": "data_detail" },
+        "title": { "$ref": "#/definitions/safeText" },
+        "subtitle": { "$ref": "#/definitions/safeText" },
+        "data_path": { "$ref": "#/definitions/path" },
+        "columns": { "type": "array", "minItems": 1, "maxItems": 8, "items": { "$ref": "#/definitions/tableColumn" } },
+        "limit": { "type": "integer", "minimum": 1, "maximum": 100 },
+        "sort": { "enum": ["asc", "desc", "none"] },
+        "optional": { "type": "boolean" }
+      }
+    },
+    "closingComponent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "title"],
+      "properties": {
+        "id": { "$ref": "#/definitions/safeId" },
+        "type": { "const": "closing_actions" },
+        "title": { "$ref": "#/definitions/safeText" },
+        "optional": { "type": "boolean" }
+      }
+    },
+    "component": {
+      "oneOf": [
+        { "$ref": "#/definitions/heroComponent" },
+        { "$ref": "#/definitions/kpiComponent" },
+        { "$ref": "#/definitions/chapterIntroComponent" },
+        { "$ref": "#/definitions/insightComponent" },
+        { "$ref": "#/definitions/tableComponent" },
+        { "$ref": "#/definitions/trendComponent" },
+        { "$ref": "#/definitions/barComponent" },
+        { "$ref": "#/definitions/slopeComponent" },
+        { "$ref": "#/definitions/detailComponent" },
+        { "$ref": "#/definitions/closingComponent" }
+      ]
+    },
+    "action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "object", "action", "deadline", "validation_metric", "priority", "claim_kind"],
+      "properties": {
+        "id": { "$ref": "#/definitions/safeId" },
+        "object": { "$ref": "#/definitions/safeText" },
+        "action": { "$ref": "#/definitions/safeText" },
+        "deadline": { "$ref": "#/definitions/safeText" },
+        "validation_metric": { "$ref": "#/definitions/safeText" },
+        "priority": { "enum": ["urgent", "strategic", "monitor"] },
+        "claim_kind": { "enum": ["action", "hypothesis"] },
+        "evidence": { "type": "array", "minItems": 1, "maxItems": 12, "uniqueItems": true, "items": { "$ref": "#/definitions/evidencePath" } },
+        "reason": { "$ref": "#/definitions/safeText" },
+        "validation_needed": { "$ref": "#/definitions/safeText" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "claim_kind": { "const": "hypothesis" } } },
+          "then": { "required": ["reason", "validation_needed"] },
+          "else": { "required": ["evidence"] }
+        }
+      ]
+    }
+  }
+}
